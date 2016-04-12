@@ -84,9 +84,9 @@ area$TAI_ID2 <- as.factor(area$TAI_ID1)
 
 str(prod); str(area)
 
-p <- ggplot(data=prod, mapping=aes(x=Year, y=sqrt(value))) + geom_line(aes(colour=crop, alpha=0.2, group = TAI_ID2)) + facet_grid( country ~ crop) + geom_smooth(stat='smooth', method='loess') + theme_bw(base_size=10, base_family='Helvetica') + theme(axis.text.x = element_text(angle=0))  + ggtitle(expression(paste('Crop per Province in'~ sqrt(Tons))))
+p <- ggplot(data=dat, mapping=aes(x=Year, y=sqrt(prod))) + geom_line(aes(colour=crop, alpha=0.2, group = TAI_ID2)) + facet_grid( crop ~ country) + geom_smooth(stat='smooth', method='loess') + theme_bw(base_size=10, base_family='Helvetica') + theme(axis.text.x = element_text(angle=0))  + ggtitle(expression(paste('Crop per Province in'~ sqrt(Tons))))
 
-p <- ggplot(data=area, mapping=aes(x=year_a, y=value)) + geom_line(aes(colour=crop, alpha=0.2, group = TAI_ID2)) + facet_grid( country ~ crop) + geom_smooth(stat='smooth', method='loess') + theme_bw(base_size=10, base_family='Helvetica') + theme(axis.text.x = element_text(angle=0))  + ggtitle('Cultivated area per Province in Ha')
+p <- ggplot(data=dat, mapping=aes(x=year_a, y=area)) + geom_line(aes(colour=crop, alpha=0.2, group = TAI_ID2)) + facet_grid( country ~ crop) + geom_smooth(stat='smooth', method='loess') + theme_bw(base_size=10, base_family='Helvetica') + theme(axis.text.x = element_text(angle=0))  + ggtitle('Cultivated area per Province in Ha')
 
 
 # quartz.save(file='CultivatedAreaTL_year.png', type='png')
@@ -129,7 +129,7 @@ datKeyCrops <- filter(datKeyCrops, Year == 2002:2005 | Year == 2007:2009)
 	filter(datKeyCrops, yield > 50) 
 
 p <- ggplot(data= filter (datKeyCrops, yield < 100), mapping=aes(x=Year, y=yield)) + geom_line(aes(colour=crop, alpha=0.2, group = TAI_ID2)) + facet_grid(crop ~ country)  + theme_bw(base_size=10, base_family='Helvetica') + theme(axis.text.x = element_text(angle=0)) + ggtitle("Cleaned data NA = 46") #+ ggtitle(expression(paste('Crop per Province in'~ sqrt(Tons)))) + geom_smooth(stat='smooth', method='loess')
-
+p
 # quartz.save(file='Crop_province_KeyCrops.png', type='png')
 
 ## Normalizing by district area or per capita would make crop production comparable. Katja wisely says: 'If you do production through harvested area, you get yield, and that is something different – it doesn’t say that much about the importance of the crop in an area, but rather how productive it is.' In order to do that, I need to join crop data with map data.
@@ -137,6 +137,6 @@ p <- ggplot(data= filter (datKeyCrops, yield < 100), mapping=aes(x=Year, y=yield
 datKeyCrops <- left_join(datKeyCrops, select(users, TAI_ID1, Sq_km, Pop= Total))
 
 # Normalize (do not confuse cropped area with area of the district 'Sq_km')
-datKeyCrops <- mutate(datKeyCrops, prop_km2 = prod / Sq_km, prop_capita = prop / Pop) 
+datKeyCrops <- mutate(datKeyCrops, prop_km2 = prod / Sq_km, prop_capita = prod / Pop) 
 
 ### Note J160405: New problem: when importing data from excel it takes , as separator for decimals. Somehow many values get converted to NA after applying as.numeric to the columns of interest (see ExtracDataTAI.R file, lines 277 onwards)... 
