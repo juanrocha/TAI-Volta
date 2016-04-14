@@ -4,32 +4,83 @@ author: "Juan Carlos Rocha"
 output: github_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r setup, include=FALSE, cache=TRUE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+require(ggplot2)
+require(dplyr)
 ```
 
 ## TAI-Volta project
 
-The TAI-Volta project goal is **targeting agricultural innovations** in the Volta river basin, between Ghana and Burkina Faso. This document present a preliminary analysis of the data we've got so far as a showcase of we can do once more data comes into the pipeline. Katja Malmborg has been collecting data from project collaborators and the statistics beaureau from both countries. Raw data are mainly excel files with several tables per sheet indicating area or crops production over time per district or province. She has organized the tables on suitable files (one table per sheet at least) and has also collected socio-economic information from national census reports. I use the script `ExtractDataTAI.R` to mine the different data files and compile a unique data object.
+The TAI-Volta project goal is **targeting agricultural innovations** in the Volta river basin, between Ghana and Burkina Faso. This document presents a preliminary analysis of the data we've got so far as a showcase of we can do once more data comes into the pipeline. Katja Malmborg has been collecting data from project collaborators and the statistics beaureau from both countries. Raw data are mainly excel files with several tables per sheet indicating area or crops production over time per district or province. She has organized the tables on suitable files (one table per sheet at least) and has also collected socio-economic information from national census reports. I use the script `ExtractDataTAI.R` to mine the different data files and compile a unique data object.
 
 ### Data so far..
+To date we have 22500 observations that comprises 32 crop production (in metric Tons) and cultivated area (in Km^2^) for the 99 provinces (in Burkina Faso) and districts (in Ghana) from 1993 to 2012. However, we do have also over 4000 missing values or `NA's`. Below a summary of the cleaned data: 
 
-
-You can include R code in the document as follows:
-
-```{r echo=TRUE}
+```{r eval = TRUE, echo=FALSE}
 load(file='160414_Volta.RData')
-ls()
-summary(dat)
 str(dat)
+summary(dat)
 ```
 
-## Including Plots
+The figures below show the distribution of production in tons and cultivated area for the 32 crops available. 
 
-You can also embed plots, for example:
+```{r eval = TRUE, echo=FALSE, cache=TRUE}
+p <- ggplot(data=dat, aes(crop, prod))+ geom_jitter(aes(colour=crop, alpha=0.2)) + geom_boxplot(notch=T) + facet_grid(country~.)  +
+  theme(axis.text.x = element_text(angle=90))+
+  ggtitle('Production of crops (Tons) in the Volta basin')
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+p
+
+p <- ggplot(data=dat, aes(crop, area))+ geom_jitter(aes(colour=crop, alpha=0.2)) + geom_boxplot(notch=T) + facet_grid(country~.)  +
+  theme(axis.text.x = element_text(angle=90))+
+  ggtitle('Cultivated area per crop in the Volta basin')
+
+p
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+Despite having incomplete information on 32 crops, we can only use what is comparable across provinces and districts in both countries. Then, the comnmon crops are reduced to:
+```{r echo=FALSE, cache=TRUE}
+intersect(dat$crop[dat$country == 'GH'], dat$crop[dat$country =='BF'])
+datKeyCrops <- (filter(dat, crop == 'Maize' | crop == 'Millet'| crop == 'Rice'| crop == 'Yam'| crop == 'Sorghum'| crop == 'Cowpea'| crop == 'Soy' ))
+
+p <- ggplot(data=datKeyCrops, mapping=aes(x=Year, y=sqrt(prod))) +
+  geom_line(aes(colour=crop, alpha=0.2, group = TAI_ID2)) + 
+  facet_grid( crop ~ country) + geom_smooth(stat='smooth', method='loess') + 
+  theme_bw(base_size=10, base_family='Helvetica') + 
+  theme(axis.text.x = element_text(angle=0))  + 
+  ggtitle(expression(paste('Crop per Province in'~ sqrt(Tons))))
+
+p
+```
+
+
+As you can see, data for common crops in Burkina Faso is more complete over time while Ghana only has available data for years 2002 : 2009 (except 2006), which is not visible here. The maximum values of certain crops dwarfs the production values of others. For this reason the production was scaled by the square root. Now with a more complete dataset one can calculate yields (tons / Km^2^). Behind the scenes I also get rid of yield values higher than 100 tons/Km^2^; these datapoints (n=2) seem errors on data input. For example, when production is reported but the area reported is zero (dividing by zero is `Inf`).
+
+```{r echo=FALSE, cache=TRUE}
+datKeyCrops <- dplyr::mutate(datKeyCrops, yield = ifelse(prod == 0 & area == 0, 0, prod/area))
+p <- ggplot(data= filter (datKeyCrops, yield < 100), mapping=aes(x=Year, y= yield)) + 
+        geom_line(aes(colour=crop, alpha=0.2, group = TAI_ID2)) + facet_grid(country ~ crop )  + 
+        theme_bw(base_size=10, base_family='Helvetica') + 
+        theme(axis.text.x = element_text(angle=0)) +
+        ggtitle("Yield over time")
+  
+p
+
+```
+
+With the demographic data (population and district area) one can also calculate how important is each crop per capita. Dividing not by cultivated area (yield) but by the area of the district where the crop happens give also a sense of the relative importance of the crop with respect to other districts (Is that correct?).
+
+```{r echo = FALSE}
+datKeyCrops <- left_join(datKeyCrops, select(users, TAI_ID1, Sq_km, Pop= Total))
+
+# Normalize (do not confuse cropped area with area of the district 'Sq_km')
+datKeyCrops <- mutate(datKeyCrops, prop_km2 = prod / Sq_km, prop_capita = prod / Pop) 
+
+
+
+```
+
+

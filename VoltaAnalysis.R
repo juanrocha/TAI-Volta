@@ -88,14 +88,26 @@ area$TAI_ID2 <- as.factor(area$TAI_ID1)
 
 str(prod); str(area)
 
-p <- ggplot(data=dat, mapping=aes(x=Year, y=sqrt(prod))) + geom_line(aes(colour=crop, alpha=0.2, group = TAI_ID2)) + facet_grid( crop ~ country) + geom_smooth(stat='smooth', method='loess') + theme_bw(base_size=10, base_family='Helvetica') + theme(axis.text.x = element_text(angle=0))  + ggtitle(expression(paste('Crop per Province in'~ sqrt(Tons))))
+p <- ggplot(data=dat, mapping=aes(x=Year, y=sqrt(prod))) +
+  geom_line(aes(colour=crop, alpha=0.2, group = TAI_ID2)) + 
+  facet_grid( crop ~ country) + geom_smooth(stat='smooth', method='loess') + 
+  theme_bw(base_size=10, base_family='Helvetica') + 
+  theme(axis.text.x = element_text(angle=0))  + 
+  ggtitle(expression(paste('Crop per Province in'~ sqrt(Tons))))
 
-p <- ggplot(data=dat, mapping=aes(x=year_a, y=area)) + geom_line(aes(colour=crop, alpha=0.2, group = TAI_ID2)) + facet_grid( country ~ crop) + geom_smooth(stat='smooth', method='loess') + theme_bw(base_size=10, base_family='Helvetica') + theme(axis.text.x = element_text(angle=0))  + ggtitle('Cultivated area per Province in Ha')
+p <- ggplot(data=dat, mapping=aes(x=year_a, y=area)) +
+  geom_line(aes(colour=crop, alpha=0.2, group = TAI_ID2)) + 
+  facet_grid( country ~ crop) + geom_smooth(stat='smooth', method='loess') + 
+  theme_bw(base_size=10, base_family='Helvetica') + 
+  theme(axis.text.x = element_text(angle=0))  +
+  ggtitle('Cultivated area per Province in Ha')
 
 
 # quartz.save(file='CultivatedAreaTL_year.png', type='png')
 
-p <- ggplot(data=prod, aes(crop, value)) + geom_boxplot(notch=T) + facet_grid( ~country) #+ geom_jitter(aes(colour=crop, alpha=0.5)) + 
+p <- ggplot(data=dat, aes(crop, prod))+ geom_jitter(aes(colour=crop, alpha=0.2)) + geom_boxplot(notch=T) + facet_grid(country~.)  +
+  theme(axis.text.x = element_text(angle=90))+
+  ggtitle('Production of crops (Tons) in the Volta basin')
 
 p
 
@@ -113,6 +125,16 @@ intersect(dat$crop[dat$country == 'GH'], dat$crop[dat$country =='BF'])
 
 # then you can use filter to select them :) or a longer subsetting string
 datKeyCrops <- (filter(dat, crop == 'Maize' | crop == 'Millet'| crop == 'Rice'| crop == 'Yam'| crop == 'Sorghum'| crop == 'Cowpea'| crop == 'Soy' ))
+
+p <- ggplot(data=datKeyCrops, mapping=aes(x=Year, y=sqrt(prod))) +
+  geom_line(aes(colour=crop, alpha=0.2, group = TAI_ID2)) + 
+  facet_grid( crop ~ country) + geom_smooth(stat='smooth', method='loess') + 
+  theme_bw(base_size=10, base_family='Helvetica') + 
+  theme(axis.text.x = element_text(angle=0))  + 
+  ggtitle(expression(paste('Crop per Province in'~ sqrt(Tons))))
+
+p
+
 
 # calculate yieds
 head(dat)
@@ -159,7 +181,16 @@ datKeyCrops <- mutate(datKeyCrops, prop_km2 = prod / Sq_km, prop_capita = prod /
 ## Update J160414: solved! it was a problem with the cell format (not number) on Excel that
 # makes spaces in between numbers that R interpreted as commas [,] so as.number did not work properly
 
+p <- ggplot(data= filter (datKeyCrops, yield < 100), mapping=aes(x=Year, y= prop_capita)) + 
+  geom_line(aes(colour=crop, alpha=0.2, group = TAI_ID2)) + facet_grid(crop ~ country)  + 
+  theme_bw(base_size=10, base_family='Helvetica') + 
+  theme(axis.text.x = element_text(angle=0)) +
+  ggtitle("Production per capita")
+#+ ggtitle(expression(paste('Crop per Province in'~ sqrt(Tons)))) + geom_smooth(stat='smooth', method='loess')
+p
 
+
+hist(datKeyCrops$prop_capita)
 
 
 
