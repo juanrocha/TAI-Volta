@@ -44,12 +44,12 @@ sn <- sheetNames(xls= file)
 areaG <- read.xls(xls= file, sheet=1)
 areaG$year <- rep(as.numeric(sn[1]), dim(areaG)[1])
 
-x <- read.xls(xls= file, sheet=3)
-x$year <- rep(as.numeric(sn[3]), dim(x)[1])
-names(x) == names(areaG)
-# try
-x2<- full_join(x , areaG)
-rm(x,x2)
+# x <- read.xls(xls= file, sheet=3)
+# x$year <- rep(as.numeric(sn[3]), dim(x)[1])
+# names(x) == names(areaG)
+# # try
+# x2<- full_join(x , areaG)
+# rm(x,x2)
 
 
 for (i in 2:7){
@@ -64,9 +64,10 @@ str(areaG)
 
 areaG <- areaG[,-c(33, 34, 32, 19)] # delete stapple crops, total and veg
 
-# replace NA with zeroes so the sum works. The original dataset does not have NA's, they were created when joining tables with different colnames, spelling problems.
+# replace NA with zeroes so the sum works. The original dataset does not have NA's, 
+# they were created when joining tables with different colnames, spelling problems.
 
-cbind( areaG[29], replace(areaG[29], is.na(areaG[29]), 0)) # good way to do it
+# cbind( areaG[29], replace(areaG[29], is.na(areaG[29]), 0)) # good way to do it
 # Here I just repeat the operation above across all numeric columns
 areaG[4:30] <- apply(areaG[4:30], 2, function(x){replace(x, is.na(x), 0)})
 
@@ -86,12 +87,14 @@ areaG <- areaG[,-c(18,21)]
 
 # rename the crops and use long form dataset agreggated by crop
 
-colnames(areaG)[4:19] <- c('Maize', 'Rice', 'Cassava','Yam', 'Cocoyam', 'Platain', 'Sorghum','Millet', 'Ground nuts', 'Cowpea', 'Soy', 'Okro', 'Pepper', 'Tomato', 'Year', 'Garden eggs')
-
-areaG <- melt(areaG, id.vars=c('District', 'Region', 'TAI_ID1', 'Year'), measure.vars= names(areaG)[c(4:17,19)], variable_name= 'crop')
+# colnames(areaG)[4:19] <- c('Maize', 'Rice', 'Cassava','Yam', 'Cocoyam', 'Platain',
+#                            'Sorghum','Millet', 'Ground nuts', 'Cowpea', 'Soy', 'Okro', 
+#                            'Pepper', 'Tomato', 'Year', 'Garden eggs')
+# 
+# areaG <- melt(areaG, id.vars=c('District', 'Region', 'TAI_ID1', 'Year'), measure.vars= names(areaG)[c(4:17,19)], variable_name= 'crop')
 
 ## without deleting crops or years:
-# areaG <- melt(areaG, id.vars=c('District', 'Region', 'TAI_ID1', 'year'))
+ areaG <- melt(areaG, id.vars=c('District', 'Region', 'TAI_ID1', 'year'))
 
 
 # now the dataset is clean and in long format with year being the long variable.
@@ -131,12 +134,16 @@ areaB <- melt(areaB, id.vars=c('Province', 'TAI_ID1','TAI_ID2','crop'), variable
 # extra cleaning when using all years
 areaB <- areaB[,-3]
 str(areaG)
-levels(areaG$variable) <- c('Maize', 'Rice', 'Cassava','Yam', 'Cocoyam', 'Platain', 'Sorghum','Millet', 'Ground nuts', 'Cowpea', 'Soy', 'Okro', 'Pepper', 'Tomato', 'Potato', 'Sweet potato', 'Garden eggs','Lettuce', 'Onion', 'Cucumber', 'Cabbage','Watermelon')
+levels(areaG$variable) <- c('Maize', 'Rice', 'Cassava','Yam', 'Cocoyam', 'Platain', 
+                            'Sorghum','Millet', 'Ground nuts', 'Cowpea', 'Soy', 'Okro', 
+                            'Pepper', 'Tomato', 'Potato', 'Sweet potato', 'Garden eggs',
+                            'Lettuce', 'Onion', 'Cucumber', 'Cabbage','Watermelon')
 names(areaG)[5] <- 'crop'
-
+names(areaG)[4] <- 'Year'
 
 # standardize names and classes
 colnames(areaG)[1] <- colnames(areaB)[1]
+
 areaG <- areaG[,-2]
 # names(areaG)[3] <- 'Year'
 areaB$Year <- as.numeric(as.character(areaB$Year))
@@ -191,7 +198,10 @@ prodG <- prodG[,-c(21:23)]
 # Not all crops were measured all years, delete those that didn't
 # prodG <- prodG[,-c(20:25)] # Note: trying with all data...
 
-colnames(prodG)[4:25] <- c('Maize', 'Rice', 'Cassava','Yam', 'Cocoyam', 'Platain', 'Sorghum','Millet', 'Ground nuts', 'Cowpea', 'Soy', 'Okro', 'Pepper', 'Tomato', 'Garden eggs','Year','Sweet potato','Lettuce', 'Onion', 'Cucumber', 'Cabbage','Watermelon') #[4:19] <- c('Maize', 'Rice', 'Cassava','Yam', 'Cocoyam', 'Platain', 'Sorghum','Millet', 'Ground nuts', 'Cowpea', 'Soy', 'Okro', 'Pepper', 'Tomato', 'Garden eggs','Year' )
+colnames(prodG)[4:25] <- c('Maize', 'Rice', 'Cassava','Yam', 'Cocoyam', 'Platain',
+                           'Sorghum','Millet', 'Ground nuts', 'Cowpea', 'Soy', 'Okro', 
+                           'Pepper', 'Tomato', 'Garden eggs','Year','Sweet potato',
+                           'Lettuce', 'Onion', 'Cucumber', 'Cabbage','Watermelon') #[4:19] <- c('Maize', 'Rice', 'Cassava','Yam', 'Cocoyam', 'Platain', 'Sorghum','Millet', 'Ground nuts', 'Cowpea', 'Soy', 'Okro', 'Pepper', 'Tomato', 'Garden eggs','Year' )
 
 # prodG <- melt(prodG, id.vars=c('District', 'Region', 'TAI_ID1', 'Year'), measure.vars= names(prodG)[c(4:18)], variable_name= 'crop')
 prodG <- melt(prodG, id.vars=c('District', 'Region', 'TAI_ID1', 'Year'), variable_name= 'crop')
@@ -247,7 +257,19 @@ names(prod.volta)[5] <- "prod"
 area.volta <- area.volta[,-1]
 prod.volta <- prod.volta[,-1]
 
-dat <- inner_join(area.volta, prod.volta)
+dat <- full_join(area.volta, prod.volta)
+dat$crop <- as.factor(dat$crop)
+dat$country <- as.factor(dat$country)
+
+summary (dat)
+str(dat)
+
+# check the NAs in time, or any other column, just change the column name after $
+table(dat$Year [is.na(dat$area)])
+table(dat$Year [is.na(dat$prod)])
+
+
+
 ###########
 # Population statistics
 ###########
@@ -276,16 +298,22 @@ popB <- read.xls(file, sheet=4) # this data sucks!
 ## Katja did a file with summary info for the bundling exercise. Use pop and other stats from such file. 
 file <- 'Volta_Bundling_prep.xlsx'
 users <- read.xls(file, sheet=1, dec=',')
-users[3:16] <- apply(users[3:16], 2, function (x) {as.numeric(x)} )
+users[4:16] <- apply(users[4:16], 2, function (x) {as.numeric(x)} )
 
 resource <- read.xls (file, sheet=2)
 biophys <- read.xls(file, sheet=3)
 interact <- read.xls(file,sheet=4)
 
-# the problem with the sheets crop diversity from Katja is that she aggregates summing over the years (I assumed) and temporal variablity is lost. However, she has more crops on her tables and don't know where the info comes from. From the original datasets (original from her), there is no fonio, sweet potatos, cotton, etc in both countries. I can't say if she has the data or if she simply fill up with zero values.
+# the problem with the sheets crop diversity from Katja is that she aggregates
+# summing over the years (I assumed) and temporal variablity is lost. However, 
+# she has more crops on her tables and don't know where the info comes from. From
+# the original datasets (original from her), there is no fonio, sweet potatos,
+# cotton, etc in both countries. I can't say if she has the data or if she simply 
+# fill up with zero values.
 
 getwd()
-save('area', 'biophys', 'interact', 'prod', 'resource','users', 'prodB', 'prodG', 'areaB', 'areaG', 'dat', file='Volta.RData')
+save( 'biophys', 'interact', 'resource','users',  'dat', 'volta.shp', "datKeyCrops" ,
+      file='160414_Volta.RData')
 
 ## exploratory graphics
 require (ggplot2)

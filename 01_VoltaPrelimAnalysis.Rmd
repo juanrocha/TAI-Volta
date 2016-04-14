@@ -1,0 +1,35 @@
+---
+title: "Volta Preliminary Analysis"
+author: "Juan Carlos Rocha"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## TAI-Volta project
+
+The TAI-Volta project goal is **targeting agricultural innovations** in the Volta river basin, between Ghana and Burkina Faso. This document present a preliminary analysis of the data we've got so far as a showcase of we can do once more data comes into the pipeline. Katja Malmborg has been collecting data from project collaborators and the statistics beaureau from both countries. Raw data are mainly excel files with several tables per sheet indicating area or crops production over time per district or province. She has organized the tables on suitable files (one table per sheet at least) and has also collected socio-economic information from national census reports. I use the script `ExtractDataTAI.R` to mine the different data files and compile a unique data object.
+
+### Data so far..
+
+
+You can include R code in the document as follows:
+
+```{r echo=TRUE}
+load(file='160414_Volta.RData')
+ls()
+summary(dat)
+str(dat)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

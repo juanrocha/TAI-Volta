@@ -37,7 +37,8 @@ load('~/Documents/Projects/TAI/TransformedData/Data_Burkina&Ganha/Volta.RData')
 # interact is the preliminary data for interactions, only cattle density
 # resource has total.harvested.area, province.district.area, ratio.harvested.area, market.acces and tree.cover
 # biophys has aridity, mean.temp, soil.water, wet.season. slope75
-# users has sq_km total.pop wome, child, urban and rural totals, employees, farmers, ration.children, ration.woman, pop.density, ratio.farmers, urbanization.
+# users has sq_km total.pop wome, child, urban and rural totals, employees, 
+# farmers, ration.children, ration.woman, pop.density, ratio.farmers, urbanization.
 
 # load map for visualizations and data
 volta.shp <- readShapeSpatial("~/Documents/Projects/TAI/TransformedData/Bundling/Volta_bundling1.shp")
@@ -54,7 +55,10 @@ area$country <- ifelse(area$TAI_ID > 3000, 'GH', 'BF')
 # use only common crops for both countries that occur every year.
 common <- intersect(levels(areaB$crop),  levels(areaG$crop))
 
-# note to self: I'm not sure if having different time periods is valid. We have 7 years of data but different years. It can affect the aggregate calculations later. But even if it works (e.g. by changing the year stamp by yr1, yr2...yr7), in real life there were two different periods with probably different climate conditions, etc.
+# note to self: I'm not sure if having different time periods is valid. 
+# We have 7 years of data but different years. It can affect the aggregate 
+# calculations later. But even if it works (e.g. by changing the year stamp by yr1, yr2...yr7), 
+# in real life there were two different periods with probably different climate conditions, etc.
 
 index <- vector()
 for (i in seq_along(common)){ 
@@ -97,11 +101,11 @@ p
 
 ## To do
 
-# write a function that constructs the matrix for ordination methods
-# write a function that divides prod / area cultivated and produce the long dataset for ploting & ordination methods.
+# write a function that divides prod / area cultivated and produce the 
+# long dataset for ploting & ordination methods.
 
 
-dat$country <- ifelse(dat$TAI_ID > 3000, 'GH', 'BF')
+dat$country <- ifelse(dat$TAI_ID1 > 3000, 'GH', 'BF')
 dat$TAI_ID2 <- as.factor(dat$TAI_ID1)
 
 # this is the way to get the common crops for the two countries
@@ -128,15 +132,38 @@ datKeyCrops <- filter(datKeyCrops, Year == 2002:2005 | Year == 2007:2009)
 # Note there is few horrible outliers making life difficult:
 	filter(datKeyCrops, yield > 50) 
 
-p <- ggplot(data= filter (datKeyCrops, yield < 100), mapping=aes(x=Year, y=yield)) + geom_line(aes(colour=crop, alpha=0.2, group = TAI_ID2)) + facet_grid(crop ~ country)  + theme_bw(base_size=10, base_family='Helvetica') + theme(axis.text.x = element_text(angle=0)) + ggtitle("Cleaned data NA = 46") #+ ggtitle(expression(paste('Crop per Province in'~ sqrt(Tons)))) + geom_smooth(stat='smooth', method='loess')
+p <- ggplot(data= filter (datKeyCrops, yield < 100), mapping=aes(x=Year, y= yield)) + 
+        geom_line(aes(colour=crop, alpha=0.2, group = TAI_ID2)) + facet_grid(crop ~ country)  + 
+        theme_bw(base_size=10, base_family='Helvetica') + 
+        theme(axis.text.x = element_text(angle=0)) +
+        ggtitle("Yield over time")
+  #+ ggtitle(expression(paste('Crop per Province in'~ sqrt(Tons)))) + geom_smooth(stat='smooth', method='loess')
 p
+
 # quartz.save(file='Crop_province_KeyCrops.png', type='png')
 
-## Normalizing by district area or per capita would make crop production comparable. Katja wisely says: 'If you do production through harvested area, you get yield, and that is something different – it doesn’t say that much about the importance of the crop in an area, but rather how productive it is.' In order to do that, I need to join crop data with map data.
+## Normalizing by district area or per capita would make crop production comparable.
+# Katja wisely says: 'If you do production through harvested area, you get yield, 
+# and that is something different – it doesn’t say that much about the importance 
+# of the crop in an area, but rather how productive it is.' In order to do that, 
+# I need to join crop data with map data.
 
 datKeyCrops <- left_join(datKeyCrops, select(users, TAI_ID1, Sq_km, Pop= Total))
 
 # Normalize (do not confuse cropped area with area of the district 'Sq_km')
 datKeyCrops <- mutate(datKeyCrops, prop_km2 = prod / Sq_km, prop_capita = prod / Pop) 
 
-### Note J160405: New problem: when importing data from excel it takes , as separator for decimals. Somehow many values get converted to NA after applying as.numeric to the columns of interest (see ExtracDataTAI.R file, lines 277 onwards)... 
+### Note J160405: New problem: when importing data from excel it takes ,
+# as separator for decimals. Somehow many values get converted to NA after 
+# applying as.numeric to the columns of interest (see ExtracDataTAI.R file, lines 277 onwards)... 
+## Update J160414: solved! it was a problem with the cell format (not number) on Excel that
+# makes spaces in between numbers that R interpreted as commas [,] so as.number did not work properly
+
+
+
+
+
+
+
+
+
