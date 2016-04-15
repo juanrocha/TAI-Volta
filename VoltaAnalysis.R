@@ -173,7 +173,7 @@ p
 datKeyCrops <- left_join(datKeyCrops, select(users, TAI_ID1, Sq_km, Pop= Total))
 
 # Normalize (do not confuse cropped area with area of the district 'Sq_km')
-datKeyCrops <- mutate(datKeyCrops, prop_km2 = prod / Sq_km, prop_capita = prod / Pop) 
+datKeyCrops <- mutate(datKeyCrops, prod_km2 = prod / Sq_km, prod_capita = prod / Pop) 
 
 ### Note J160405: New problem: when importing data from excel it takes ,
 # as separator for decimals. Somehow many values get converted to NA after 
@@ -181,16 +181,16 @@ datKeyCrops <- mutate(datKeyCrops, prop_km2 = prod / Sq_km, prop_capita = prod /
 ## Update J160414: solved! it was a problem with the cell format (not number) on Excel that
 # makes spaces in between numbers that R interpreted as commas [,] so as.number did not work properly
 
-p <- ggplot(data= filter (datKeyCrops, yield < 100), mapping=aes(x=Year, y= prop_capita)) + 
-  geom_line(aes(colour=crop, alpha=0.2, group = TAI_ID2)) + facet_grid(crop ~ country)  + 
+p <- ggplot(data= filter (datKeyCrops, yield < 100), mapping=aes(x=Year, y= prod_km2)) + 
+  geom_line(aes(colour=crop, alpha=0.2, group = TAI_ID2)) + facet_grid(country~crop)  + 
   theme_bw(base_size=10, base_family='Helvetica') + 
-  theme(axis.text.x = element_text(angle=0)) +
+  theme(axis.text.x = element_text(angle=90)) +
   ggtitle("Production per capita")
 #+ ggtitle(expression(paste('Crop per Province in'~ sqrt(Tons)))) + geom_smooth(stat='smooth', method='loess')
 p
 
 
-hist(datKeyCrops$prop_capita)
+hist(datKeyCrops$prop_km2)
 
 
 

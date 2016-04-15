@@ -2,16 +2,10 @@ Volta Preliminary Analysis
 ================
 Juan Carlos Rocha
 
-``` r
-knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
-require(ggplot2)
-require(dplyr)
-```
-
 TAI-Volta project
 -----------------
 
-The TAI-Volta project goal is **targeting agricultural innovations** in the Volta river basin, between Ghana and Burkina Faso. This document present a preliminary analysis of the data we've got so far as a showcase of we can do once more data comes into the pipeline. Katja Malmborg has been collecting data from project collaborators and the statistics beaureau from both countries. Raw data are mainly excel files with several tables per sheet indicating area or crops production over time per district or province. She has organized the tables on suitable files (one table per sheet at least) and has also collected socio-economic information from national census reports. I use the script `ExtractDataTAI.R` to mine the different data files and compile a unique data object.
+The TAI-Volta project goal is **targeting agricultural innovations** in the Volta river basin, between Ghana and Burkina Faso. This document presents a preliminary analysis of the data we've got so far as a showcase of we can do once more data comes into the pipeline. Katja Malmborg has been collecting data from project collaborators and the statistics beaureau from both countries. Raw data are mainly excel files with several tables per sheet indicating area or crops production over time per district or province. She has organized the tables on suitable files (one table per sheet at least) and has also collected socio-economic information from national census reports. I use the script `ExtractDataTAI.R` to mine the different data files and compile a unique data object.
 
 ### Data so far..
 
@@ -45,16 +39,55 @@ To date we have 22500 observations that comprises 32 crop production (in metric 
 
 The figures below show the distribution of production in tons and cultivated area for the 32 crops available.
 
-![](01_VoltaPrelimAnalysis_files/figure-markdown_github/unnamed-chunk-2-1.png)<!-- -->![](01_VoltaPrelimAnalysis_files/figure-markdown_github/unnamed-chunk-2-2.png)<!-- -->
+    ## Warning: Removed 4494 rows containing non-finite values (stat_boxplot).
+
+    ## Warning: Removed 4494 rows containing missing values (geom_point).
+
+    ## notch went outside hinges. Try setting notch=FALSE.
+    ## notch went outside hinges. Try setting notch=FALSE.
+    ## notch went outside hinges. Try setting notch=FALSE.
+    ## notch went outside hinges. Try setting notch=FALSE.
+    ## notch went outside hinges. Try setting notch=FALSE.
+    ## notch went outside hinges. Try setting notch=FALSE.
+    ## notch went outside hinges. Try setting notch=FALSE.
+    ## notch went outside hinges. Try setting notch=FALSE.
+    ## notch went outside hinges. Try setting notch=FALSE.
+    ## notch went outside hinges. Try setting notch=FALSE.
+
+![](01_VoltaPrelimAnalysis_files/figure-markdown_github/unnamed-chunk-2-1.png)<!-- -->
+
+    ## Warning: Removed 4189 rows containing non-finite values (stat_boxplot).
+
+    ## Warning: Removed 4189 rows containing missing values (geom_point).
+
+    ## notch went outside hinges. Try setting notch=FALSE.
+    ## notch went outside hinges. Try setting notch=FALSE.
+    ## notch went outside hinges. Try setting notch=FALSE.
+    ## notch went outside hinges. Try setting notch=FALSE.
+    ## notch went outside hinges. Try setting notch=FALSE.
+    ## notch went outside hinges. Try setting notch=FALSE.
+    ## notch went outside hinges. Try setting notch=FALSE.
+    ## notch went outside hinges. Try setting notch=FALSE.
+    ## notch went outside hinges. Try setting notch=FALSE.
+
+![](01_VoltaPrelimAnalysis_files/figure-markdown_github/unnamed-chunk-2-2.png)<!-- -->
 
 Despite having incomplete information on 32 crops, we can only use what is comparable across provinces and districts in both countries. Then, the comnmon crops are reduced to:
 
     ## [1] "Maize"   "Rice"    "Yam"     "Sorghum" "Millet"  "Cowpea"  "Soy"
 
+    ## Warning: Removed 1263 rows containing non-finite values (stat_smooth).
+
+    ## Warning: Removed 124 rows containing missing values (geom_path).
+
 ![](01_VoltaPrelimAnalysis_files/figure-markdown_github/unnamed-chunk-3-1.png)<!-- -->
 
-As you can see, data for common crops in Burkina Faso is more complete over time while Ghana only has available data for years 2002 : 2009 (except 2006), which is not visible here. The maximum values of certain crops dwarfs the production values of others. For this reason the production was scaled by the square root. Now with a more complete dataset one can calculate yields (tons / Km<sup>2</sup>). Behind the scenes I also get rid of yield values higher than 100 tons/Km<sup>2</sup>; these datapoints (n=)
+As you can see, data for common crops in Burkina Faso is more complete over time while Ghana only has available data for years 2002 : 2009 (except 2006), which is not visible here. The maximum values of certain crops dwarfs the production values of others. For this reason the production was scaled by the square root. Now with a more complete dataset one can calculate yields (tons / Km<sup>2</sup>). Behind the scenes I also get rid of yield values higher than 100 tons/Km<sup>2</sup>; these datapoints (n=2) seem errors on data input. For example, when production is reported but the area reported is zero (dividing by zero is `Inf`).
 
 ![](01_VoltaPrelimAnalysis_files/figure-markdown_github/unnamed-chunk-4-1.png)<!-- -->
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+With the demographic data (population and district area) one can also calculate how important is each crop per capita. Dividing not by cultivated area (yield) but by the area of the district where the crop happens give also a sense of the relative importance of the crop with respect to other districts (Is that correct?).
+
+    ## Joining by: "TAI_ID1"
+
+ToDo: maps and an animated movie of change of yield over time!

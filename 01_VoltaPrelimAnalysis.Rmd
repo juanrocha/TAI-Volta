@@ -60,11 +60,15 @@ p
 As you can see, data for common crops in Burkina Faso is more complete over time while Ghana only has available data for years 2002 : 2009 (except 2006), which is not visible here. The maximum values of certain crops dwarfs the production values of others. For this reason the production was scaled by the square root. Now with a more complete dataset one can calculate yields (tons / Km^2^). Behind the scenes I also get rid of yield values higher than 100 tons/Km^2^; these datapoints (n=2) seem errors on data input. For example, when production is reported but the area reported is zero (dividing by zero is `Inf`).
 
 ```{r echo=FALSE, cache=TRUE}
+
 datKeyCrops <- dplyr::mutate(datKeyCrops, yield = ifelse(prod == 0 & area == 0, 0, prod/area))
+
+#datKeyCrops <- filter(datKeyCrops, Year == 2002:2005 | Year == 2007:2009) something weird going on here... revise!!
+
 p <- ggplot(data= filter (datKeyCrops, yield < 100), mapping=aes(x=Year, y= yield)) + 
         geom_line(aes(colour=crop, alpha=0.2, group = TAI_ID2)) + facet_grid(country ~ crop )  + 
         theme_bw(base_size=10, base_family='Helvetica') + 
-        theme(axis.text.x = element_text(angle=0)) +
+        theme(axis.text.x = element_text(angle=90)) +
         ggtitle("Yield over time")
   
 p
@@ -83,4 +87,4 @@ datKeyCrops <- mutate(datKeyCrops, prop_km2 = prod / Sq_km, prop_capita = prod /
 
 ```
 
-
+ToDo: maps and an animated movie of change of yield over time!
