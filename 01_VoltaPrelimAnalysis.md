@@ -39,46 +39,11 @@ To date we have 22500 observations that comprises 32 crop production (in metric 
 
 The figures below show the distribution of production in tons and cultivated area for the 32 crops available.
 
-    ## Warning: Removed 4494 rows containing non-finite values (stat_boxplot).
-
-    ## Warning: Removed 4494 rows containing missing values (geom_point).
-
-    ## notch went outside hinges. Try setting notch=FALSE.
-    ## notch went outside hinges. Try setting notch=FALSE.
-    ## notch went outside hinges. Try setting notch=FALSE.
-    ## notch went outside hinges. Try setting notch=FALSE.
-    ## notch went outside hinges. Try setting notch=FALSE.
-    ## notch went outside hinges. Try setting notch=FALSE.
-    ## notch went outside hinges. Try setting notch=FALSE.
-    ## notch went outside hinges. Try setting notch=FALSE.
-    ## notch went outside hinges. Try setting notch=FALSE.
-    ## notch went outside hinges. Try setting notch=FALSE.
-
-![](01_VoltaPrelimAnalysis_files/figure-markdown_github/unnamed-chunk-2-1.png)<!-- -->
-
-    ## Warning: Removed 4189 rows containing non-finite values (stat_boxplot).
-
-    ## Warning: Removed 4189 rows containing missing values (geom_point).
-
-    ## notch went outside hinges. Try setting notch=FALSE.
-    ## notch went outside hinges. Try setting notch=FALSE.
-    ## notch went outside hinges. Try setting notch=FALSE.
-    ## notch went outside hinges. Try setting notch=FALSE.
-    ## notch went outside hinges. Try setting notch=FALSE.
-    ## notch went outside hinges. Try setting notch=FALSE.
-    ## notch went outside hinges. Try setting notch=FALSE.
-    ## notch went outside hinges. Try setting notch=FALSE.
-    ## notch went outside hinges. Try setting notch=FALSE.
-
-![](01_VoltaPrelimAnalysis_files/figure-markdown_github/unnamed-chunk-2-2.png)<!-- -->
+![](01_VoltaPrelimAnalysis_files/figure-markdown_github/unnamed-chunk-2-1.png)<!-- -->![](01_VoltaPrelimAnalysis_files/figure-markdown_github/unnamed-chunk-2-2.png)<!-- -->
 
 Despite having incomplete information on 32 crops, we can only use what is comparable across provinces and districts in both countries. Then, the comnmon crops are reduced to:
 
     ## [1] "Maize"   "Rice"    "Yam"     "Sorghum" "Millet"  "Cowpea"  "Soy"
-
-    ## Warning: Removed 1263 rows containing non-finite values (stat_smooth).
-
-    ## Warning: Removed 124 rows containing missing values (geom_path).
 
 ![](01_VoltaPrelimAnalysis_files/figure-markdown_github/unnamed-chunk-3-1.png)<!-- -->
 
@@ -87,7 +52,5 @@ As you can see, data for common crops in Burkina Faso is more complete over time
 ![](01_VoltaPrelimAnalysis_files/figure-markdown_github/unnamed-chunk-4-1.png)<!-- -->
 
 With the demographic data (population and district area) one can also calculate how important is each crop per capita. Dividing not by cultivated area (yield) but by the area of the district where the crop happens give also a sense of the relative importance of the crop with respect to other districts (Is that correct?).
-
-    ## Joining by: "TAI_ID1"
 
 ToDo: maps and an animated movie of change of yield over time!

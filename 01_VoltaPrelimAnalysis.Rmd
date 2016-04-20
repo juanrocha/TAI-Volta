@@ -25,7 +25,7 @@ summary(dat)
 
 The figures below show the distribution of production in tons and cultivated area for the 32 crops available. 
 
-```{r eval = TRUE, echo=FALSE, cache=TRUE}
+```{r eval = TRUE, echo=FALSE, cache=TRUE,  warning = FALSE, message = FALSE}
 p <- ggplot(data=dat, aes(crop, prod))+ geom_jitter(aes(colour=crop, alpha=0.2)) + geom_boxplot(notch=T) + facet_grid(country~.)  +
   theme(axis.text.x = element_text(angle=90))+
   ggtitle('Production of crops (Tons) in the Volta basin')
@@ -42,7 +42,7 @@ p
 
 
 Despite having incomplete information on 32 crops, we can only use what is comparable across provinces and districts in both countries. Then, the comnmon crops are reduced to:
-```{r echo=FALSE, cache=TRUE}
+```{r echo=FALSE, cache=TRUE,  warning = FALSE, message = FALSE}
 intersect(dat$crop[dat$country == 'GH'], dat$crop[dat$country =='BF'])
 datKeyCrops <- (filter(dat, crop == 'Maize' | crop == 'Millet'| crop == 'Rice'| crop == 'Yam'| crop == 'Sorghum'| crop == 'Cowpea'| crop == 'Soy' ))
 
@@ -59,7 +59,7 @@ p
 
 As you can see, data for common crops in Burkina Faso is more complete over time while Ghana only has available data for years 2002 : 2009 (except 2006), which is not visible here. The maximum values of certain crops dwarfs the production values of others. For this reason the production was scaled by the square root. Now with a more complete dataset one can calculate yields (tons / Km^2^). Behind the scenes I also get rid of yield values higher than 100 tons/Km^2^; these datapoints (n=2) seem errors on data input. For example, when production is reported but the area reported is zero (dividing by zero is `Inf`).
 
-```{r echo=FALSE, cache=TRUE}
+```{r echo=FALSE, cache=TRUE,  warning = FALSE, message = FALSE}
 
 datKeyCrops <- dplyr::mutate(datKeyCrops, yield = ifelse(prod == 0 & area == 0, 0, prod/area))
 
@@ -77,7 +77,7 @@ p
 
 With the demographic data (population and district area) one can also calculate how important is each crop per capita. Dividing not by cultivated area (yield) but by the area of the district where the crop happens give also a sense of the relative importance of the crop with respect to other districts (Is that correct?).
 
-```{r echo = FALSE}
+```{r echo = FALSE, cache=TRUE,  warning = FALSE, message = FALSE}
 datKeyCrops <- left_join(datKeyCrops, select(users, TAI_ID1, Sq_km, Pop= Total))
 
 # Normalize (do not confuse cropped area with area of the district 'Sq_km')
