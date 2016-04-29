@@ -1,0 +1,510 @@
+cuentas
+class((data$DBValue))
+n <- NROW(data)
+l <- seq(1, n, 100)
+plot( data$Time,log(data$DBValue), type='p')
+str(data)
+head(data)
+dim(data)
+names(data)
+mean(data$DBValue); sd(data$DBValue)
+hist(data$DBValue, breaks=100, freq=F)
+range(data$DBValue)
+plot(data$Time, data$SaldoAnterior, type='l')
+cuentas <- which(data$DocClass=='0')
+c <- data[c(cuentas[1]+1 : cuentas[2]-1),]
+weird <- c[is.na(c$Time),]
+weird
+plot(c$Time, c$DBValue, type='l', col='red')
+lines(c$Time, c$CRValue, col='blue')
+str(c)
+hist(c$SaldoAnterior, xlim=range(c$SaldoAnterior, na.rm=T))
+hist(log(c$DBValue))#, xlim=range(log(c$DBValue, na.rm=T)))
+hist(c$CRValue, xlim=range(c$CRValue, na.rm=T))
+plot(density(c$CRValue, na.rm=T))
+docs <- levels(data$DocNum)
+df <- data.frame(docs)
+df$step <- table(data$DocNum)
+df$uniqueDate <- rep(NA, length(docs))
+df$balance <- rep(NA,length(docs))
+table(df$step); range(df$steps[346:length(df$steps)])
+hist(df$steps[346:length(df$steps)], breaks='Sturges', freq=T, col='black', xlim=c(0,20) )
+df$steps
+df
+dim(df)
+names(df)
+head(df)
+head(data)
+dim(data)
+dim(cuentas)
+class(cuentas)
+length(cuentas)
+head(cuentas)
+data[1,]
+data[1958,]
+data[head(cuentas),3]
+tail[head(cuentas),3]
+data[tail(cuentas),3]
+data[head(cuentas,10),3]
+load("/Users/juanrocha/Box Sync/LorencaInvestigation/Lorenca2012")
+ls()
+dim(adjmat)
+weird
+plot(c$Time, c$DBValue, type='l', col='red')
+lines(c$Time, c$CRValue, col='blue')
+dim(c)
+names(c)
+head(c)
+hist(c$SaldoAnterior, xlim=range(c$SaldoAnterior, na.rm=T))
+hist(log(c$DBValue))#, xlim=range(log(c$DBValue, na.rm=T)))
+hist(c$CRValue, xlim=range(c$CRValue, na.rm=T))
+c$SaldoAnterior[3]-c$SaldoAnterior[2]
+c$SaldoAnterior[4]-c$SaldoAnterior[3]
+c$SaldoAnterior[5]-c$SaldoAnterior[4]
+c[2,]
+c[3,]
+c[1,]
+class((data$DBValue))
+c
+head(c$SaldoAnterior)
+tail(c$SaldoAnterior)
+si <- c$SaldoAnterior[2]
+tail(c)
+ingresos <- sum(c$DBValue)
+egresos <- sum(c$CRValue)
+ingresos
+sum(c$DBValue)
+head(c$DBValue)
+?sum
+ingresos <- sum(c$DBValue, na.rm=T)
+egresos <- sum(c$CRValue, na.rm=T)
+ingresos
+egresos
+si - egresos + ingresos
+si - ingresos + egresos
+tail(c)
+range(c$SaldoAnterior)
+range(c$SaldoAnterior[2:1957])
+hist(c$SaldoAnterior, xlim=range(c$SaldoAnterior, na.rm=T))
+cuentas[2]
+cuentas[2]-1
+cuentas[1]+1
+c <- data[c((cuentas[1]+1) : (cuentas[2]-1)),]
+dim(c)
+c]
+c[1]
+c[1,]
+str(c)
+si <- c$SaldoAnterior[1]
+si
+ingresos <- sum(c$DBValue, na.rm=T)
+egresos <- sum(c$CRValue, na.rm=T)
+si + ingresos - egresos
+us <- c$SaldoAnterior[length(c$SaldoAnterior)]
+us
+dim(c)[1]
+saldocheck <- rep(NA, dim(c)[1])
+saldocheck
+i=1
+i=2
+x <- c$SaldoAnterior[i] - c$SaldoAnterior[ i - 1]
+x
+x == c$DBValue
+x <- c$SaldoAnterior[i] - c$SaldoAnterior[ i - 1]
+x
+x == c$DBValue[i]
+x == abs(c$DBValue[i])
+abs(x) == c$DBValue[i]
+abs(x)
+c$DBValue[i]
+c$CRValue[i]
+x <- c$SaldoAnterior[2:length(c$SaldoAnterior)]
+y <- c$SaldoAnterior[1:length(c$SaldoAnterior)-1]
+length(x)
+length(y)
+z <- x-y
+if (x>0, saldocheck[i] <- (abs(x) == c$DBValue[i]), saldocheck[i] <- (abs(x) == c$CRValue[i])
+x <- c$SaldoAnterior[2:length(c$SaldoAnterior)]#
+	y <- c$SaldoAnterior[1:length(c$SaldoAnterior)-1]#
+	z <- x-y
+db <- (abs(z) == c$DBValue[2:length(c$SaldoAnterior)])
+cr <- (abs(z) == c$CRValue[2:length(c$SaldoAnterior)])
+head(db)
+FALSE + TRUE
+TRUE + TRUE
+FALSE + FALSE
+saldocheck <- db + cr
+saldocheck
+head(db)
+head(cr)
+c$SaldoAnterior[1]
+c$SaldoAnterior[2] - c$SaldoAnterior[1]
+c$CRValue[1]
+c$CRValue[2]
+c$DBValue[2:length(c$SaldoAnterior)]
+c$CRValue[2:length(c$SaldoAnterior)]
+head(cr)
+abs(z[1])
+abs(z[2])
+abs(z[1]) == c$CRValue[2]
+abs(z[1]) == c$CRValue[1]
+abs(z[1]) == c$CRValue[3]
+c$CRValue[1:3]
+c$CRValue[2]
+abs(z[1])
+abs(z[1]) == c$CRValue[2]
+identical(abs(z[1]), c$CRValue[2])
+class(abs(z[1]))
+class(c$CRValue[2])
+all.equal(abs(z[1]), c$CRValue[2])
+db <- all.equal(abs(z), c$DBValue[2:length(c$SaldoAnterior)])
+cr <- all.equal(abs(z), c$CRValue[2:length(c$SaldoAnterior)])
+saldocheck <- db + cr
+db
+cr
+x <- stats::rnorm(20)
+x < 1
+x[x > 0]
+1 <- 0.5 - 0.3
+x2 <- 0.3 - 0.1
+x1 <- 0.5 - 0.3
+x2 <- 0.3 - 0.1
+x1 == x2
+identical(all.equal(x1, x2), TRUE)
+db <- identical(all.equal(abs(z), c$DBValue[2:length(c$SaldoAnterior)]), TRUE)
+db
+Compare(abs(z), c$DBValue[2:length(c$SaldoAnterior)])
+all.equal(abs(z), abs(c$DBValue[2:length(c$SaldoAnterior)]))
+(abs(z) == abs(c$DBValue[2:length(c$SaldoAnterior)]))
+(abs(z), abs(c$CRValue[2:length(c$SaldoAnterior)]))
+(abs(z) == abs(c$CRValue[2:length(c$SaldoAnterior)]))
+data(presidential, package = "ggplot2")#
+plotList <- list(#
+  qplot(name, data = presidential, geom = "bar", fill = party) + ylim(c(0,6)) + coord_flip(),#
+  qplot(party, data = presidential, geom = "bar", fill = party) + coord_flip()#
+)#
+pm <- ggmatrix(#
+  plotList,#
+  2, 1,#
+  yAxisLabels = c("Presidents", "Party"),#
+  xAxisLabels = c("Count"),#
+  title = "President Term Length"#
+)#
+pm # default spacing#
+# use print.ggmatrix parameters#
+print(pm, leftWidthProportion = 0.12, spacingProportion = 0.05)
+library(ggplot2)
+data(presidential, package = "ggplot2")#
+plotList <- list(#
+  qplot(name, data = presidential, geom = "bar", fill = party) + ylim(c(0,6)) + coord_flip(),#
+  qplot(party, data = presidential, geom = "bar", fill = party) + coord_flip()#
+)#
+pm <- ggmatrix(#
+  plotList,#
+  2, 1,#
+  yAxisLabels = c("Presidents", "Party"),#
+  xAxisLabels = c("Count"),#
+  title = "President Term Length"#
+)#
+pm # default spacing#
+# use print.ggmatrix parameters#
+print(pm, leftWidthProportion = 0.12, spacingProportion = 0.05)
+library(GGal)
+library(GGally)
+data(presidential, package = "ggplot2")#
+plotList <- list(#
+  qplot(name, data = presidential, geom = "bar", fill = party) + ylim(c(0,6)) + coord_flip(),#
+  qplot(party, data = presidential, geom = "bar", fill = party) + coord_flip()#
+)#
+pm <- ggmatrix(#
+  plotList,#
+  2, 1,#
+  yAxisLabels = c("Presidents", "Party"),#
+  xAxisLabels = c("Count"),#
+  title = "President Term Length"#
+)#
+pm # default spacing#
+# use print.ggmatrix parameters#
+print(pm, leftWidthProportion = 0.12, spacingProportion = 0.05)
+airports <- read.csv("http://datasets.flowingdata.com/tuts/maparcs/airports.csv", header = TRUE)#
+rownames(airports) <- airports$iata#
+#
+# select some random flights#
+set.seed(1234)#
+flights <- data.frame(#
+  origin = sample(airports[200:400, ]$iata, 200, replace = TRUE),#
+  destination = sample(airports[200:400, ]$iata, 200, replace = TRUE)#
+)
+# convert to network#
+flights <- network(flights, directed = TRUE)
+library(network)
+# convert to network#
+flights <- network(flights, directed = TRUE)
+# add geographic coordinates#
+flights %v% "lat" <- airports[ network.vertex.names(flights), "lat" ]#
+flights %v% "lon" <- airports[ network.vertex.names(flights), "long" ]#
+#
+# drop isolated airports#
+delete.vertices(flights, which(degree(flights) < 2))#
+#
+# compute degree centrality#
+flights %v% "degree" <- degree(flights, gmode = "digraph")#
+#
+# add random groups#
+flights %v% "mygroup" <- sample(letters[1:4], network.size(flights), replace = TRUE)
+library(sna)
+# add geographic coordinates#
+flights %v% "lat" <- airports[ network.vertex.names(flights), "lat" ]#
+flights %v% "lon" <- airports[ network.vertex.names(flights), "long" ]#
+#
+# drop isolated airports#
+delete.vertices(flights, which(degree(flights) < 2))#
+#
+# compute degree centrality#
+flights %v% "degree" <- degree(flights, gmode = "digraph")#
+#
+# add random groups#
+flights %v% "mygroup" <- sample(letters[1:4], network.size(flights), replace = TRUE)
+usa <- ggplot(map_data("usa"), aes(x = long, y = lat)) +#
+  geom_polygon(aes(group = group), color = "grey65",#
+               fill = "#f9f9f9", size = 0.2)
+delete.vertices(flights, which(flights %v% "lon" < min(usa$data$long)))#
+delete.vertices(flights, which(flights %v% "lon" > max(usa$data$long)))#
+delete.vertices(flights, which(flights %v% "lat" < min(usa$data$lat)))#
+delete.vertices(flights, which(flights %v% "lat" > max(usa$data$lat)))
+# overlay network data to map#
+ggnetworkmap(usa, flights, size = 4, great.circles = TRUE,#
+             node.group = mygroup, segment.color = "steelblue",#
+             ring.group = degree, weight = degree)
+data(twitter_spambots)
+str(twitter_spambots)
+world <- fortify(map("world", plot = FALSE, fill = TRUE))#
+world <- ggplot(world, aes(x = long, y = lat)) +#
+  geom_polygon(aes(group = group), color = "grey65",#
+               fill = "#f9f9f9", size = 0.2)#
+#
+# view
+world
+ggnetworkmap(world, twitter_spambots)
+ggnetworkmap(net = twitter_spambots, arrow.size = 0.5)
+# compute indegree and outdegree centrality#
+twitter_spambots %v% "indegree" <- degree(twitter_spambots, cmode = "indegree")#
+twitter_spambots %v% "outdegree" <- degree(twitter_spambots, cmode = "outdegree")#
+#
+ggnetworkmap(net = twitter_spambots,#
+             arrow.size = 0.5,#
+             node.group = indegree,#
+             ring.group = outdegree, size = 4) +#
+  scale_fill_continuous("Indegree", high = "red", low = "yellow") +#
+  labs(color = "Outdegree")
+ggnetworkmap(net = twitter_spambots,#
+             arrow.size = 0.5,#
+             node.group = followers,#
+             ring.group = friends,#
+             size = 4,#
+             weight = indegree,#
+             label.nodes = TRUE, vjust = -1.5) +#
+  scale_fill_continuous("Followers", high = "red", low = "yellow") +#
+  labs(color = "Friends") +#
+  scale_color_continuous(low = "lightgreen", high = "darkgreen")
+ggnetworkmap(net = twitter_spambots,#
+             arrow.size = 0.1,#
+             node.group = followers,#
+             ring.group = friends,#
+             size = 4,#
+             weight = indegree,#
+             label.nodes = TRUE, vjust = -1.5) +#
+  scale_fill_continuous("Followers", high = "red", low = "yellow") +#
+  labs(color = "Friends") +#
+  scale_color_continuous(low = "lightgreen", high = "darkgreen")
+data(tips, package = "reshape")#
+pm <- ggpairs(tips)#
+pm
+## reduce the columns being displayed#
+## these two lines of code produce the same plot matrix#
+pm <- ggpairs(tips, columns = c(1, 6, 2))#
+pm <- ggpairs(tips, columns = c("total_bill", "time", "tip"), columnLabels = c("Total Bill", "Time of Day", "Tip"))#
+pm
+library(ggplot2)#
+pm <- ggpairs(tips, mapping = aes(color = sex), columns = c("total_bill", "time", "tip"))#
+pm
+library(ggplot2)#
+pm <- ggpairs(#
+  tips, columns = c("total_bill", "time", "tip"),#
+  lower = list(#
+    continuous = "smooth",#
+    combo = "facetdensity",#
+    mapping = aes(color = time)#
+  )#
+)#
+pm
+pm <- ggpairs(#
+  tips, columns = c("total_bill", "time", "tip"),#
+  upper = "blank",#
+  diag = NULL#
+)#
+pm
+my_bin <- function(data, mapping, ..., low = "#132B43", high = "#56B1F7") {#
+  ggplot(data = data, mapping = mapping) +#
+    geom_bin2d(...) +#
+    scale_fill_gradient(low = low, high = high)#
+}#
+pm <- ggpairs(#
+  tips, columns = c("total_bill", "time", "tip"),#
+  lower = list(#
+    continuous = my_bin#
+  )#
+)#
+pm
+pm <- ggpairs(#
+  tips, columns = c("total_bill", "time", "tip"),#
+  lower = list(#
+    combo = wrap("facethist", binwidth = 1),#
+    continuous = wrap(my_bin, binwidth = c(5, 0.5), high = "red")#
+  )#
+)#
+pm
+pm <- ggpairs(tips, columns = c("total_bill", "time", "tip"))#
+# retrieve the third row, first column plot#
+p <- pm[3,1]#
+p <- p + aes(color = time)#
+p#
+pm[3,1] <- p#
+pm
+q9
+getwd()
+# clean work space#
+rm(list=ls())#
+#
+# load packages#
+require(rvest)#
+require(RSelenium)
+rm(list=ls())#
+require (tm)#
+require (SnowballC)#
+require (topicmodels)#
+require (RTextTools) #tokenize as bi-grams - check#
+require (lda)#
+require (RColorBrewer)#
+require (slam)
+load('~/Dropbox/pdf2text/ArcticAnalysis2/ArcticAnalysis150505.RData')
+ls()
+sapply (tset.TM[1:3], slot, "alpha")
+dim(tset.tdm)
+lapply(tset.TM, logLik) #maximize loglik#
+lapply(tset.TM[c(1,2,4)], perplexity) #minimize perplexity#
+sapply (tset.TM, function (x)#
+  mean(apply(posterior(x)$topics,#
+             1, function (z) - sum(z * log(z))))) #maximize ENTROPY#
+#
+Topic <- topics(tset.TM [["VEM0"]], 1)
+quartz(width=3.5, height=3.5, family ='Helvetica', pointsize=6)#
+par (mfcol=c(2,2))#
+dotchart(unlist(sapply (tset.TM[1:3], slot, "alpha")), xlab="alpha")#
+dotchart(unlist(lapply(tset.TM, logLik)), xlab="logLik") #maximize loglik#
+dotchart(unlist(lapply(tset.TM[c(1,2,4)], perplexity)), xlab="Perplexity") #minimize perplexity#
+dotchart(unlist( sapply (tset.TM, function (x)#
+  mean(apply(posterior(x)$topics,#
+             1, function (z) - sum(z * log(z))))) ), xlab="Entropy")
+ls()
+quartz(width=3.5, height=3.5, family ='Helvetica', pointsize=6)#
+par (mfcol=c(2,2))#
+dotchart(unlist(sapply (tset.TM[1:3], slot, "alpha")), xlab="alpha")#
+dotchart(unlist(lapply(tset.TM, logLik)), xlab="logLik") #maximize loglik#
+dotchart(unlist(lapply(tset.TM[c(1,2,4)], perplexity)), xlab="Perplexity") #minimize perplexity#
+dotchart(unlist( sapply (tset.TM, function (x)#
+  mean(apply(posterior(x)$topics,#
+             1, function (z) - sum(z * log(z))))) ), xlab="Entropy")
+quartz(width=3.5, height=3.5, family ='Helvetica', pointsize=6)
+dotchart(unlist(sapply (tset.TM[1:3], slot, "alpha")), xlab="alpha")#
+dotchart(unlist(lapply(tset.TM, logLik)), xlab="logLik") #maximize loglik#
+dotchart(unlist(lapply(tset.TM[c(1,2,4)], perplexity)), xlab="Perplexity") #minimize perplexity#
+dotchart(unlist( sapply (tset.TM, function (x)#
+  mean(apply(posterior(x)$topics,#
+             1, function (z) - sum(z * log(z))))) ), xlab="Entropy")
+k1 <- 10#
+k2 <- 20#
+k3 <- 40#
+k4 <- 80#
+k5 <- 100#
+#
+topicNumber.Gibbs <- list (M1 = LDA(tset.dtm, k=k1, method='Gibbs', control = list ( seed = SEED)), M2 = LDA(tset.dtm, k=k2, method='Gibbs',control = list ( seed = SEED)),M3 = LDA(tset.dtm, k=k3, method='Gibbs', control = list ( seed = SEED)),M4 = LDA(tset.dtm, k=k4, method='Gibbs', control = list ( seed = SEED)),M5 = LDA(tset.dtm, k=k5, method='Gibbs', control = list ( seed = SEED)))
+topicNumber.TM <- topicNumber.Gibbs
+sapply (topicNumber.TM, function (x)#
+  mean(apply(posterior(x)$topics,#
+             1, function (z) - sum(z * log(z))))) #Entropy#
+sapply(topicNumber.TM, slot, "alpha")#
+lapply(topicNumber.TM, logLik)#
+lapply(topicNumber.TM, perplexity)
+dotchart(unlist( sapply (tset.TM, function (x)#
+  mean(apply(posterior(x)$topics,#
+             1, function (z) - sum(z * log(z))))) ), xlab="Entropy")
+quartz(width=3.5, height=3.5, family='Helvetica', pointsize=6)#
+par (mfcol=c(2,2))#
+dotchart(unlist(sapply (topicNumber.TM, slot, "alpha")), xlab="alpha")#
+dotchart(unlist(lapply(topicNumber.TM, logLik)), xlab="logLik")#
+dotchart(unlist(lapply(topicNumber.TM, perplexity)), xlab="Perplexity")#
+dotchart(unlist( sapply (topicNumber.TM, function (x)#
+  mean(apply(posterior(x)$topics,#
+             1, function (z) - sum(z * log(z))))) ), xlab="Entropy")
+ls()
+save.image(file='160419_AnalysisGibbs.RData') # completeley different to what is said on my notes above. M2 is not the best. It seems to over fit since I cannot fit more topics than documents and there is ~200 documents and best model M5 has 100 topics
+rm(list=ls())#
+#
+# load libraries#
+require (ggplot2)#
+require (dplyr)#
+require(gdata)#
+#
+# load data#
+#
+# survey <- read.xls(xls='~/Dropbox/BEST/Colombia/Survey/Consolidado-Game_Survey_database_.xlsx', sheet=1)#
+surv <- read.csv2(file='~/Dropbox/BEST/Colombia/Survey/Consolidado-Game_Survey_database_.csv', header=T, na.strings = '.')#
+key <- read.xls(xls='~/Dropbox/BEST/Colombia/Survey/Consolidado-Game_Survey_database_.xlsx', sheet=2)
+help(package='GGally')
+rm(list=ls())#
+require (tm)#
+require (SnowballC)#
+require (topicmodels)#
+require (RTextTools) #tokenize as bi-grams - check#
+require (lda)#
+require (RColorBrewer)#
+require (slam)
+load('~/Dropbox/pdf2text/ArcticAnalysis2/ArcticAnalysis150505.RData')
+ls()
+#Finding number of topics, remember it's likely to be <30#
+k1 <- 10#
+k2 <- 20#
+k3 <- 40#
+k4 <- 80#
+k5 <- 100
+topicNumber.TM <- list (VEM1 = LDA(tset.dtm, k=k1, control = list ( seed = SEED)), VEM2 = LDA(tset.dtm, k=k2, control = list ( seed = SEED)),VEM3 = LDA(tset.dtm, k=k3, control = list ( seed = SEED)),VEM4 = LDA(tset.dtm, k=k4, control = list ( seed = SEED)),VEM5 = LDA(tset.dtm, k=k5, control = list ( seed = SEED)))
+sapply (topicNumber.TM, function (x)#
+  mean(apply(posterior(x)$topics,#
+             1, function (z) - sum(z * log(z))))) #Entropy#
+sapply(topicNumber.TM, slot, "alpha")#
+lapply(topicNumber.TM, logLik)#
+lapply(topicNumber.TM, perplexity)#
+#
+quartz(width=3.5, height=3.5, family='Helvetica', pointsize=6)#
+par (mfcol=c(2,2))#
+dotchart(unlist(sapply (topicNumber.TM, slot, "alpha")), xlab="alpha")#
+dotchart(unlist(lapply(topicNumber.TM, logLik)), xlab="logLik")#
+dotchart(unlist(lapply(topicNumber.TM, perplexity)), xlab="Perplexity")#
+dotchart(unlist( sapply (topicNumber.TM, function (x)#
+  mean(apply(posterior(x)$topics,#
+             1, function (z) - sum(z * log(z))))) ), xlab="Entropy")
+getwd()
+save.image(file='160424_AnalysisVEM.RData') # completeley different to what is said on my notes above. M2 is not the best. It seems to over fit since I cannot fit more topics than documents and there is ~200 documents and best model M5 has 100 topics
+library(animation)
+help(package='animation')
+oopt = ani.options(interval = 2)#
+par(mar = c(3, 3, 1, 1.5), mgp = c(1.5, 0.5, 0))#
+kmeans.ani()
+x = rbind(matrix(rnorm(100, sd = 0.3), ncol = 2), matrix(rnorm(100, mean = 1, #
+    sd = 0.3), ncol = 2))
+colnames(x) = c("x", "y")#
+kmeans.ani(x, centers = 2)
+setwd(~/Documents/Projects/TAI/scripts/TAI-Volta)
+setwd("~/Documents/Projects/TAI/scripts/TAI-Volta")
+rmarkdown::render('~/Documents/Projects/TAI/scripts/TAI-Volta/01_VoltaPrelimAnalysis.Rmd')

@@ -300,9 +300,9 @@ file <- 'Volta_Bundling_prep.xlsx'
 users <- read.xls(file, sheet=1, dec=',')
 users[4:16] <- apply(users[4:16], 2, function (x) {as.numeric(x)} )
 
-resource <- read.xls (file, sheet=2)
-biophys <- read.xls(file, sheet=3)
-interact <- read.xls(file,sheet=4)
+resource <- read.xls (file, sheet=2, dec=',')
+biophys <- read.xls(file, sheet=3, dec=',')
+interact <- read.xls(file,sheet=4, dec=',')
 
 # the problem with the sheets crop diversity from Katja is that she aggregates
 # summing over the years (I assumed) and temporal variablity is lost. However, 

@@ -16,21 +16,23 @@
 
 rm(list=ls())
 
-require ('gdata')
-require('dplyr')
-require('reshape')
-require ('ggplot2')
-require(maptools)
-require(rgeos)
-require(RColorBrewer)
+library ('gdata')
+library('dplyr')
+library('reshape')
+library ('ggplot2')
+library(maptools)
+library(rgeos)
+library(RColorBrewer)
 library(plot3D)
-require('GGally')
+library('GGally')
+ggmap::ggmap(volta.shp)
 
 setwd("~/Documents/Projects/TAI/figures")
 
 # load data
 
-load('~/Documents/Projects/TAI/TransformedData/Data_Burkina&Ganha/Volta.RData')
+# load('~/Documents/Projects/TAI/TransformedData/Data_Burkina&Ganha/Volta.RData')
+load('~/Documents/Projects/TAI/scripts/TAI-Volta/160414_Volta.RData')
 
 # area is harvested area per crop per year, value = Hectares
 # prod is production in tons per crop per year, value = tons
@@ -46,47 +48,47 @@ volta.shp <- readShapeSpatial("~/Documents/Projects/TAI/TransformedData/Bundling
 
 # Explore production data
 
-
-prod$country <- ifelse(prod$TAI_ID > 3000, 'GH', 'BF')
-area$country <- ifelse(area$TAI_ID > 3000, 'GH', 'BF')
-# prod$TAI_ID1 <- as.factor(prod$TAI_ID1)
-# area$TAI_ID1 <- as.factor(area$TAI_ID1)
-
-# use only common crops for both countries that occur every year.
-common <- intersect(levels(areaB$crop),  levels(areaG$crop))
-
-# note to self: I'm not sure if having different time periods is valid. 
-# We have 7 years of data but different years. It can affect the aggregate 
-# calculations later. But even if it works (e.g. by changing the year stamp by yr1, yr2...yr7), 
-# in real life there were two different periods with probably different climate conditions, etc.
-
-index <- vector()
-for (i in seq_along(common)){ 
-	index <- c(index, which(prod$crop == common[i]))
-	}
-
-index2 <- vector()
-for (i in seq_along(common)){ 
-	index2 <- c(index2, which(area$crop == common[i]))
-	}
-
-prod <- droplevels(prod[sort(index),])#subset(prod, crop == common, drop=T)
-area <- droplevels(area[sort(index2),]) #subset(area, crop == common, drop=T)
-prod$year_a <- ifelse(prod$country == 'GH', prod$Year - 2001, prod$Year - 2004)
-area$year_a <- ifelse(area$country == 'GH', area$Year - 2001, area$Year - 2004)
-
-
-table(prod$year_a)
-# correct for the missing year in GH
-which(prod$country == 'GH' & prod$year_a>5)
-
-prod$year_a[which(prod$country == 'GH' & prod$year_a>5)] <- prod$year_a[which(prod$country == 'GH' & prod$year_a>5)] -1
-area$year_a[which(area$country == 'GH' & area$year_a>5)] <- area$year_a[which(area$country == 'GH' & area$year_a>5)] -1
-prod$TAI_ID2 <- as.factor(prod$TAI_ID1)
-area$TAI_ID2 <- as.factor(area$TAI_ID1)
+# 
+# prod$country <- ifelse(prod$TAI_ID > 3000, 'GH', 'BF')
+# area$country <- ifelse(area$TAI_ID > 3000, 'GH', 'BF')
+# # prod$TAI_ID1 <- as.factor(prod$TAI_ID1)
+# # area$TAI_ID1 <- as.factor(area$TAI_ID1)
+# 
+# # use only common crops for both countries that occur every year.
+# common <- intersect(levels(areaB$crop),  levels(areaG$crop))
+# 
+# # note to self: I'm not sure if having different time periods is valid. 
+# # We have 7 years of data but different years. It can affect the aggregate 
+# # calculations later. But even if it works (e.g. by changing the year stamp by yr1, yr2...yr7), 
+# # in real life there were two different periods with probably different climate conditions, etc.
+# 
+# index <- vector()
+# for (i in seq_along(common)){ 
+# 	index <- c(index, which(prod$crop == common[i]))
+# 	}
+# 
+# index2 <- vector()
+# for (i in seq_along(common)){ 
+# 	index2 <- c(index2, which(area$crop == common[i]))
+# 	}
+# 
+# prod <- droplevels(prod[sort(index),])#subset(prod, crop == common, drop=T)
+# area <- droplevels(area[sort(index2),]) #subset(area, crop == common, drop=T)
+# prod$year_a <- ifelse(prod$country == 'GH', prod$Year - 2001, prod$Year - 2004)
+# area$year_a <- ifelse(area$country == 'GH', area$Year - 2001, area$Year - 2004)
+# 
+# 
+# table(prod$year_a)
+# # correct for the missing year in GH
+# which(prod$country == 'GH' & prod$year_a>5)
+# 
+# prod$year_a[which(prod$country == 'GH' & prod$year_a>5)] <- prod$year_a[which(prod$country == 'GH' & prod$year_a>5)] -1
+# area$year_a[which(area$country == 'GH' & area$year_a>5)] <- area$year_a[which(area$country == 'GH' & area$year_a>5)] -1
+# prod$TAI_ID2 <- as.factor(prod$TAI_ID1)
+# area$TAI_ID2 <- as.factor(area$TAI_ID1)
 # now year_a is the first year of data, 2, 3 ... 7 for both places.
 
-str(prod); str(area)
+# str(prod); str(area)
 
 p <- ggplot(data=dat, mapping=aes(x=Year, y=sqrt(prod))) +
   geom_line(aes(colour=crop, alpha=0.2, group = TAI_ID2)) + 
@@ -125,7 +127,7 @@ intersect(dat$crop[dat$country == 'GH'], dat$crop[dat$country =='BF'])
 
 # then you can use filter to select them :) or a longer subsetting string
 datKeyCrops <- (filter(dat, crop == 'Maize' | crop == 'Millet'| crop == 'Rice'| crop == 'Yam'| crop == 'Sorghum'| crop == 'Cowpea'| crop == 'Soy' ))
-
+datKeyCrops <- drop.levels(datKeyCrops)
 p <- ggplot(data=datKeyCrops, mapping=aes(x=Year, y=sqrt(prod))) +
   geom_line(aes(colour=crop, alpha=0.2, group = TAI_ID2)) + 
   facet_grid( crop ~ country) + geom_smooth(stat='smooth', method='loess') + 
@@ -161,7 +163,7 @@ p <- ggplot(data= filter (datKeyCrops, yield < 100), mapping=aes(x=Year, y= yiel
         ggtitle("Yield over time")
   #+ ggtitle(expression(paste('Crop per Province in'~ sqrt(Tons)))) + geom_smooth(stat='smooth', method='loess')
 p
-
+rm(p)
 # quartz.save(file='Crop_province_KeyCrops.png', type='png')
 
 ## Normalizing by district area or per capita would make crop production comparable.
@@ -181,20 +183,86 @@ datKeyCrops <- mutate(datKeyCrops, prod_km2 = prod / Sq_km, prod_capita = prod /
 ## Update J160414: solved! it was a problem with the cell format (not number) on Excel that
 # makes spaces in between numbers that R interpreted as commas [,] so as.number did not work properly
 
-p <- ggplot(data= filter (datKeyCrops, yield < 100), mapping=aes(x=Year, y= prod_km2)) + 
+p <- ggplot(data= filter (datKeyCrops, yield < 100), mapping=aes(x=Year, y= prod_capita)) + 
   geom_line(aes(colour=crop, alpha=0.2, group = TAI_ID2)) + facet_grid(country~crop)  + 
   theme_bw(base_size=10, base_family='Helvetica') + 
   theme(axis.text.x = element_text(angle=90)) +
   ggtitle("Production per capita")
 #+ ggtitle(expression(paste('Crop per Province in'~ sqrt(Tons)))) + geom_smooth(stat='smooth', method='loess')
 p
+rm(p)
+
+# make a video :)
+# Store the original data from shape file for backup, you will re use it
+sh_data <- volta.shp@data
+# minimize the dataset to what you really nead so joined tables are not super heavy
+volta.shp@data <- select(volta.shp@data, c(1:3))
+
+# then make a dataset with one year 
+# a <- select(datKeyCrops, -TAI_ID1 ) %>%
+#   filter(Year == 2002) %>%
+#   drop.levels() %>%
+#   cast(TAI_ID2 ~ crop, value = 'yield')
+
+# make sure is a factor
+volta.shp@data$TAI_ID1 <- as.factor(volta.shp@data$TAI_ID1 )
+
+# volta.shp@data <- full_join(volta.shp@data, a, by= c('TAI_ID1' = 'TAI_ID2'))
+
+# Following steps from tutorial Juan_TutorialCreatingMaps.R
+#fortify
+volta_f <- fortify(volta.shp)
+# head(volta_f)
+volta.shp@data$id <- rownames(volta.shp@data) # this id is to joing with fortified data
+# head(volta.shp@data)
+
+volta_f <- left_join(volta_f, volta.shp@data)
+# It's a huge object
+format(object.size(volta_f), units='auto') #16Mb
+dim(volta_f)
+head(volta_f)
+
+# now add the data you want to plot from the original dataset using TAI_ID1
+volta_f <- left_join (volta_f, filter(select(datKeyCrops, TAI_ID2, crop, yield, prod_km2, prod_capita, Year), Year == 2002, crop == 'Cowpea'), by=c('TAI_ID1' = 'TAI_ID2'))
+
+filter(select(datKeyCrops, TAI_ID2, crop, yield, prod_km2, prod_capita, Year), Year == 2002)
+
+g <- ggplot(volta_f, aes(long,lat, group = group, fill= yield)) +
+  geom_polygon() + # facet_grid(.~ crop) +
+  coord_equal() + theme_void() + 
+  ggtitle(paste('Volta basin yields in', 2002, sep=' ') )
+
+system.time()
 
 
-hist(datKeyCrops$prop_km2)
 
 
+# create the animation in html
+# year <- c(2002:2005, 2007:2009)
+map.year <- function(datos, layer, year, crop){
+  lay_f <- fortify(layer)
+  layer@data$id <- rownames(layer@data)
+  lay_f <- left_join(lay_f, layer@data)
+  print(format(object.size(lay_f), units='auto'))
+  
+  lay_f <- left_join (lay_f, 
+                        filter(select(datos, TAI_ID2, crop, yield, prod_km2, prod_capita, Year), Year == year, crop == crop),
+                        by=c('TAI_ID1' = 'TAI_ID2'))
+ g <-  ggplot (data = lay_f, aes(long,lat, group = group, fill= yield)) +
+    geom_polygon() + #facet_grid(.~ crop) +
+    coord_equal() + theme_void() + 
+    ggtitle( paste ('Volta basin yields of in', year, sep=' '))
+  return(g)
+}
+
+# prueba
+g <- map.year(datos = datKeyCrops, layer = volta.shp, year = 2002, crop = Cowpea) # this has a completely different behavior than do it manually... not working.
 
 
-
-
-
+library(animation)
+saveGIF({
+  ani.options(nmax=7)
+  for (i in 1:7){
+    print()
+  }
+})
