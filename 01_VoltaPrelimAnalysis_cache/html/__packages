@@ -1,3 +1,7 @@
 base
 ggplot2
 dplyr
+GGally
+ggmap
+gridExtra
+tidyr

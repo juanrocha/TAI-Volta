@@ -1,6 +1,6 @@
 ---
 title: "Volta Preliminary Analysis"
-author: "Juan Carlos Rocha"
+author: "by Juan Carlos Rocha"
 output:
   html_document:
     self_contained: true
@@ -20,16 +20,32 @@ output:
 
 ```{r setup, include=FALSE, cache=TRUE}
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
-require(ggplot2)
-require(dplyr)
+library(ggplot2)
+library(tidyr)
+library(dplyr)
+library(GGally)
+library (ggmap)
+library(gridExtra)
+
 ```
 
 ## TAI-Volta project
 
 The TAI-Volta project goal is **targeting agricultural innovations** in the Volta river basin, between Ghana and Burkina Faso. This document presents a preliminary analysis of the data we've got so far as a showcase of we can do once more data comes into the pipeline. Katja Malmborg has been collecting data from project collaborators and the statistics beaureau from both countries. Raw data are mainly excel files with several tables per sheet indicating area or crops production over time per district or province. She has organized the tables on suitable files (one table per sheet at least) and has also collected socio-economic information from national census reports. I use the script `ExtractDataTAI.R` to mine the different data files and compile a unique data object.
 
-### Data so far...
-To date we have 22500 observations that comprises 32 crop production (in metric Tons) and cultivated area (in Km^2^) for the 99 provinces (in Burkina Faso) and districts (in Ghana) from 1993 to 2012. However, we do have also over 4000 missing values or `NA's`. Below a summary of the cleaned data: 
+```{r map, fig.height=5, fig.width=5, cache=TRUE}
+load(file='~/Documents/Projects/TAI/scripts/TAI-Volta/mapVolta.RData')
+ggmap (map) + theme(axis.line=element_blank(),axis.text.x=element_blank(),
+          axis.text.y=element_blank(),axis.ticks=element_blank(),
+          axis.title.x=element_blank(),
+          axis.title.y=element_blank(),legend.position="none",
+          panel.background=element_blank(),panel.border=element_blank(),panel.grid.major=element_blank(),
+          panel.grid.minor=element_blank(),plot.background=element_blank())
+```
+
+
+### Crop data so far...
+To date we have 22500 observations that comprises 32 crop production (in metric Tons) and cultivated area (in Km^2^) for the 99 provinces (in Burkina Faso) and districts (in Ghana) from 1993 to 2012. However, we do also have over 4000 missing values or `NA's`. Below a summary of the cleaned data: 
 
 ```{r data, eval = TRUE, echo=FALSE, cache=TRUE}
 load(file='160414_Volta.RData')
@@ -39,24 +55,24 @@ summary(dat)
 
 The figures below show the distribution of production in tons and cultivated area for the 32 crops available. 
 
-```{r crops_32, eval = TRUE, echo=FALSE, cache=TRUE, fig.height=7, fig.width=7, collapse=TRUE, fig.align='center', fig.show='hold', error=FALSE, warning=FALSE, message=FALSE}
-p <- ggplot(data=dat, aes(crop, prod))+ geom_jitter(aes(colour=crop, alpha=0.2)) + geom_boxplot(notch=T) + facet_grid(country~.)  +
+```{r crops_32, eval = TRUE, echo=FALSE, cache=TRUE, fig.height=6, fig.width=7, collapse=TRUE, fig.align='center', fig.show='hold', error=FALSE, warning=FALSE, message=FALSE}
+p1 <- ggplot(data=dat, aes(crop, prod))+ geom_jitter(aes(colour=crop, alpha=0.2)) + geom_boxplot(notch=T) + facet_grid(country~.)  +
   theme(axis.text.x = element_text(angle=90))+
   ggtitle('Production of crops (Tons) in the Volta basin')
 
-p
+p1
 
-p <- ggplot(data=dat, aes(crop, area))+ geom_jitter(aes(colour=crop, alpha=0.2)) + geom_boxplot(notch=T) + facet_grid(country~.)  +
+p2 <- ggplot(data=dat, aes(crop, area))+ geom_jitter(aes(colour=crop, alpha=0.2)) + geom_boxplot(notch=T) + facet_grid(country~.)  +
   theme(axis.text.x = element_text(angle=90))+
   ggtitle('Cultivated area per crop in the Volta basin')
 
-p
-rm(p)
+p2
+#grid.arrange(p1,p2,ncol=2,nrow=1)
 ```
 
 
 Despite having incomplete information on 32 crops, we can only use what is comparable across provinces and districts in both countries. Then, the comnmon crops are reduced to:
-```{r echo=FALSE, cache=TRUE, collapse=TRUE, fig.align='center', fig.show='hold', error=FALSE, warning=FALSE, message=FALSE}
+```{r keyCrops, echo=FALSE, cache=TRUE, collapse=TRUE, fig.align='center', fig.show='hold', error=FALSE, warning=FALSE, message=FALSE}
 intersect(dat$crop[dat$country == 'GH'], dat$crop[dat$country =='BF'])
 datKeyCrops <- (filter(dat, crop == 'Maize' | crop == 'Millet'| crop == 'Rice'| crop == 'Yam'| crop == 'Sorghum'| crop == 'Cowpea'| crop == 'Soy' ))
 
@@ -74,7 +90,7 @@ rm(p)
 
 As you can see, data for common crops in Burkina Faso is more complete over time while Ghana only has available data for years 2002 : 2009 (except 2006), which is not visible here. The maximum values of certain crops dwarfs the production values of others. For this reason the production was scaled by the square root. Now with a more complete dataset one can calculate yields (tons / Km^2^). Behind the scenes I also get rid of yield values higher than 100 tons/Km^2^; these datapoints (n=2) seem errors on data input. For example, when production is reported but the area reported is zero (dividing by zero is `Inf`).
 
-```{r echo=FALSE, cache=TRUE, collapse=TRUE, fig.align='center', fig.show='hold', error=FALSE, warning=FALSE, message=FALSE}
+```{r yields, echo=FALSE, cache=TRUE, collapse=TRUE, fig.align='center', fig.show='hold', error=FALSE, warning=FALSE, message=FALSE}
 
 datKeyCrops <- dplyr::mutate(datKeyCrops, yield = ifelse(prod == 0 & area == 0, 0, prod/area))
 
@@ -92,36 +108,108 @@ rm(p)
 
 With the demographic data (population and district area) one can also calculate how important is each crop per capita. Dividing not by cultivated area (yield) but by the area of the district where the crop happens give also a sense of the relative importance of the crop with respect to other districts (Is that correct?).
 
-```{r echo = FALSE, cache=TRUE,  collapse=TRUE, cache=TRUE, fig.align='center', fig.height=5, fig.width=7, fig.show='hold', error=FALSE, warning=FALSE, message=FALSE}
-datKeyCrops <- left_join(datKeyCrops, select(users, TAI_ID1, Sq_km, Pop= Total))
+```{r production, echo = FALSE, cache=TRUE,  collapse=TRUE, fig.align='center', fig.height=6, fig.width=12, fig.show='hold', error=FALSE, warning=FALSE, message=FALSE}
+datKeyCrops <- left_join(datKeyCrops, select(users, TAI_ID1, Sq_km, Pop= Total, farmers = Rural.total))
 
 # Normalize (do not confuse cropped area with area of the district 'Sq_km')
-datKeyCrops <- mutate(datKeyCrops, prod_km2 = prod / Sq_km, prod_capita = prod / Pop) 
+datKeyCrops <- mutate(datKeyCrops, prod_km2 = prod / Sq_km, prod_capita = prod / Pop , yield_capita = yield / farmers) 
 
-p <- ggplot(data= filter (datKeyCrops, yield < 100), mapping=aes(x=Year, y= prod_capita)) +
+p1 <- ggplot(data= filter (datKeyCrops, yield < 100), mapping=aes(x=Year, y= prod_capita)) +
   geom_line(aes(colour=crop, alpha=0.2, group = TAI_ID2)) + facet_grid(country~crop)  +
   theme_bw(base_size=10, base_family='Helvetica') +
   theme(axis.text.x = element_text(angle=90)) +
   ggtitle("Production per capita")
 #+ ggtitle(expression(paste('Crop per Province in'~ sqrt(Tons)))) + geom_smooth(stat='smooth', method='loess')
-p
 
-p <- ggplot(data= filter (datKeyCrops, yield < 100), mapping=aes(x=Year, y= prod_km2)) +
+
+p2 <- ggplot(data= filter (datKeyCrops, yield < 100), mapping=aes(x=Year, y= prod_km2)) +
   geom_line(aes(colour=crop, alpha=0.2, group = TAI_ID2)) + facet_grid(country~crop)  +
   theme_bw(base_size=10, base_family='Helvetica') +
   theme(axis.text.x = element_text(angle=90)) +
   ggtitle("Production per Km^2")
 #+ ggtitle(expression(paste('Crop per Province in'~ sqrt(Tons)))) + geom_smooth(stat='smooth', method='loess')
-p
 
-
+grid.arrange(
+    p1,
+    p2,
+    ncol=2, nrow=1
+)
 
 ```
 
-ToDo: maps and an animated movie of change of yield over time!
-
 ### Identifying SES archetypes
+In order to make production data comparable, crop production data were normalized by cropped area and number of farmers as a proxy of labor. Only years where data was available for both contries was kept. The data was also detrended by substracting the mean, which leave us with 1338 observations after getting rid of `NA's` and `Inf` values.
+
+```{r normal, echo = FALSE, cache=TRUE, collapse=TRUE, fig.align='center', fig.height=5, fig.width=6, error=FALSE, warning=FALSE, message=FALSE}
+datKeyCrops <- filter(datKeyCrops, Year == 2002:2005 | Year == 2007:2009)# select years with data
+datKeyCrops <- filter(datKeyCrops, !is.na(yield_capita) & yield_capita != Inf )
+datKeyCrops <- mutate(datKeyCrops, dt_yield_cp = yield_capita - mean(yield_capita))
+p1 <- ggplot(data= filter (datKeyCrops, yield < 100 ), mapping=aes(x=Year, y= dt_yield_cp)) +
+  geom_line(aes(colour=crop, alpha=0.2, group = TAI_ID2)) + facet_grid(country~crop)  +
+  theme_bw(base_size=10, base_family='Helvetica') +
+  theme(axis.text.x = element_text(angle=90)) +
+  ggtitle("Detrended yield per capita")
+
+# I want to get the mean vs sd plot calculated over the time series, one point per province, but is not working.
+# p2 <- ggplot(data= filter (datKeyCrops, yield < 100 ), mapping=aes(x=mean(dt_yield_cp), y= sd(dt_yield_cp), color=TAI_ID2, group=crop)) +
+#     geom_point( show.legend = F)
+p2 <- ggplot(data= filter (datKeyCrops, yield < 100 ), mapping=aes(x=Year, y= (yield_capita * 10^6)^0.25)) +
+  geom_line(aes(colour=crop, alpha=0.2, group = TAI_ID2)) + facet_grid(country~crop)  +
+  theme_bw(base_size=10, base_family='Helvetica') +
+  theme(axis.text.x = element_text(angle=90)) +
+  ggtitle("Transformed yield per capita")
+# grid.arrange(
+#     p1,
+#     p2,
+#     ncol=2, nrow=1
+# )
+p1
+p2
+```
+
+The following graph gives you an idea of the distribution and differences of transformed crop yields per country and per crop. The transformation shown here is the fourth square root, it is a strong transformation trying to make the data less skew for ordination purposes. As you can see, even for the best time period where both countries have data, only few years are complete without missing values. As a toy example I will use 2009, one of the years without `NAs` and run an multivariate ordination method and a clustering analysis.
+```{r diversity, echo = FALSE, cache=TRUE, collapse=TRUE, fig.align='center', fig.height=5, fig.width=10, error=FALSE, warning=FALSE, message=FALSE}
+
+library (vegan)
+library(rgl)
+library(cluster)
+library(maptools)
+library(ggplot2)
+library(clValid)
+library ('gdata')
+
+datKeyCrops <- mutate(datKeyCrops, trans_yield = (yield_capita * 10^6)^0.25)
+ggpairs(datKeyCrops,
+        columns = c('trans_yield', 'crop', 'country' ),
+        upper= list(continuous='density'), lower=list(continuous='points'),
+        mapping=aes(color= country, alpha=0.5), title='Color by country')
+
+# levels(as.factor(datKeyCrops$Year))
+
+dat2009 <- datKeyCrops %>%
+    filter (Year==2004) %>%
+    select(TAI_ID2, crop, trans_yield) %>%
+    spread (key = crop, value = trans_yield)
+
+pca <- rda(select(dat2009, -TAI_ID2))
+mds <- metaMDS (select(dat2009, -TAI_ID2))
+
+# load map
+volta.shp <- readShapeSpatial("~/Documents/Projects/TAI/TransformedData/Bundling/Volta_bundling1.shp")
+
+env.clim <- volta.shp@data[,c(11:18)]
+env.social <- volta.shp@data[,c(4:10)]
+
+plot(mds, type='p', display='sites', cex=0.8)
+ef1 <- envfit(mds,env.clim, permu=999)
+ef2 <- envfit(mds, env.social, permu=999)
+plot(ef1, p.max=0.05, col='blue', cex=0.8)
+plot(ef2, p.max=0.05, col='purple', cex=.8)
+```
+
 
  
-
-
+## To-Do's
+1. maps and an animated movie of change of yield over time
+2. replicate ordination with PCA or MDS, clustering with ~9 methods and map SES archetypes accordingly.
+3. Calculate crop diversity

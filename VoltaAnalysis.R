@@ -175,7 +175,7 @@ rm(p)
 datKeyCrops <- left_join(datKeyCrops, select(users, TAI_ID1, Sq_km, Pop= Total))
 
 # Normalize (do not confuse cropped area with area of the district 'Sq_km')
-datKeyCrops <- mutate(datKeyCrops, prod_km2 = prod / Sq_km, prod_capita = prod / Pop) 
+datKeyCrops <- mutate(datKeyCrops, prod_km2 = prod / Sq_km, prod_capita = prod / Pop, yield_capita = yield / Pop) 
 
 ### Note J160405: New problem: when importing data from excel it takes ,
 # as separator for decimals. Somehow many values get converted to NA after 
