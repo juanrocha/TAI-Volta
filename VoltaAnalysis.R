@@ -15,7 +15,7 @@
 # clean and load libraries
 
 rm(list=ls())
-
+library(tidyr)
 library ('gdata')
 library('dplyr')
 library('reshape')
