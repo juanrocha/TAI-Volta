@@ -104,10 +104,12 @@ p <- ggplot(data=dat, mapping=aes(x=year_a, y=area)) +
   theme(axis.text.x = element_text(angle=0))  +
   ggtitle('Cultivated area per Province in Ha')
 
+p
 
-# quartz.save(file='CultivatedAreaTL_year.png', type='png')
+# quartz.save(file='160630_CropProd_boxplots.png', type='png')
 
-p <- ggplot(data=dat, aes(crop, prod))+ geom_jitter(aes(colour=crop, alpha=0.2)) + geom_boxplot(notch=T) + facet_grid(country~.)  +
+p <- ggplot(data=dat, aes(crop, prod))+ geom_jitter(aes(colour=crop, alpha=0.2)) + 
+  geom_boxplot(notch=T) + facet_grid(country~.)  +
   theme(axis.text.x = element_text(angle=90))+
   ggtitle('Production of crops (Tons) in the Volta basin')
 

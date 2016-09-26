@@ -323,6 +323,9 @@ g <- ggplot(data = subset(area, crop == c('Rice' , 'Rice_irr')), aes(x=Year, y=v
 		facet_wrap( ~ Province, ncol=8)
 
 
+#### New file with raw values from Katja: 160901
+
+file <- 'Volta_Vars_raw_160901.xlsx'
 
 
 
