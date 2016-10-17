@@ -1,4 +1,4 @@
-\begin{thebibliography}{21}
+\begin{thebibliography}{23}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -11,24 +11,39 @@ UNG Assembly.
   Development}}.
 \newblock New York: United Nations, 2015.
 
+\bibitem[Brock et~al.(2008)Brock, Pihur, Datta, and Datta]{Brock:2008vz}
+Guy Brock, Vasyl Pihur, Susmita Datta, and Somnath Datta.
+\newblock {clValid: An R Package for Cluster Validation }.
+\newblock \emph{Journal of Statistical Software}, 25\penalty0 (4):\penalty0
+  1--22, January 2008.
+
+\bibitem[Charrad et~al.(2014)Charrad, Ghazzali, Boiteau, and
+  Niknafs]{Charrad:2014tp}
+Malika Charrad, Nadia Ghazzali, V{\'e}ronique Boiteau, and Azam Niknafs.
+\newblock {NbClust: An RPackage for Determining the Relevant Number of Clusters
+  in a Data Set}.
+\newblock \emph{Journal of Statistical Software}, 61\penalty0 (6), 2014.
+
 \bibitem[Ellis and Ramankutty(2008)]{Ellis:2008p314}
 Ellis and Ramankutty.
 \newblock {Putting people in the map: anthropogenic biomes of the world}.
-\newblock \emph{Frontiers in Ecology and the Environment}, 2008.
+\newblock \emph{Frontiers in Ecology and the Environment}, 6\penalty0
+  (10):\penalty0 523--523, 2008.
 
 \bibitem[Ellis et~al.(2010)Ellis, Goldewijk, Siebert, Lightman, and
   Ramankutty]{Ellis:2010p6408}
 Erle~C Ellis, Kees~Klein Goldewijk, Stefan Siebert, Deborah Lightman, and Navin
   Ramankutty.
 \newblock {Anthropogenic transformation of the biomes, 1700 to 2000}.
-\newblock \emph{Global Ecology and Biogeography}, 2010.
+\newblock \emph{Global Ecology and Biogeography}, 19\penalty0 (5):\penalty0
+  589--606, 2010.
 
 \bibitem[Foley et~al.(2005)Foley, DeFries, Asner, Barford, Bonan, Carpenter,
   Chapin, Coe, Daily, and Gibbs]{Foley:2005p190}
 JA~Foley, R~DeFries, GP~Asner, C~Barford, G~Bonan, SR~Carpenter, FS~Chapin,
   MT~Coe, GC~Daily, and HK~Gibbs.
 \newblock {Global consequences of land use}.
-\newblock \emph{Science}, 2005.
+\newblock \emph{Science}, 309\penalty0 (5734):\penalty0 570--574, 2005.
 
 \bibitem[Griggs et~al.(2013)Griggs, Stafford~Smith, Gaffney, Rockstr{\"o}m,
   {\"O}hman, Shyamsundar, Steffen, Glaser, Kanie, and Noble]{Griggs:2013cm}
@@ -36,7 +51,7 @@ David Griggs, Mark Stafford~Smith, Owen Gaffney, Johan Rockstr{\"o}m, Marcus~C
   {\"O}hman, Priya Shyamsundar, Will Steffen, Gisbert Glaser, Norichika Kanie,
   and Ian Noble.
 \newblock {Policy: Sustainable development goals for people and planet}.
-\newblock \emph{Nature}, 2013.
+\newblock \emph{Nature}, 495\penalty0 (7441):\penalty0 305--307, March 2013.
 
 \bibitem[Hamann et~al.(2015)Hamann, Biggs, and Reyers]{Hamann:2015cx}
 Maike Hamann, Reinette Biggs, and Belinda Reyers.
@@ -44,24 +59,26 @@ Maike Hamann, Reinette Biggs, and Belinda Reyers.
   {\textquoteleft}green-loop{\textquoteright} and
   {\textquoteleft}red-loop{\textquoteright} dynamics based on characteristic
   bundles of ecosystem service use}.
-\newblock \emph{Global Environmental Change}, 2015.
+\newblock \emph{Global Environmental Change}, 34:\penalty0 218--226, September
+  2015.
 
 \bibitem[Holland(2012)]{Holland:2012ur}
 John~H Holland.
 \newblock \emph{{Signals and Boundaries}}.
-\newblock MIT Press, 2012.
+\newblock Building Blocks for Complex Adaptive Systems. MIT Press, July 2012.
 
 \bibitem[Lambin et~al.(2014)Lambin, D{\textquoteright}haen, Mertz, Nielsen, and
   Rasmussen]{Lambin:2014eg}
 Eric~F Lambin, Sarah Ann~Lise D{\textquoteright}haen, Ole Mertz,
   Jonas~{\O}stergaard Nielsen, and Kjeld Rasmussen.
 \newblock {Scenarios on future land changes in the West African Sahel}.
-\newblock \emph{Geografisk Tidsskrift-Danish Journal of Geography}, 2014.
+\newblock \emph{Geografisk Tidsskrift-Danish Journal of Geography},
+  114\penalty0 (1):\penalty0 76--83, March 2014.
 
 \bibitem[Levin(2000)]{Levin:2000vk}
 Simon~A Levin.
 \newblock \emph{{Fragile Dominion}}.
-\newblock Basic Books, 2000.
+\newblock Basic Books, June 2000.
 
 \bibitem[Liu et~al.(2007)Liu, Dietz, Carpenter, Alberti, Folke, Moran, Pell,
   Deadman, Kratz, Lubchenco, Ostrom, Ouyang, Provencher, Redman, Schneider, and
@@ -70,7 +87,8 @@ J~Liu, T~Dietz, S~R Carpenter, M~Alberti, C~Folke, E~Moran, A~N Pell,
   P~Deadman, T~Kratz, J~Lubchenco, E~Ostrom, Z~Ouyang, W~Provencher, C~L
   Redman, S~H Schneider, and W~W Taylor.
 \newblock {Complexity of Coupled Human and Natural Systems}.
-\newblock \emph{Science}, 2007.
+\newblock \emph{Science}, 317\penalty0 (5844):\penalty0 1513--1516, September
+  2007.
 
 \bibitem[Meacham et~al.(2016)Meacham, Queiroz, Norstr{\"o}m, and
   Peterson]{Meacham:2016cy}
@@ -78,19 +96,20 @@ Megan Meacham, Cibele Queiroz, Albert Norstr{\"o}m, and Garry Peterson.
 \newblock {Social-ecological drivers of multiple ecosystem services: what
   variables explain patterns of ecosystem services across the Norrstr{\"o}m
   drainage basin?}
-\newblock \emph{Ecology and Society}, 2016.
+\newblock \emph{Ecology and Society}, 21\penalty0 (1):\penalty0 art14, January
+  2016.
 
 \bibitem[Ostrom(2007)]{Ostrom:2007je}
 Elinor Ostrom.
 \newblock {A diagnostic approach for going beyond panaceas.}
 \newblock \emph{Proceedings Of The National Academy Of Sciences Of The United
-  States Of America}, 2007.
+  States Of America}, 104\penalty0 (39):\penalty0 15181--15187, September 2007.
 
 \bibitem[Ostrom(2009)]{Ostrom:2009p6785}
 Elinor Ostrom.
 \newblock {A general framework for analyzing sustainability of
   social-ecological systems.}
-\newblock \emph{Science}, 2009.
+\newblock \emph{Science}, 325\penalty0 (5939):\penalty0 419--422, July 2009.
 
 \bibitem[Queiroz et~al.(2015)Queiroz, Meacham, Richter, Norstr{\"o}m,
   Andersson, Norberg, and Peterson]{Queiroz:2015cv}
@@ -98,7 +117,8 @@ Cibele Queiroz, Megan Meacham, Kristina Richter, Albert~V Norstr{\"o}m, Erik
   Andersson, Jon Norberg, and Garry Peterson.
 \newblock {Mapping bundles of ecosystem services reveals distinct types of
   multifunctionality within a Swedish landscape}.
-\newblock \emph{AMBIO: A Journal of the Human Environment}, 2015.
+\newblock \emph{AMBIO: A Journal of the Human Environment}, 44\penalty0
+  (1):\penalty0 89--101, January 2015.
 
 \bibitem[Rabe et~al.(2016)Rabe, Koellner, Marzelli, Schumacher, and
   Gr{\^e}t-Regamey]{Rabe:2016hp}
@@ -106,44 +126,49 @@ Sven-Erik Rabe, Thomas Koellner, Stefan Marzelli, Paul Schumacher, and Adrienne
   Gr{\^e}t-Regamey.
 \newblock {National ecosystem services mapping at multiple scales {\textendash}
   The German exemplar}.
-\newblock \emph{Ecological Indicators}, 2016.
+\newblock \emph{Ecological Indicators}, 70:\penalty0 357--372, November 2016.
 
 \bibitem[Raudsepp-Hearne et~al.(2010)Raudsepp-Hearne, Peterson, and
   Bennett]{RaudseppHearne:2010p5327}
 C~Raudsepp-Hearne, G~D Peterson, and E~M Bennett.
 \newblock {Ecosystem service bundles for analyzing tradeoffs in diverse
   landscapes.}
-\newblock \emph{Proceedings of the National Academy of Sciences}, 2010.
+\newblock \emph{Proceedings of the National Academy of Sciences}, 107\penalty0
+  (11):\penalty0 5242--5247, March 2010.
 
 \bibitem[Renard et~al.(2015)Renard, Rhemtulla, and Bennett]{Renard:2015ew}
 Delphine Renard, Jeanine~M Rhemtulla, and Elena~M Bennett.
 \newblock {Historical dynamics in ecosystem service bundles}.
 \newblock \emph{Proceedings Of The National Academy Of Sciences Of The United
-  States Of America}, 2015.
+  States Of America}, 112\penalty0 (43):\penalty0 201502565--13416, October
+  2015.
 
 \bibitem[Ropero et~al.(2015)Ropero, Aguilera, and Rum{\'\i}]{Ropero:2015bp}
 R~F Ropero, P~A Aguilera, and R~Rum{\'\i}.
 \newblock {Analysis of the socioecological structure and dynamics of the
   territory using a hybrid Bayesian network classifier}.
-\newblock \emph{Ecological Modelling}, 2015.
+\newblock \emph{Ecological Modelling}, 311:\penalty0 73--87, September 2015.
 
 \bibitem[Surendran~Nair et~al.(2016)Surendran~Nair, Preston, King, and
   Mei]{SurendranNair:2016tz}
 Sujithkumar Surendran~Nair, Benjamin~L Preston, Anthony~W King, and Rui Mei.
 \newblock {Using landscape typologies to model socioecological systems:
   Application to agriculture of the United States Gulf Coast}.
-\newblock \emph{Environmental Modelling {\&} Software}, 2016.
+\newblock \emph{Environmental Modelling {\&} Software}, 79:\penalty0 85--95,
+  May 2016.
 
 \bibitem[Ullah et~al.(2015)Ullah, Kuijt, and Freeman]{Ullah:2015eb}
 Isaac I~T Ullah, Ian Kuijt, and Jacob Freeman.
 \newblock {Toward a theory of punctuated subsistence change.}
-\newblock \emph{Proceedings of the National Academy of Sciences}, 2015.
+\newblock \emph{Proceedings of the National Academy of Sciences}, 112\penalty0
+  (31):\penalty0 9579--9584, August 2015.
 
 \bibitem[V{\'a}clav{\'\i}k et~al.(2013)V{\'a}clav{\'\i}k, Lautenbach,
   Kuemmerle, and Seppelt]{Vaclavik:2013cs}
 Tom{\'a}{\v s} V{\'a}clav{\'\i}k, Sven Lautenbach, Tobias Kuemmerle, and Ralf
   Seppelt.
 \newblock {Mapping global land system archetypes}.
-\newblock \emph{Global Environmental Change-Human And Policy Dimensions}, 2013.
+\newblock \emph{Global Environmental Change-Human And Policy Dimensions},
+  23\penalty0 (6):\penalty0 1637--1647, December 2013.
 
 \end{thebibliography}

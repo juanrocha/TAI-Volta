@@ -3,15 +3,14 @@ title: "Mapping Social Ecological Systems Archetypes"
 author: "Juan Rocha, Katja Malmborg, Line Gordon, Kate Brauman and Fabrice DeClerk"
 date: "7 September 2016"
 output:
+  word_document: null
   pdf_document:
+    citation_package: natbib
     toc: yes
     toc_depth: 2
-    citation_package: natbib
-  word_document: null
 fontsize: 11pt
-bibliography: MappingSES_bibliography.bib
 cls: pnastwo.cls
-
+bibliography: MappingSES_bibliography.bib
 ---
 
 ```{r setup, include=FALSE}
@@ -299,7 +298,7 @@ for (i in 1:length(k)){
 # quartz.save(file = '160912_clustering.png', type = 'png', dpi = 200,width=5, height=6, pointsize = 8 )
 ```
 
-Following the analogy of boundles of ecosystem services [@Foley:2005p190; @RaudseppHearne:2010p5327], here we also map the bundles of SES variables that co-variate in space using the 7 archetypes suggested by the clustering analysis (Figure 2). Resource users of SES in northern Burkina Faso (Fig 2a) are characterized by low literacy, lower levels of migration both within regions (first level of administrative division) and amongst regions (external migration), with lower rates of urbanization and population density. Their population is dominated by farmers with a high ratio of women and children. Their main crops are sorghum, millet and rice (in kcals per harvested area). The biophysical conditions are dominated by very short wet season and the highest mean temperature; while the resource conditions present very little tree cover and the highest density of cattle per capita as well as per `r expression(Km^2)`. Southern Burkina Faso SES (Fig 2c) shows very similar conditions. Resource users present higher literacy rates and migration. Cowpeas and maize have higher importance in the south; the aridity index is slightly higher than in the north and consequently the ratio of cropped area is smaller. Southern Burkina Faso have lower market access, a similar ratio of cattle per capita but lower in density.
+Following the analogy of boundles of ecosystem services [@Foley:2005p190; @RaudseppHearne:2010p5327], here we also map the bundles of SES variables that co-variate in space using the 7 archetypes suggested by the clustering analysis (Figure 2). Resource users of SES in northern Burkina Faso (Fig 2a) are characterized by low literacy, lower levels of migration both within regions (first level of administrative division) and amongst regions (external migration), with lower rates of urbanization and population density. Their population is dominated by farmers with a high ratio of women and children. Their main crops are sorghum, millet and rice (in kcals per harvested area). The biophysical conditions are dominated by very short wet season and the highest mean temperature; while the resource conditions present very little tree cover and the highest density of cattle per capita as well as per $Km^{2}$. Southern Burkina Faso SES (Fig 2c) shows very similar conditions. Resource users present higher literacy rates and migration. Cowpeas and maize have higher importance in the south; the aridity index is slightly higher than in the north and consequently the ratio of cropped area is smaller. Southern Burkina Faso have lower market access, a similar ratio of cattle per capita but lower in density.
 
 SES in Ghanaian region of the Volta basin have in general higher literacy, population growth and migration rates, longer wet seasons, roughest landscapes (Slope_75) and a very distinctive sets of crops they produce and relay upon (Fig 2b,d,e,g). While Fig 2g specializes in rice and cassava, two crops suited for a longer wet season; Fig 2e has a higher share of yam, cocoyam, platain and groundnuts. A similar set of crops is co-produced in Fig 2b with exception of groundnuts. Fig 2b counts with higher tree cover and the highest concentration of water reservoirs of the basin and longer wet season. Similar production levels (in kcals per cultivated area) are found in central Ghana (Fig 2d), but the favored set of crops combine groundnuts, millet and sorghum as in Burkina Faso, in addition to rice, cassava, yam and cocoyam.
 
