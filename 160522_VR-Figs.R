@@ -74,7 +74,7 @@ crop$year <- as.factor(crop$year)
 ## combine two datasets and make sure it doesn't create NAs 
 dat <- full_join(crop %>% select(TAI_ID2, year, crop, CropProd, TAI_ID1),
                  area %>% select(TAI_ID2, year, crop, area, TAI_ID1), 
-                 by = c("TAI_ID2", "year", "crop"))
+                 by = c("TAI_ID2", "year", "crop", "TAI_ID1"))
 # Now dat has all data of crop production in tons and area in Ha. 
 str(dat) # 18940 obs;  $ TAI_ID1 : Factor w/ 155 levels
 
@@ -88,7 +88,7 @@ str(dat) # 11920 obs;  $ TAI_ID1 : Factor w/ 99 levels Only Volta basin!!
 
 ### Short analysis for VR proposal
 names(dat)[4] <- 'prod'
-dat$country <- ifelse((dat$TAI_ID1.x) > 3000, 'GH', 'BF')
+dat$country <- ifelse((dat$TAI_ID1) > 3000, 'GH', 'BF')
 
 
 p <- ggplot(data=dat, mapping=aes(x=year, y=prop_cultivated_area)) +

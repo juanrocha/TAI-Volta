@@ -50,22 +50,27 @@ correct.num <- function (x){
 ## Data
 ## Read data
 #### New file with raw values from Katja: 160901 / 161017
-
-file <- 'TAI_Variables_1610.xlsx'
+file <- 'TAI_Variables_1610_2.xlsx'
 sn <- sheetNames(xls=file)
 
-dat <- read.xls (file, sheet = 6)
+dat <- read.xls (file, sheet = 2)
 str(dat)
 
+
+## Different tries with distance
+d <- vegdist (dat[-1], method = "mahalanobis", tol= 10e-20)
+# d <- mahalanobis(dat[-1], center = c(0,0), cov = cov(dat[-1]), tol = 10e-20)
+# d <- dist (dat[-1], method = 'euclidean', diag = F)
 
 
 # Validating number of clusters
 # Number of clusters with NdClust: uses 30 different index and compare them to decide the optimal partition
 library (NbClust)
 # euclidean and manhattan are not good for gradient separation (see help vegdist)
-clust_num <- NbClust( data = dat[-1], dist = 'manhattan',  # diss = designdist(full [-c(2,23)], '1-J/sqrt(A*B)' )
-                      min.nc = 2, max.nc = 12, method = 'ward.D2', alphaBeale = 0.1,
-                      index = 'all')
+clust_num <- NbClust( data = dat[-1], diss = d, dist = NULL,
+                      min.nc = 2, max.nc = 12, method = 'ward.D2', alphaBeale = 0.1, index = 'all')
+#dist = 'manhattan',  # diss = designdist(full [-c(2,23)], '1-J/sqrt(A*B)' )
+
 
 library (clValid)
 ## Internal validation
@@ -88,4 +93,18 @@ summary (stab)
 mds <- metaMDS(dat[-c(1)], distance = 'manhattan', trymax = 1000, verbose = FALSE)
 setwd('~/Documents/Projects/TAI/scripts/TAI-Volta')
 
+### Explore the correlation problem
+library (corrgram)
+quartz(height = 4, width = 4)
+## users
+corrgram(dat[c(1:9)], type = "data", order = "PCA", lower.panel = panel.cor,
+        upper.panel = panel.pts, diag.panel = panel.density, main = 'users')
+## interactions
+corrgram(dat[23:36], type = "data", order = "PCA", lower.panel = panel.cor,
+        upper.panel = panel.pts, diag.panel = panel.density, main = 'interactions')
 
+## biophysical
+corrgram(dat[17:21], type = "data", order = "PCA", lower.panel = panel.cor,
+        upper.panel = panel.pts, diag.panel = panel.density, main = 'biophysical')
+## resource
+corrgram(dat[c(10:16, 37)], type = "data", order = "PCA", lower.panel = panel.cor,  upper.panel = panel.pts, diag.panel = panel.density, main = 'resource')

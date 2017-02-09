@@ -1,7 +1,7 @@
 ---
 title: "Mapping Social Ecological Systems Archetypes"
 author: "Juan Rocha, Katja Malmborg, Line Gordon, Kate Brauman and Fabrice DeClerk"
-date: "7 September 2016"
+date: "23 November 2016"
 output:
   word_document: null
   pdf_document:
@@ -16,12 +16,15 @@ bibliography: MappingSES_bibliography.bib
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, dev = 'pdf')
 
+rm(list = ls())
+
 ## load libraries
 library  ('gdata')
+library ('readxl')
 library ('dplyr')
+library ('tidyr')
 library ('reshape')
 library (corrgram)
-library(vegan)
 library (ggplot2)
 
 # load libraries for mapping
@@ -36,7 +39,28 @@ library (vegan)
 library(NbClust)
 library(clValid)
 # library(MASS)
-library(kohonen)
+# library(kohonen)
+
+
+##### Useful functions for later:
+### Select only districts on the Volta Basin
+volta.only <- function(x){
+  x <- x [ is.element (x$TAI_ID1, volta.shp@data$TAI_ID1 ), ]
+  x <- droplevels(x)
+}
+
+### Normalizing by scaling everything to 0:1
+rescale_hw <- function (x){ # This is Hadley Wickman function from his book R for DataScience
+  rng <- range(x, na.rm= TRUE, finite = TRUE)
+  (x - rng[1]) / (rng[2] - rng[1])
+}
+
+### Correct the numeric format from excel files
+correct.num <- function (x){
+  l <- length(x)
+  x[3:l] <- apply (x[3:l], 2, function (x){as.numeric(x)} )
+  return(x)
+}
 
 ```
 
@@ -77,7 +101,7 @@ Zero hunger and no poverty are the first two sustainable development goals [@Ass
 
 Nobel prize winner Elinor Ostrom advocated embracing social-ecological complexity. Ostrom recognized that there is no universal solution to problems of destruction of overuse of natural resources [@Ostrom:2007je] and further developed a Social-Ecological Systems' (SES) framework hoping that it will helps us accumulate knowledge and better understanding of what works and what does not in different SES arenas [@Ostrom:2009p6785]. The SES framework is a nested multi tier set of variables that has been suggested as features that characterize distinctive aspects of SES. The SES framework has been typically applied to local case studies that cover relatively small areas and short periods of time (documented in two publicly available datasets: the [SES Library](https://seslibrary.asu.edu)  and the [SES Meta Analysis Database](https://sesmad.dartmouth.edu)). Over a hundred case studies have been coded in these databases, however the scale at which they are coded make it hard to bring their lessons to policy making relevant arenas.
 
-The purpose of this paper is to develop a data driven method to upscale Ostrom's SES framework. It is targeted to developing countries, where available data is restricted in quality and monitoring programs might not be on place. As a working example we studied the Volta River basin, a cross national watershed that covers roughly two thirds of Burkina Faso's and Ghana's joint territories. The West African Sahel is a highly vulnerable area due to wide-spread of poverty, recurrent droughts and dry spells, political upheaval, emergent diseases (e.g. ebola), rapid urbanization, and growing food demand [@Lambin:2014eg]. The region offers a sharp gradient in climate, humidity, as well as a strong gradient of economic development, from the relatively rich southern Ghanaian urban regions in the south to the poor regions of northern Burkina Faso dominated by smallholder agriculture and pastoral systems. In particular, we will look at how the construction of water reservoirs might have an impact on food security, a key sustainable development goal [_I don't want to put here poverty reduction or clean water since we don't really have data for it_]. The following section outlines how we operationalize the Ostrom's SES framework to the scale of the Volta River basin based on publicly available data and national statistics. Next we describe the SES archetypes found, how they change over time and how reservoir development explain the trends. We then discuss the overall results and the applicability of our methods to other developing context.  
+The purpose of this paper is to develop a data driven method to upscale Ostrom's SES framework. It is targeted to developing countries, where available data is restricted in quality and monitoring programs might not be on place. As a working example we studied the Volta River basin, a cross national watershed that covers roughly two thirds of Burkina Faso's and Ghana's joint territories. The West African Sahel is a highly vulnerable area due to wide-spread of poverty, recurrent droughts and dry spells, political upheaval, emergent diseases (e.g. ebola), rapid urbanization, and growing food demand [@Lambin:2014eg]. The region offers a sharp gradient in climate, humidity, as well as a strong gradient of economic development, from the relatively rich southern Ghanaian urban regions in the south to the poor regions of northern Burkina Faso dominated by smallholder agriculture and pastoral systems. In particular, we will look at how the construction of water reservoirs might have an impact on food security, a key sustainable development goal [_I don't want to put here poverty reduction or clean water since we don't really have data for it_]. The following section outlines how we operationalize the Ostrom's SES framework to the scale of the Volta River basin based on publicly available data and national statistics. Next we describe the SES archetypes found, how they change over time and how reservoir development explain the trends. We then discuss the overall results and the applicability of our methods to other developing context.
 
 [_Needed?_]
 
@@ -91,151 +115,250 @@ The idea that SES are intertwined and interdependent systems is not new: SES are
 
 Despite the differences in purpose, scale, resolution and datasets used, what the aforementioned studies have in common is that they attempt to map SES by combining multivariate methods of ordination and clustering algorithms to find out i) systems' typologies and ii) potential underlying variables of change. Here we follow a similar rationale but using Ostrom's SES framework. In Ostrom's parlance a SES has 6 key subsystems: i) resource users (RU), resource system (RS), governance system (GS), users (U), interactions (I) and outcomes (O); all framed by social, economic and political settings (S) as well as by related ecosystems (ECO). Each of these subsystems have a nested second tier of variables aimed to capture key features of the first tier. First we collected publicly available datasets that matched as proxies of any of the Ostrom's variables but at the second administrative level for Ghana and Burkina Faso, namely districts and provinces respectively (See Methods). Figure 1 summarizes the framework and the proxies used, while Appendix 1 present a table with data sources, units and other relevant metadata.
 
-Since our analysis focus on food security issues the defining key interaction (I) of our SES characterization is crop production. It is a dummy variable that reflect both the capacity of the ecosystem to provide food services, but also the human labor and preferences necessary as input to co-produce the service. Crop data, both production and cropped area, were collected from national statistical bureaux. While data does exist for 32 crops from 1993-2012, here we only used 7 crops [_10 crops on Katjas table?; in addition do we include here cattle?_] with minimum missing values, and the last 5 year averages to correct for outliers. Users (RU and S) were here characterized by national census statistics and their change over the period 1996-2006 for Burkina Faso and 2000-2010 for Ghana. The ecological system (ECO) is characterized by biophysical variables from CRU [_Katja clarify here_] that summarizes aridity, mean temperature, precipitation and slope. The resource system (RS) is a combination of variables that facilitate or not agriculture (our key interaction) such as the percentage of area dedicated to crops, presence of water reservoirs, tree cover, cattle density or market access. All data is standardized to the range 0:1.
+Since our analysis focus on food security issues the defining key interaction (I) of our SES characterization is crop production. It is a dummy variable that reflect both the capacity of the ecosystem to provide food services, but also the human labor and preferences necessary as input to co-produce the service. Crop data, both production and cropped area, were collected from national statistical bureaux. While data does exist for 32 crops from 1993-2012, here we only used 10 crops [_10 crops on Katjas table?; in addition do we include here cattle?_] with minimum missing values, and the last 5 year averages to correct for outliers. Users (RU and S) were here characterized by national census statistics and their change over the period 1996-2006 for Burkina Faso and 2000-2010 for Ghana. The ecological system (ECO) is characterized by biophysical variables from CRU [_Katja clarify here_] that summarizes aridity, mean temperature, precipitation and slope. The resource system (RS) is a combination of variables that facilitate or not agriculture (our key interaction) such as the percentage of area dedicated to crops, presence of water reservoirs, tree cover, cattle density or market access. All data is standardized to the range 0:1.
 
 >* _Normalization_
 
 >* _Clustering SES archetypes: routine to find out optimal number of clusters_
 
-To test the optimal number of clusters, 30 different algorithms were compared following the protocol described by Charrad et al [-@Charrad:2014tp]. We further test the internal validation and stability validation of 9 different clustering techniques: hierarchical clustering, self-organizing maps, k-means, partitioning around medoids, divisible hierarchical algorithm _diana_,  a sampling based clustering _clara_, a fuzzy clustering _fanny_, self-organizing trees _sota_, and model-based algorithm [@Brock:2008vz]. Results are typically presented as non-metric multi dimensional ordinations and their spacial distribution in maps of the Volta basin.
+To test the optimal number of clusters, 30 different indexes were compared following the protocol described by Charrad et al [-@Charrad:2014tp]. We further test the internal validation and stability validation of 9 different clustering techniques: hierarchical clustering, self-organizing maps, k-means, partitioning around medoids, divisible hierarchical algorithm _diana_,  a sampling based clustering _clara_, a fuzzy clustering _fanny_, self-organizing trees _sota_, and model-based algorithm [@Brock:2008vz]. Results are typically presented as non-metric multi dimensional ordinations and their spacial distribution in maps of the Volta basin. The Malahoanobis distance was used during the clustering o control for potential correlations, while for visualizations we used a less restrictive Manhattan distance to ensure convergence.
 
 We further investigate the interdependences between Ostrom's nested variables, by reiterating the ordination on a set of variables of interest (e.g. interactions [I]) and performing vector fitting with the remaining variable sets (e.g. resource system, users, biophysical). Temporal trends were explored only on the interaction dataset.
 
 ```{r data, cache = TRUE, echo = FALSE, error=FALSE, warning=FALSE, message=FALSE, results = 'hide'}
+
+## Update this with new importing data code
 setwd("~/Documents/Projects/TAI/TransformedData/Data_Burkina&Ganha")
 # load map for visualizations and data
 volta.shp <- readShapeSpatial("~/Documents/Projects/TAI/TransformedData/Bundling/Volta_bundling1.shp")
 
-##### Useful functions for later:
-
-### Select only districts on the Volta Basin
-volta.only <- function(x){
-  x <- x [ is.element (x$TAI_ID1, volta.shp@data$TAI_ID1 ), ]
-  x <- droplevels(x)
-}
-
-### Normalizing by scaling everything to 0:1
-rescale_hw <- function (x){ # This is Hadley Wickman function from his book R for DataScience
-  rng <- range(x, na.rm= TRUE, finite = TRUE)
-  (x - rng[1]) / (rng[2] - rng[1])
-}
-
-### Correct the numeric format from excel files
-correct.num <- function (x){
-  l <- length(x)
-  x[3:l] <- apply (x[3:l], 2, function (x){as.numeric(x)} )
-  return(x)
-}
 
 ## Read data
-#### New file with raw values from Katja: 160901
+load('~/Documents/Projects/TAI/TransformedData/Data_Burkina&Ganha/161205_Volta.RData')
 
+#### kcals and dams data
+    dams <- read_excel(path = 'Volta_Dam_density_KLC.xlsx', sheet = 1)
+    kcals <- read_excel("crop_kcals.xlsx", sheet = 1)
+
+
+## Select only volta places
+dat <- dat %>% volta.only()
+
+## only key crops
+datKeyCrops <- (filter(dat, crop == 'Maize' | crop == 'Millet'| crop == 'Rice'| crop == 'Yam'| crop == 'Sorghum'| crop == 'Cowpea'| crop == 'Soy' ))
+
+datKeyCrops <- drop.levels(datKeyCrops)
+
+## only years with most complete information (3% NA)
+datKeyCrops <- (filter(datKeyCrops, Year > 2001, Year < 2010, Year !=2006))
+
+datKeyCrops$TAI_ID2 <- datKeyCrops$TAI_ID1
+
+## Crop dat is now dat from the ExtracDataTAI file
+crop.dat <- datKeyCrops
+crop.dat$country <- ifelse(as.numeric(as.character(crop.dat$TAI_ID1)) > 3000, 'GH', 'BF')
+
+
+crop.dat <- crop.dat %>%
+        mutate(sq_prod = sqrt(prod), sq_area = sqrt(area)) %>%
+        mutate( #dt_prod = sq_prod - mean(sq_prod), Los detrending tienen que calcularse en el agregado de cada TAI_ID1, no para todos los datos!!!
+            # dt_area = sq_area - mean(sq_area),
+            log_prod = log(1+prod),
+            yield = ifelse(prod == 0 | area == 0, 0, prod/area),
+            log_yield = log(1+yield),
+            log_area = log(1+area)
+        )
+
+tot.area <- crop.dat %>%
+  dplyr::select (TAI_ID2, crop, area, Year) %>%
+  group_by ( TAI_ID2, Year) %>%
+  summarize (tot_area = sum(area, na.rm = TRUE))
+
+crop.dat <- left_join(crop.dat, tot.area, by = c("TAI_ID2", 'Year'))
+crop.dat <- crop.dat %>%
+  mutate(prop_cultivated_area = area / tot_area )
+
+
+### Calculate the 7 year mean
+crop.area <- crop.dat %>%
+    dplyr::select(TAI_ID2, crop, log_area, Year) %>%
+    group_by(TAI_ID2, crop) %>%
+    summarize(mean_area = mean(log_area, na.rm= TRUE))
+
+## remember we are using log-transformed area
+
+## Now do the same for kcals
+
+# kcals
+crops.nam <- tolower(levels(crop.dat$crop))
+# crops.nam[2] <- 'taro' # cocoyam is aka. taro
+crops.nam[6] <- 'soybean'
+crops.nam %in% kcals$CROPNAME
+
+cals.fao <- filter(kcals, CROPNAME %in% crops.nam) %>% dplyr::select(crop = CROPNAME, kcals_fao = kcals.per.ton.fao)
+
+cals.fao$crop <- as.factor(cals.fao$crop)
+levels(cals.fao$crop) <- levels(crop.dat$crop)
+
+crop.dat <- left_join(crop.dat, cals.fao, by = c("crop"))
+crop.dat <- crop.dat %>%
+        mutate(kcal_crop = (log_prod * kcals_fao))
+# remember we are using log-transformed production.
+
+kcals <- crop.dat %>%
+    dplyr::select(TAI_ID2, crop, kcal_crop, Year) %>%
+    group_by(TAI_ID2, crop) %>%
+    summarize(mean_kcal = mean(kcal_crop, na.rm= TRUE))
+
+dat.int <- left_join(crop.area, kcals, by = c('TAI_ID2', 'crop'))
+
+# #interaction dataset: select the mean for kcals (log)
+interact <- dplyr::select(dat.int, TAI_ID2, crop, mean_kcal) %>%
+tidyr::spread( key = crop, value = mean_kcal) %>% dplyr::rename(m_cowpea = Cowpea, m_maize = Maize, m_millet = Millet, m_rice = Rice, m_sorghum = Sorghum, m_soy = Soy, m_yam = Yam)
+
+## add the selection of mean area (log)
+interact <- left_join(interact, (dplyr::select(dat.int, TAI_ID2, crop, mean_area) %>%
+tidyr::spread( key = crop, value = mean_area) %>% dplyr::rename(a_cowpea = Cowpea, a_maize = Maize, a_millet = Millet, a_rice = Rice, a_sorghum = Sorghum, a_soy = Soy, a_yam = Yam)))
+
+#### New file with raw values from Katja: 160901
 file <- 'Volta_Vars_raw_160901.xlsx'
 sn <- sheetNames(xls=file)
 
+
+dams$TAI_ID2 <- as.factor(dams$TAI_ID1)
+# dat <- left_join(dat, dams, by = c("ADM_2", "TAI_ID2"))
+
 users <- read.xls(file, sheet=2, dec=',')
 users <- correct.num(users)
-
+users$TAI_ID1 <- as.factor(users$TAI_ID1)
 resource <- read.xls (file, sheet=3, dec=',')
 biophys <- resource [c(1,2,11:15)]
 resource <- resource [-c(11:15)]
 biophys <- correct.num(biophys)
-resource <- correct.num (resource)
+resource <- correct.num(resource)
+resource$TAI_ID1 <- as.factor(resource$TAI_ID1)
+resource <- left_join(resource, dplyr::select(dams, TAI_ID2, Dams), by = c("TAI_ID1" = "TAI_ID2"))
+biophys$TAI_ID1 <- as.factor(biophys$TAI_ID1)
+biophys$Aridity <- 1-biophys$Aridity  # Invert the scale so results are easy to interpret.
+resource <- resource[-c(4,6,9,10)] #delete dams density
 # biophys <- read.xls(file, sheet=3, dec=',')
 
-# Threre is 3 datasets for interactions depending on the sheet
+# Threre is 3 datasets for interactions depending on the sheet in Katjas file
 # 4 = kcals per distric area in sq.km
 # 5 = kcals_harv.area
 # 6 = ratio_harv.area
 # 7 = other
-interact <- read.xls(file,sheet=5, dec=',')
-interact <- correct.num(interact)
-interact <- volta.only(interact)
+# interact <- read.xls(file,sheet=5, dec=',')
+# interact <- correct.num(interact)
+# interact <- volta.only(interact)
+
 
 ### Combine all datasets for clustering all
-dat <- left_join (users, resource, by = c("TAI_ID1", "ADM_2"))
+dat <- left_join(users, resource, by = c("TAI_ID1", "ADM_2"))
 dat <- left_join(dat, biophys, by = c("TAI_ID1", "ADM_2"))
-dat <- left_join(dat, interact, by = "TAI_ID1")
+dat$TAI_ID2 <- as.factor(dat$TAI_ID1)
+dat <- left_join(dat, interact, by = c("TAI_ID2"))
 
-dat <- dat[-26] # delete Province
+
+
+
+# delete columns that wont be used.
+dat <- dat[,-c(1,2,4)]
+#### New file with raw values from Katja: 160901 / 161017
+# file <- 'TAI_Variables_1610_2.xlsx'
+# sn <- sheetNames(xls=file)
+#
+# dat2 <- read.xls (file, sheet = 1)
+# str(dat2)
+#
+# dat <- left_join(dat,
+#     dplyr::select(dat2, TAI_ID1, Kcals_per_person, Farm_size),
+#     by = c("TAI_ID1"))
+
+
+## trying dropping different variables by suggestion of Katja
+# dat <- dat[-4] # ratio of women
+# dat <- dat[-18] # dam density
+# dat <- dat[-22] # soil water
+# dat <- dat[-26] # rice
+# dat <- dat[-29] # cocoyam
+# dat <- dat[-30] # plantain
+# dat <- dat[-31] # sorghoum
 
 # Note this is non-normalized data, original values. After the following line all is "rescaled" to 0-1
-dat[3:35] <- apply(dat[3:35], 2, rescale_hw)
-## You can delete "Pop_dens_log" since it's rescaled and you already have pop_density.
-dat <- dat[-4]
+dat[-23] <- apply(dat[-23], 2, rescale_hw)
 
+## Using mahalanobis distance help us dealing with colinearity or strong correlations.
+d <- vegdist(dat[-c(23)], method = "mahalanobis", tol= 10e-20)
+
+# X dataset for plotting final distributions in ggplot
+x <- gather(dat[-23], key = variable)
+x$variable <- as.factor(x$variable)
+
+g <- ggplot (x, aes(value), group = x) + geom_density()
+g+ facet_wrap(~variable)
 
 ## Validating number of clusters
 ## Number of clusters with NdClust: uses 30 different index and compare them to decide the optimal partition
 # library (NbClust)
-# # euclidean and manhattan are not good for gradient separation (see help vegdist)
-clust_num <- NbClust( data = dat[-c(1,2)], dist = 'manhattan',  # diss = designdist(full [-c(2,23)], '1-J/sqrt(A*B)' )
-                      min.nc = 3, max.nc = 12, method = 'ward.D2', alphaBeale = 0.1,
-                      index = 'all')
+# euclidean and manhattan are not good for gradient separation (see help vegdist)
+m <- 'ward.D2'
+clust_num <- NbClust( data = dat[-c(23)], dist = 'manhattan',
+                      min.nc = 3, max.nc = 12, method = m, alphaBeale = 0.1, index = 'all')
 
-## 6 algorithms propose that the number of clusters is 7 and another 5 that it should be 3 clusters
-# *******************************************************************
-#   * Among all indices:                                                
-#   * 5 proposed 3 as the best number of clusters
-# * 4 proposed 4 as the best number of clusters
-# * 4 proposed 5 as the best number of clusters
-# * 1 proposed 6 as the best number of clusters
-# * 6 proposed 7 as the best number of clusters
-# * 1 proposed 11 as the best number of clusters
-# * 1 proposed 12 as the best number of clusters
-#
-# ***** Conclusion *****                            
-#   
-#   * According to the majority rule, the best number of clusters is  7
-# *******************************************************************
+clust_num_mb <- NbClust( data = dat[-c(23)], diss = d, dist = NULL,
+                    min.nc = 3, max.nc = 12, method = m, alphaBeale = 0.1, index = 'all')
 
+## With manhattan
+# According to the majority rule, the best number of clusters is  7
+# ## With mahalanobis
+# According to the majority rule, the best number of clusters is  4
 
 # quartz()
 # par(mfrow=c(1,1))
 # hist(clust_num$Best.nc[1,],breaks=max(na.omit(clust_num$Best.nc[1,])),
 #      xlab="Number of clusters",col="lightgrey", main="Optimal number of clusters?")
 
-# library (clValid)
-# ## Internal validation
-# intern <- clValid(obj=as.data.frame(dat[-c(1,2)]), nClust=c(3:9),
-#                   clMethods=c('hierarchical', 'kmeans', 'diana', 'fanny','som',
-#                               'pam', 'sota', 'clara', 'model'),
-#                   validation='internal')
-#
-# ## Stability validation
-# stab <- clValid(obj=as.data.frame(dat[-c(1,2)]), nClust=c(3:9),
-#                 clMethods=c('hierarchical', 'kmeans', 'diana', 'fanny', 'som',
-#                             'pam', 'sota', 'clara', 'model'),
-#                 validation='stability')
-#
-# summary (intern)
+# Internal validation
+intern <- clValid(obj=as.data.frame(dat[-c(23)]), nClust=c(3:9),
+                  clMethods=c('hierarchical', 'kmeans', 'diana', 'fanny','som',
+                              'pam', 'sota', 'clara', 'model'),
+                  validation='internal')
+
+## Stability validation
+stab <- clValid(obj=as.data.frame(dat[-c(23)]), nClust=c(3:9),
+                clMethods=c('hierarchical', 'kmeans', 'diana', 'fanny', 'som',
+                            'pam', 'sota', 'clara', 'model'),
+                validation='stability')
+
+summary(intern)
 # Optimal Scores:
-#   
+#
 #   Score   Method       Clusters
-# Connectivity 10.2159 hierarchical 3       
-# Dunn          0.3697 hierarchical 5       
-# Silhouette    0.3444 hierarchical 3     
+# Connectivity 10.2159 hierarchical 3
+# Dunn          0.3697 hierarchical 5
+# Silhouette    0.3444 hierarchical 3
 
 
-# summary (stab)
+summary(stab)
 # Optimal Scores:
-#   
+#
 #   Score  Method       Clusters
-# APN 0.0006 hierarchical 5       
-# AD  0.9623 kmeans       9       
-# ADM 0.0026 hierarchical 5       
+# APN 0.0006 hierarchical 5
+# AD  0.9623 kmeans       9
+# ADM 0.0026 hierarchical 5
 # FOM 0.1385 som          9
 
 
 ## Prepare the clustering result dataset
-mds <- metaMDS(dat[-c(1,2)], distance = 'manhattan', trymax = 1000, verbose = FALSE)
+mds <- metaMDS(dat[-c(23)], distance = 'manhattan', trymax = 1000, verbose = FALSE) # does not converge with "mahalanobis" distance
 setwd('~/Documents/Projects/TAI/scripts/TAI-Volta')
 ```
 
 
 ## Results
 
-The Volta river basin has different sets of social-ecological systems. The clustering search identifies an optimal number of 7 archetypes suggested by 6 out of 30 algorithms, followed by 3 clusters (5 algorithms), and 4-5 clusters (4 algorithms each). However, when looking at internal validation hierarchical clustering is suggested as the best performing technique with 3 or 5 clusters; while stability validation suggest higher number of clusters with hierarchical clustering best suited for 5 clusters, or 9 clusters with self-organizing maps or k-means. Figure 1 summarizes the data used to operationalize the Ostrom's SES framework on the Volta Basin, as well as the clustering of second level administrative units with the best performing clustering methods for 7 and 9 archetypes. Lower numbers of clustering often group all provinces of Burkina Faso on one set regardless of the algorithm used. Here we favor higher number of archetypes that enhance stability of the analysis, this is, that results are robust when removing columns of the dataset -a feature desired in highly correlated data [@Brock:2008vz].
+The Volta river basin has different sets of social-ecological systems. The clustering search identifies an optimal number of 4 archetypes suggested by 9 out of 30 indexes, followed by 3 clusters (7 indexes), and 5 clusters (5 indexes). However, when looking at internal validation, hierarchical clustering is suggested as the best performing technique with 3 or 5 clusters; while stability validation suggest higher number of clusters with hierarchical clustering best suited for 5 clusters, or 9 clusters with self-organizing maps or k-means. Figure 1 summarizes the data used to operationalize the Ostrom's SES framework on the Volta Basin [_do we need this? It's the map done previously by Katja not included here for now_], as well as the clustering of second level administrative units with the best performing clustering methods for 5 and 9 archetypes. Lower numbers of clustering often group all provinces of Burkina Faso on one set regardless of the algorithm used. Here we favor higher number of archetypes that enhance stability of the analysis, this is, that results are robust when removing columns of the dataset -a feature desired in highly correlated data [@Brock:2008vz].
 
 ```{r Fig1, echo = FALSE, fig.align='center', fig.height=5, fig.width=6, error=FALSE, warning=FALSE, message=FALSE, fig.cap = 'Clustering results. Social-Ecological systems archetypes found by applying different clustering techniques. Optimal numer of clusters is 7 but 9 performs best on stability validation. Upper panel shows non-metric multi dimensional scaling of the data and maps for 7 clusters, lower panel for 9 clusters. Best performing algorithms are hierarchical clustering, k-means and self-organizing maps (som)', dev.args= list(pointsize = 8)}
 ########################
@@ -244,36 +367,40 @@ The Volta river basin has different sets of social-ecological systems. The clust
 
 ## TODO: Need to introduce a framework figure here
 
-# quartz(width=5, height=6, pointsize = 8)
+quartz(width=5, height=5, pointsize = 7)
 # number of clusters
-k <- c(7,9)
+k <- c(6,9)
 
-par(mfrow=c(4,3))
+par(mfcol=c(2,2))
 
 for (i in 1:length(k)){
   par(mai = c(0.1, 0.2, 0.1 , 0.1))
 
   ## Best selected algorithms: hierarchical, k-means and som
-  fitKM <- kmeans(dat[-c(1,2)], centers= k[i] ,iter.max=2000,nstart=50)
-  fitSOM <- som(as.matrix(dat[-c(1,2)]), grid= somgrid(3,2,'hexagonal'))
-  dis <- vegdist(dat[-c(1,2)], method='manhattan')
+  fitKM <- kmeans(dat[-c(23)], centers= k[i] ,iter.max=2000,nstart=50)
+  fitSOM <- som(as.matrix(dat[-c(23)]), grid= somgrid(3,2,'hexagonal'))
+  fitPAM <-pam(mds$points, metric='manhattan', k=k[i])
+  dis <- vegdist(dat[-c(23)], method='manhattan')
   clus <- hclust(dis, method='ward.D2')
   grp <- cutree(clus, k[i])
   fitHier <- grp
+  fitClara <- clara(dat[-c(23)], k = k[i])
 
   # create a clusters dataframe
-  clusters <- data.frame( TAI_ID1 = dat$TAI_ID1, # codes
-                        #clara = as.vector(fitClara$clustering ),
+  clusters <- data.frame( TAI_ID2 = dat$TAI_ID2, # codes
+                        clara = as.vector(fitClara$clustering ),
                         k_means = as.vector(fitKM$cluster),
-                        #PAM = as.vector(fitPAM$clustering),
+                        PAM = as.vector(fitPAM$clustering),
                         som = as.vector(fitSOM$unit.classif),
-                        hierarchical = as.vector(fitHier))
+                        hierarchical = as.vector(fitHier),
+                        Wald = clust_num_mb$Best.partition
+                        )
 
   # create colors
-  levelCols <- brewer.pal(k [i], "Set1")
+  levelCols <- brewer.pal(k [i], "Set3")
 
   # plot
-  for (j in 2:4){
+  for (j in 4){
     # Plot MDS with grouping according with each clustering algorithm
     ordiplot(mds, type='none', main= paste(k[i], colnames( clusters)[j],  sep = ' '), xlab = NULL, ylab = NULL )
     points(mds$points, cex=1, lwd=1.5,
@@ -285,20 +412,21 @@ for (i in 1:length(k)){
   }
 
 
-  for (j in 2:4){
+  for (j in 4){
     par(mai = c(0.2, 0.2, 0.2 , 0.2))
     # Plot map with resulting clusters
-    plot(volta.shp, col= levelCols[clusters[,j]],lwd=0.1)  
+    plot(volta.shp, col= levelCols[clusters[,j]],lwd=0.1)
          # main= paste(k[i], colnames( clusters)[j], sep = ' '))
 
   }
 }
 
-
-# quartz.save(file = '160912_clustering.png', type = 'png', dpi = 200,width=5, height=6, pointsize = 8 )
+# plot(volta.shp, col = levelCols[clust_num_mb$Best.partition], lwd = 0.1)
+# setwd("~/Documents/Projects/TAI/figures")
+# quartz.save(file = '161125_full_clustering.png', type = 'png', dpi = 300,width=15, height=5, pointsize = 7 )
 ```
 
-Following the analogy of boundles of ecosystem services [@Foley:2005p190; @RaudseppHearne:2010p5327], here we also map the bundles of SES variables that co-variate in space using the 7 archetypes suggested by the clustering analysis (Figure 2). Resource users of SES in northern Burkina Faso (Fig 2a) are characterized by low literacy, lower levels of migration both within regions (first level of administrative division) and amongst regions (external migration), with lower rates of urbanization and population density. Their population is dominated by farmers with a high ratio of women and children. Their main crops are sorghum, millet and rice (in kcals per harvested area). The biophysical conditions are dominated by very short wet season and the highest mean temperature; while the resource conditions present very little tree cover and the highest density of cattle per capita as well as per $Km^{2}$. Southern Burkina Faso SES (Fig 2c) shows very similar conditions. Resource users present higher literacy rates and migration. Cowpeas and maize have higher importance in the south; the aridity index is slightly higher than in the north and consequently the ratio of cropped area is smaller. Southern Burkina Faso have lower market access, a similar ratio of cattle per capita but lower in density.
+Following the analogy of boundles of ecosystem services [@Foley:2005p190; @RaudseppHearne:2010p5327], here we also map the bundles of SES variables that co-variate in space using the 9 archetypes suggested by the clustering analysis (Figure 2). Resource users of SES in northern Burkina Faso (Fig 2a) are characterized by low literacy, lower levels of migration both within regions (first level of administrative division) and amongst regions (external migration), with lower rates of urbanization and population density. Their population is dominated by farmers with a high ratio of women and children. Their main crops are sorghum, millet and rice (in kcals per harvested area). The biophysical conditions are dominated by very short wet season and the highest mean temperature; while the resource conditions present very little tree cover and the highest density of cattle per capita as well as per $Km^{2}$. Southern Burkina Faso SES (Fig 2c) shows very similar conditions. Resource users present higher literacy rates and migration. Cowpeas and maize have higher importance in the south; the aridity index is slightly higher than in the north and consequently the ratio of cropped area is smaller. Southern Burkina Faso have lower market access, a similar ratio of cattle per capita but lower in density.
 
 SES in Ghanaian region of the Volta basin have in general higher literacy, population growth and migration rates, longer wet seasons, roughest landscapes (Slope_75) and a very distinctive sets of crops they produce and relay upon (Fig 2b,d,e,g). While Fig 2g specializes in rice and cassava, two crops suited for a longer wet season; Fig 2e has a higher share of yam, cocoyam, platain and groundnuts. A similar set of crops is co-produced in Fig 2b with exception of groundnuts. Fig 2b counts with higher tree cover and the highest concentration of water reservoirs of the basin and longer wet season. Similar production levels (in kcals per cultivated area) are found in central Ghana (Fig 2d), but the favored set of crops combine groundnuts, millet and sorghum as in Burkina Faso, in addition to rice, cassava, yam and cocoyam.
 
@@ -307,49 +435,55 @@ SES characterized by high urbanization were identified in Fig 2f. Urban district
 
 ```{r Fig2, echo = FALSE, fig.align='center', fig.height=7, fig.width=6, error=FALSE, warning=FALSE, message=FALSE, fig.cap = "Bundles of SES variables. The SES framework was operationalized by analysing datasets that are proxi of Ostrom's suggested variables at spatial units that correspond to the second administrative level", dev.args= list(pointsize = 8) }
 
-k <- 7 # optimal number of clusters
-avg <- apply (dat[-c(1,2)], 2, mean)
+k <- 6 # optimal number of clusters
+# avg <- apply (dat[-c(22)], 2, mean)
 
-dis <- vegdist(dat[-c(1,2)], method='manhattan')
-clus <- hclust(dis, method='ward.D2')
-grp <- cutree(clus, k)
-fitHier <- grp
+# dis <- vegdist(dat[-c(22)], method='manhattan')
+# clus <- hclust(dis, method='ward.D2')
+# grp <- cutree(clus, k)
+# fitHier <- grp
 
+## All the fits were calculated beforehand.
 # following Garry's code with k-means
-fitKM <- kmeans(dat[-c(1,2)], centers= k ,iter.max=2000,nstart=50)
+fitKM <- kmeans(dat[-c(23)], centers= k ,iter.max=2000,nstart=50)
 #residFKM <- fitKM$centers - rbind (replicate (k, avg))
+fitPAM <-pam(mds$points, metric='manhattan', k = k)
+
 
 ## Colors
 clusColors <- c('gray90', 'gray10')
-freq <- order (fitKM$size, decreasing = TRUE)
+# freq <- order(fitKM$size, decreasing = TRUE)
+freq <- order(fitPAM$clusinfo[,1], decreasing = TRUE)
 
-U_Cols <- brewer.pal(length(users) - 2, "Reds")
-R_Cols <- brewer.pal(length(resource)- 2, "Greys")
-B_Cols <- brewer.pal(length(biophys)- 2, "PuBu")
-I_Cols <- brewer.pal(length(interact)- 2, "YlGn")
-FlowerCol <- c(U_Cols, R_Cols, B_Cols, I_Cols)
+# colnames(fitKM$centers)
+
+U_Cols <- colorRampPalette(c('yellow', 'orange'), interpolate = "linear", alpha = T) #brewer.pal(length(users) - 2, "Reds") #10
+R_Cols <- colorRampPalette(c('tan', 'olivedrab4'), interpolate = "linear", alpha = T) #brewer.pal(length(resource)- 2, "Greys") #9
+B_Cols <- colorRampPalette(c('salmon', 'purple4'), interpolate = "linear", alpha = T) #brewer.pal(length(biophys)- 2, "PuBu") # 14
+I_Cols <- colorRampPalette(c('steelblue4', 'red4'), interpolate = "linear", alpha = T) #brewer.pal(length(interact)- 1, "YlGn") #5
+
+FlowerCol <- c(U_Cols(9), R_Cols(8), B_Cols(5), I_Cols(14))
 
 ## ploting
-# quartz(width=7, height = 7, pointsize = 8)
+quartz(width=7, height = 7, pointsize = 8)
 par(mfrow = c(4,4), mai = c(.02, 0.2, 0.2, 0.2))
-layout (matrix(c(1:14, 15,15), 4,4, byrow = T))
+layout (matrix(c(1:12, rep(13,4)), 4,4, byrow = T))
 
 for ( i in 1:k) {
-  varCols <- clusColors [(fitKM$cluster == freq [i]) + 1]
+  varCols <- clusColors[(as.vector(fitPAM$clustering) == freq[i])+ 1]
   plot (volta.shp, col = varCols, lwd = 0.1, main= letters[i], cex.main = 1.5 )
 
   stars (t (sqrt(fitKM$centers[freq[i], ])), len = 0.6, full = TRUE, scale = FALSE,
          radius = TRUE, draw.segments = TRUE, col.segments = FlowerCol)
 }
-
 # legend
 par( mai = c(1,1,1,1))
-leg <- data.frame (leg =rep (1, length(dat) -2 ), row.names =  colnames(dat[-c(1,2)]))
+leg <- data.frame (leg =rep(1, length(dat) -1 ), row.names =  colnames(fitKM$centers))  # dat[-c(23)]
 stars (t(leg), len = 1, full = TRUE, scale = FALSE, key.loc = c(2.3, 2.3), locations = c(2.3, 2.3),
          radius = TRUE, draw.segments = TRUE, col.segments = FlowerCol,
        axes = F, plot = T, cex = 0.7)
 
-# quartz.save(file = '160912_SESarchetypes.png', type = 'png', dpi = 200,width=7, height=7, pointsize = 8 )
+# quartz.save(file = '161125_SESarchetypes.png', type = 'png', dpi = 200,width=7, height=7, pointsize = 8 )
 
 ```
 
@@ -378,10 +512,10 @@ cube <- function(s1, s2, s3, s4){ # each side of the cube is s_
 
 
 
-int.side <- cube(s1 = interact[-c(1,2)], s2 = resource[-c(1,2)], s3= biophys[-c(1,2)], s4 = users[-c(1,2)])
-bio.side <- cube(s1 = biophys[-c(1,2)] , s2 =  resource[-c(1,2)], interact[-c(1,2)], s4 = users[-c(1,2)])
-res.side <- cube(s1 =  resource[-c(1,2)] , s2 =  biophys[-c(1,2)], s3= interact[-c(1,2)], s4 = users[-c(1,2)])
-soc.side <- cube(s1 = users[-c(1,2,4)] , s2 =  resource[-c(1,2)], s3= interact[-c(1,2)], s4 =  biophys[-c(1,2)])
+int.side <- cube(s1 = interact[-c(1)], s2 = resource[-c(1,2)], s3= biophys[-c(1,2)], s4 = users[-c(1,2,4)])
+bio.side <- cube(s1 = biophys[-c(1,2)] , s2 =  resource[-c(1,2)], interact[-c(1)], s4 = users[-c(1,2,4)])
+res.side <- cube(s1 =  resource[-c(1,2)] , s2 =  biophys[-c(1,2)], s3= interact[-c(1)], s4 = users[-c(1,2,4)])
+soc.side <- cube(s1 = users[-c(1,2,4)] , s2 =  resource[-c(1,2)], s3= interact[-c(1)], s4 =  biophys[-c(1,2)])
 
 ```
 
@@ -389,7 +523,7 @@ soc.side <- cube(s1 = users[-c(1,2,4)] , s2 =  resource[-c(1,2)], s3= interact[-
 ```{r Fig3, echo = FALSE, fig.align='center', fig.height=7, fig.width=5, error=FALSE, warning=FALSE, message=FALSE, fig.cap = "**Interactions between SES framework components**. Each subsystem in the Ostrom's framework is ordered with non-metric multidimensional scaling and vectors are fitted for all other variables that significanlty (p < 0.001) explain the variation of the ordination", dev.args= list(pointsize = 8) }
 
 # create colors
-levelCols <- brewer.pal(k, "Set1") # check for better colours with alpha, k = 7
+levelCols <- brewer.pal(k, "Set3") # check for better colours with alpha, k = 7
 
 ## an especial plot function that does all at once
 plot.cube <- function (x, main, c1, c2, c3, sub, ... ){ #takes a cube object
@@ -399,9 +533,9 @@ plot.cube <- function (x, main, c1, c2, c3, sub, ... ){ #takes a cube object
     ordiplot(x[[1]], type='none', main= paste( main, "vs", sub[i], sep = " "), xlab = NULL, ylab = NULL)#,
              #xlim = c(-1.2,1.2), ylim = c(-1,1))
     points(x[[1]]$points, cex=0.7, lwd=0.8,
-           col= levelCols[fitKM$cluster])
+           col= levelCols[as.vector(fitPAM$clustering)])
 
-    ordihull(x[[1]], groups= fitKM$cluster, label = FALSE, cex=0.2,
+    ordihull(x[[1]], groups= as.vector(fitPAM$clustering), label = FALSE, cex=0.2,
              col= levelCols, lty = 0, draw = 'polygon', alpha = 0.25)
 
     ## Plot environmental fitting
@@ -411,10 +545,10 @@ plot.cube <- function (x, main, c1, c2, c3, sub, ... ){ #takes a cube object
   }
 }
 
-# quartz(width = 5, height = 7, pointsize = 8)
+quartz(width = 5, height = 7, pointsize = 8)
 par(mfrow = c(4,3), mai = c(0.2,0.2,0.2,0.2))
 # Interactions
-plot.cube (int.side, main = "Interactions", sub = c( " ","Resource", "Biophysic", "Users"),
+plot.cube(int.side, main = "Interactions", sub = c( " ","Resource", "Biophysic", "Users"),
            c1 = "gray20", # resource
            c2 = "dodgerblue4", # biophysic
            c3 = "darkred") # users
@@ -429,7 +563,15 @@ plot.cube(soc.side, main = "Users", sub = c('', "Resource", "Interactions", "Bio
           c1 = "gray20", c2 = "darkgreen", c3 = "dodgerblue4")
 
 
-# quartz.save(file = '160912_Cube.png', type = 'png', dpi = 200,width=5, height=7, pointsize = 8 )
+# quartz.save(file = '161125_Cube.png', type = 'png', dpi = 200,width=5, height=7, pointsize = 8 )
+
+# quartz(width = 5, height = 5, pointsize = 8)
+# ordiplot(int.side[[1]], type='none' )
+# points(int.side[[1]]$points, cex=0.7, lwd=0.8,
+#        col= levelCols[as.vector(fitPAM$clustering)])
+# ordihull(int.side[[1]], groups= as.vector(fitPAM$clustering), label = FALSE, cex=0.2, col= levelCols, lty = 0, draw = 'polygon', alpha = 0.25)
+# plot(int.side[[2]], p.max=0.001, cex=1)
+
 ```
 
 

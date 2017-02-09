@@ -1,510 +1,792 @@
-cuentas
-class((data$DBValue))
-n <- NROW(data)
-l <- seq(1, n, 100)
-plot( data$Time,log(data$DBValue), type='p')
-str(data)
-head(data)
-dim(data)
-names(data)
-mean(data$DBValue); sd(data$DBValue)
-hist(data$DBValue, breaks=100, freq=F)
-range(data$DBValue)
-plot(data$Time, data$SaldoAnterior, type='l')
-cuentas <- which(data$DocClass=='0')
-c <- data[c(cuentas[1]+1 : cuentas[2]-1),]
-weird <- c[is.na(c$Time),]
-weird
-plot(c$Time, c$DBValue, type='l', col='red')
-lines(c$Time, c$CRValue, col='blue')
-str(c)
-hist(c$SaldoAnterior, xlim=range(c$SaldoAnterior, na.rm=T))
-hist(log(c$DBValue))#, xlim=range(log(c$DBValue, na.rm=T)))
-hist(c$CRValue, xlim=range(c$CRValue, na.rm=T))
-plot(density(c$CRValue, na.rm=T))
-docs <- levels(data$DocNum)
-df <- data.frame(docs)
-df$step <- table(data$DocNum)
-df$uniqueDate <- rep(NA, length(docs))
-df$balance <- rep(NA,length(docs))
-table(df$step); range(df$steps[346:length(df$steps)])
-hist(df$steps[346:length(df$steps)], breaks='Sturges', freq=T, col='black', xlim=c(0,20) )
-df$steps
-df
-dim(df)
-names(df)
-head(df)
-head(data)
-dim(data)
-dim(cuentas)
-class(cuentas)
-length(cuentas)
-head(cuentas)
-data[1,]
-data[1958,]
-data[head(cuentas),3]
-tail[head(cuentas),3]
-data[tail(cuentas),3]
-data[head(cuentas,10),3]
-load("/Users/juanrocha/Box Sync/LorencaInvestigation/Lorenca2012")
+t + facet_wrap( topic ~ . )
+head(df.time)
+str(df.time)
+t <- ggplot(data=df.time, aes(y=cont, x=time)) +#
+	 	geom_line()
+t + facet_wrap( ~ topic)
+marcus<-matrix(c(-1,1,-1,0),nrow=2,byrow=TRUE)
+marcus<-matrix(c(-1,0,-1,0,0,-1,-1,-1,1,1,0,-1,0,1,0,0),nrow=4,byrow=TRUE)
+marcus<-matrix(c(-1,1,0,0,0,0,-1,1,0,-1,0,0,-1,1,0,1,0,0,-1,0,0,0,0,1,-1), nrow=5, byrow=T)
+names<-scan("names2.txt", what=character(), sep="," )
 ls()
-dim(adjmat)
-weird
-plot(c$Time, c$DBValue, type='l', col='red')
-lines(c$Time, c$CRValue, col='blue')
-dim(c)
-names(c)
-head(c)
-hist(c$SaldoAnterior, xlim=range(c$SaldoAnterior, na.rm=T))
-hist(log(c$DBValue))#, xlim=range(log(c$DBValue, na.rm=T)))
-hist(c$CRValue, xlim=range(c$CRValue, na.rm=T))
-c$SaldoAnterior[3]-c$SaldoAnterior[2]
-c$SaldoAnterior[4]-c$SaldoAnterior[3]
-c$SaldoAnterior[5]-c$SaldoAnterior[4]
-c[2,]
-c[3,]
-c[1,]
-class((data$DBValue))
-c
-head(c$SaldoAnterior)
-tail(c$SaldoAnterior)
-si <- c$SaldoAnterior[2]
-tail(c)
-ingresos <- sum(c$DBValue)
-egresos <- sum(c$CRValue)
-ingresos
-sum(c$DBValue)
-head(c$DBValue)
-?sum
-ingresos <- sum(c$DBValue, na.rm=T)
-egresos <- sum(c$CRValue, na.rm=T)
-ingresos
-egresos
-si - egresos + ingresos
-si - ingresos + egresos
-tail(c)
-range(c$SaldoAnterior)
-range(c$SaldoAnterior[2:1957])
-hist(c$SaldoAnterior, xlim=range(c$SaldoAnterior, na.rm=T))
-cuentas[2]
-cuentas[2]-1
-cuentas[1]+1
-c <- data[c((cuentas[1]+1) : (cuentas[2]-1)),]
-dim(c)
-c]
-c[1]
-c[1,]
-str(c)
-si <- c$SaldoAnterior[1]
-si
-ingresos <- sum(c$DBValue, na.rm=T)
-egresos <- sum(c$CRValue, na.rm=T)
-si + ingresos - egresos
-us <- c$SaldoAnterior[length(c$SaldoAnterior)]
-us
-dim(c)[1]
-saldocheck <- rep(NA, dim(c)[1])
-saldocheck
-i=1
-i=2
-x <- c$SaldoAnterior[i] - c$SaldoAnterior[ i - 1]
-x
-x == c$DBValue
-x <- c$SaldoAnterior[i] - c$SaldoAnterior[ i - 1]
-x
-x == c$DBValue[i]
-x == abs(c$DBValue[i])
-abs(x) == c$DBValue[i]
-abs(x)
-c$DBValue[i]
-c$CRValue[i]
-x <- c$SaldoAnterior[2:length(c$SaldoAnterior)]
-y <- c$SaldoAnterior[1:length(c$SaldoAnterior)-1]
-length(x)
-length(y)
-z <- x-y
-if (x>0, saldocheck[i] <- (abs(x) == c$DBValue[i]), saldocheck[i] <- (abs(x) == c$CRValue[i])
-x <- c$SaldoAnterior[2:length(c$SaldoAnterior)]#
-	y <- c$SaldoAnterior[1:length(c$SaldoAnterior)-1]#
-	z <- x-y
-db <- (abs(z) == c$DBValue[2:length(c$SaldoAnterior)])
-cr <- (abs(z) == c$CRValue[2:length(c$SaldoAnterior)])
-head(db)
-FALSE + TRUE
-TRUE + TRUE
-FALSE + FALSE
-saldocheck <- db + cr
-saldocheck
-head(db)
-head(cr)
-c$SaldoAnterior[1]
-c$SaldoAnterior[2] - c$SaldoAnterior[1]
-c$CRValue[1]
-c$CRValue[2]
-c$DBValue[2:length(c$SaldoAnterior)]
-c$CRValue[2:length(c$SaldoAnterior)]
-head(cr)
-abs(z[1])
-abs(z[2])
-abs(z[1]) == c$CRValue[2]
-abs(z[1]) == c$CRValue[1]
-abs(z[1]) == c$CRValue[3]
-c$CRValue[1:3]
-c$CRValue[2]
-abs(z[1])
-abs(z[1]) == c$CRValue[2]
-identical(abs(z[1]), c$CRValue[2])
-class(abs(z[1]))
-class(c$CRValue[2])
-all.equal(abs(z[1]), c$CRValue[2])
-db <- all.equal(abs(z), c$DBValue[2:length(c$SaldoAnterior)])
-cr <- all.equal(abs(z), c$CRValue[2:length(c$SaldoAnterior)])
-saldocheck <- db + cr
-db
-cr
-x <- stats::rnorm(20)
-x < 1
-x[x > 0]
-1 <- 0.5 - 0.3
-x2 <- 0.3 - 0.1
-x1 <- 0.5 - 0.3
-x2 <- 0.3 - 0.1
-x1 == x2
-identical(all.equal(x1, x2), TRUE)
-db <- identical(all.equal(abs(z), c$DBValue[2:length(c$SaldoAnterior)]), TRUE)
-db
-Compare(abs(z), c$DBValue[2:length(c$SaldoAnterior)])
-all.equal(abs(z), abs(c$DBValue[2:length(c$SaldoAnterior)]))
-(abs(z) == abs(c$DBValue[2:length(c$SaldoAnterior)]))
-(abs(z), abs(c$CRValue[2:length(c$SaldoAnterior)]))
-(abs(z) == abs(c$CRValue[2:length(c$SaldoAnterior)]))
-data(presidential, package = "ggplot2")#
-plotList <- list(#
-  qplot(name, data = presidential, geom = "bar", fill = party) + ylim(c(0,6)) + coord_flip(),#
-  qplot(party, data = presidential, geom = "bar", fill = party) + coord_flip()#
-)#
-pm <- ggmatrix(#
-  plotList,#
-  2, 1,#
-  yAxisLabels = c("Presidents", "Party"),#
-  xAxisLabels = c("Count"),#
-  title = "President Term Length"#
-)#
-pm # default spacing#
-# use print.ggmatrix parameters#
-print(pm, leftWidthProportion = 0.12, spacingProportion = 0.05)
+getwd()
+print("community matrix") print(marcus)
+print("community matrix")
+print(marcus)
+length(marcus)
+library("Rgraphviz")
+#rEG<-new("graphNEL", nodes=c(names), edgemode="directed") # plot(rEG)
+install.packages(Rgraphviz)
+install.packages("Rgraphviz")
+rEG<-new("graphNEL", nodes=c(names), edgemode="directed") # plot(rEG)
+library("LoopAnalyst")
+install.packages("LoopAnalyst")
+? graph.cm
+??graph.cm
+ls()
+class(marcus)
+graph.cm(marcus) # this comes from LoopAnalysis library
+library("LoopAnalyst")
+graph.cm(marcus) # this comes from LoopAnalysis library
+graph.cm(ma, file="marcus.dot") # this comes from LoopAnalysis library
+getwd()
+graph.cm(marcus, file="marcus.dot") # this comes from LoopAnalysis library
+library("network")
+g <-n etwork(marcus, direct=T, hyper=F, loops=T)
+g <-network(marcus, direct=T, hyper=F, loops=T)
+plot(g, usearrow=T, arrowhead.cex=2, loop.cex=3, vertex.cex=1, edge.col=4,
+plot.network(g, usearrow=T, arrowhead.cex=2, loop.cex=3, vertex.cex=1, edge.col=4,#
+vertex.col=1, label=network.vertex.names(g), displaylabels=T, boxed.labels=F, label.lwd=3, label.pos=0)
+plot.network(g, usearrow=T, arrowhead.cex=2, loop.cex=3, vertex.cex=1, edge.col=4, vertex.col=1, label=network.vertex.names(g), displaylabels=T, boxed.labels=F, label.lwd=3, label.pos=0)
+library("MASS")
+print("community matrix")
+print(marcus)
+k<-1
+m<-0 #
+	h<-0
+lev<-t(marcus)
+Det_m<-det(lev)
+Det_m
+det(lev)
+lev
+print("Determinant") #
+	print(Det_m)
+dl<-sqrt(length(lev))
+dl2<-dl^2
+print("dl")
+print(dl)
+length(lev)
+nacc<-as.vector(k, mode="integer")#
+	nacc[1]=0
+nacc
+nacc <-as.vector(k, mode="integer")
+nacc
+n_p<-as.vector(m, mode="integer")#
+	n_m<-as.vector(m, mode="integer") #
+	n_oo<-as.vector(m, mode="integer")
+for (m in 1:dl2) {(n_p[m]=0) & (n_m[m]=0) & (n_oo[m]=0)}#
+#
+	n_plus<-as.vector(n_p, mode="integer") #
+	n_min<-as.vector(n_m, mode="integer") #
+	n_o<-as.vector(n_oo, mode="integer")
+ntent<-(length(lev)*1000)
+print(ntent)
+casuale<-matrix(rep(0,dl2),nrow=dl)
+casuale
+for (i in 1:dl)#
+		for(j in 1:dl) casuale[i,j]<-runif(n=1,min=1e-6,max=1)
+print(casuale)
+num=0 #
+	ww<-matrix(rep(NA,dl2),nrow=dl)
+for(i in 1:dl)#
+		for(j in 1:dl) {ww[i,j]<-(lev[i,j]*casuale[i,j])#
+			}
+ww
+lev
+casuale
+lev * casuale
+ww == lev * casuale
+det_ww<-round(det(ww), digits=6)
+eig_vre<-round(Re(eigen(ww)$values), digits=6)
+eig_vim<-round(Im(eigen(ww)$values), digits=6)
+det_ww
+eig_vre
+eig_vim
+eigen(ww)
+Re(23)
+Re(23o)
+i
+Re(23i)
+for (y in 1:dl) {if (eig_vre[y]<0) (num=num+1)}
+eig_vim
+eig_vre
+num
+if ((num-dl)==0) {(nacc[k]=nacc[k]+1) & (inv_ww<-(-round(ginv(ww), digits=6))) & (vector<- as.vector(inv_ww))#
+		for (m in 1:dl2){#
+			if (vector[m]>0) (n_plus[m]=n_plus[m]+1)#
+				else if (vector[m]<0) (n_min[m]=n_min[m]+1) #
+				else if (vector[m]==0) (n_o[m]=n_o[m]+1)#
+				}#
+			}
+(num-dl)==0
+(nacc[k]=nacc[k]+1)
+round(ginv(ww), digits=6)
+help(ginv)
+per_p<-round(matrix(c((n_plus*100)/nacc[k]), nrow=dl, byrow=T), digits=5)#
+ 	per_m<-round(matrix(c((n_min*100)/nacc[k]), nrow=dl, byrow=T), digits=5) #
+ 	per_o<-round(matrix(c((n_o*100)/nacc[k]), nrow=dl, byrow=T), digits=5)#
+ 	v_p<-as.vector(per_p) #
+ 	v_m<-as.vector(per_m) #
+ 	v_o<-as.vector(per_o)#
+ 	nacc[k+1]=nacc[k]
+nacc[k]
+OUT <- as.list(rep(NA,5))#
+#
+	OUT[[1]]<-ntot #
+	OUT[[2]]<-k #
+	OUT[[3]]<-per_p #
+	OUT[[4]]<-per_m #
+	OUT[[5]]<-per_o
+ntot=nacc[k]#
+#
+	OUT <- as.list(rep(NA,5))#
+#
+	OUT[[1]]<-ntot #
+	OUT[[2]]<-k #
+	OUT[[3]]<-per_p #
+	OUT[[4]]<-per_m #
+	OUT[[5]]<-per_o
+print("n° ACCEPTED MOVES") #
+	print(OUT[[1]])
+print("n° loops")#
+	print(OUT[[2]])
+print(" (%) + ") #
+	colnames(OUT[[3]])<-names #
+	rownames(OUT[[3]])<-names #
+	print(OUT[[3]])
+tab<-as.vector(h, mode="any")
+tab
+Loop(marcus)
+Loop <- function(marcus) {#
+	### initializing count####
+	# print ("WARNING!!! MASS PACKAGE NEEDED")#
+	print("community matrix") #
+	print(marcus)#
+	# names<-scan("names2.txt", what=character(), sep="," ) # rubbish#
+	k<-1#
+	m<-0 #
+	h<-0#
+	## #community matrix as sign matrix: lev ##
+	#MATRIX IS: a11, a21, a31,...ect. where aij=dfi/dxj change in the growth function of i 	due to j!############# #1°es. Predator-Prey#
+		lev<-t(marcus)#
+		Det_m<-det(lev)#
+#
+	print("Determinant") #
+	print(Det_m)#
+	dl<-sqrt(length(lev)) #
+	dl2<-dl^2#
+		print("dl") #
+		print(dl)#
+	# print(dl^2)#
+	nacc <-as.vector(k, mode="integer")#
+	nacc[1] = 0#
+	n_p<-as.vector(m, mode="integer")#
+	n_m<-as.vector(m, mode="integer") #
+	n_oo<-as.vector(m, mode="integer")#
+#
+	for (m in 1:dl2) {(n_p[m]=0) & (n_m[m]=0) & (n_oo[m]=0)}#
+#
+	n_plus<-as.vector(n_p, mode="integer") #
+	n_min<-as.vector(n_m, mode="integer") #
+	n_o<-as.vector(n_oo, mode="integer")#
+	######### NUMBER OF RUNS#
+	# ntent<-(length(lev)*100) #
+	# ntent<-(length(lev)*500)#
+	ntent<-(length(lev)*1000)#
+	# ntent<-(length(lev)*5000) #
+	# ntent<-(length(lev)*10000)#
+#
+	print(ntent) ##########
+#
+	for (k in 1:ntent){#
+#
+	######################### #
+	#random matrix: casuale # #
+	##########################
+	casuale <- matrix(rep(0,dl2),nrow=dl)#
+	###### RANDOM MATRIX GENERATION (NAME IS: casuale) in [1e-6,1] #
+	for (i in 1:dl)#
+		for(j in 1:dl) casuale[i,j]<-runif(n=1,min=1e-6,max=1) #
+	### J: this is a very unefficient way ot creating a random matrix!!! 2 for loops!!!#
+	# print(casuale)#
+	################################################### #
+	#weighted matrix (on degree tot for each variable) # #
+	###################################################
+	num=0 #
+	ww<-matrix(rep(NA,dl2),nrow=dl)#
+	for(i in 1:dl)#
+		for(j in 1:dl) {ww[i,j]<-(lev[i,j]*casuale[i,j])#
+			}#
+	det_ww <-round(det(ww), digits=6)#
+	eig_vre <-round(Re(eigen(ww)$values), digits=6) #
+	eig_vim <-round(Im(eigen(ww)$values), digits=6)#
+	for (y in 1:dl) {if (eig_vre[y]<0) (num=num+1)}#
+##########A MINUS SIGN IS INSERTED DURING MATRIX INVERSION TO TAKE INTO ACCOUNT THE SIGN OF COEFF b=-dfi/dc ##########
+#
+	if ((num-dl)==0) {(nacc[k]=nacc[k]+1) & (inv_ww<-(-round(ginv(ww), digits=6))) & (vector<- as.vector(inv_ww))#
+		for (m in 1:dl2){#
+			if (vector[m]>0) (n_plus[m]=n_plus[m]+1)#
+				else if (vector[m]<0) (n_min[m]=n_min[m]+1) #
+				else if (vector[m]==0) (n_o[m]=n_o[m]+1)#
+				}#
+			}#
+#
+ 	round(ginv(ww), digits=6)#
+ 	per_p<-round(matrix(c((n_plus*100)/nacc[k]), nrow=dl, byrow=T), digits=5)#
+ 	per_m<-round(matrix(c((n_min*100)/nacc[k]), nrow=dl, byrow=T), digits=5) #
+ 	per_o<-round(matrix(c((n_o*100)/nacc[k]), nrow=dl, byrow=T), digits=5)#
+ 	v_p<-as.vector(per_p) #
+ 	v_m<-as.vector(per_m) #
+ 	v_o<-as.vector(per_o)#
+ 	nacc[k+1]=nacc[k]#
+ 	#############################################
+ 	}#
+	ntot=nacc[k]#
+#
+	OUT <- as.list(rep(NA,5))#
+#
+	OUT[[1]]<-ntot #
+	OUT[[2]]<-k #
+	OUT[[3]]<-per_p #
+	OUT[[4]]<-per_m #
+	OUT[[5]]<-per_o#
+#
+	print("n° ACCEPTED MOVES") #
+	print(OUT[[1]])#
+	print("n° loops")#
+	print(OUT[[2]])#
+	print(" (%) + ") #
+	colnames(OUT[[3]])<-names #
+	rownames(OUT[[3]])<-names #
+	print(OUT[[3]])#
+	print(" (%) - ") #
+	colnames(OUT[[4]])<-names #
+	rownames(OUT[[4]])<-names #
+	print(OUT[[4]])#
+	print(" (%) 0 ")#
+	colnames(OUT[[5]])<-names #
+	rownames(OUT[[5]])<-names #
+	print(OUT[[5]])#
+#
+	tab <-as.vector(h, mode="any")#
+#
+	for (h in 1:dl2) {#
+		if (v_o[h]==100) (tab[h]<-0)#
+			else if (v_p[h]>=75) (tab[h]<-"+")#
+			else if (v_p[h]<=25 & v_p[h]>=0) (tab[h]<-"-")#
+			else if (abs(v_p[h]-v_m[h])<=20) (tab[h]<-"0*") #
+			else if (25<v_p[h] & v_p[h]<40) (tab[h]<-"?-")#
+			else if (60<v_p[h] & v_p[h]<75) (tab[h]<-"?+") #
+	}#
+	tab_m<-matrix(c(tab), nrow=dl, byrow=T) #
+	tabella_predizioni<-t(tab_m)#
+#
+	### insert as external######### #
+	colnames(tabella_predizioni)<-names #
+	rownames(tabella_predizioni)<-names#
+	print("tabella_predizioni") #
+	print.noquote(tabella_predizioni)#
+}
+Loop(marcus)
+library (statnet)
+help(modularity)
+?? modularity
+help(package = 'sna')
+ls()
+hello
+library('fields')
+help(package='fields')
+help(fields.hints)
+x<- 1:20#
+y<- 1:15#
+z<-  outer( x,y,"+")#
+zr<- range( c(z))
+par( oma=c(4,0,0,0))#
+set.panel( 3,2)#
+par( mar=c(1,1,0,0))
+for ( k in 1:6){#
+image( x,y,z, axes=FALSE, xlab="", ylab="", zlim=zr)#
+}
+par( oma=c(0,0,0,0))#
+image.plot( zlim=zr, legend.only=TRUE, horizontal=TRUE, legend.mar=5)
+par( oma=c(8,6,1,1))#
+set.panel( 3,2)#
+par( mar=c(1,1,0,0))
+for ( k in 1:6){#
+ image( x,y,z, axes=FALSE, xlab="", ylab="", zlim=zr)#
+ box() # box around figure
+# maybe draw an x axis #
+  if( k  %in% c(5,6) ){#
+  axis( 1, cex.axis=1.5)#
+  mtext( line=4, side=1, "Xstuff")}#
+#
+# maybe draw a y axis#
+  if( k  %in% c(1,3,5) ){#
+  axis( 2, cex.axis=1.5)#
+  mtext( line=4, side=2, "Ystuff")}#
+}
+# same trick of adding a legend strip. #
+par( oma=c(0,0,0,0))#
+image.plot( zlim=zr, legend.only=TRUE, horizontal=TRUE, legend.mar=5)
+# reset panel #
+set.panel()
+clab<- colors()#
+n<- length( clab)#
+N<- ceiling( sqrt(n) )#
+M<- N#
+temp<- rep( NA,M*N)#
+temp[1:n] <- 1:n#
+z<- matrix(temp, M,N)#
+#
+image(seq(.5,M+.5,,M+1), seq(.5,N+.5,,N+1)#
+       , z,  col=clab, axes=FALSE, xlab="", ylab="")
+clab<- colors()#
+#
+for( nn in clab){#
+  temp<- signif(col2rgb(nn)/256, 3)#
+   cat(#
+    "\definecolor{", #
+                nn, "}",#
+    "{rgb}{", temp[1], #
+          ",", temp[2], #
+          ",", temp[3], #
+           "}", fill=TRUE , sep="")#
+ }
+data(CO2)
+quilt.plot( CO2$lon.lat, CO2$y)#
+world( add=TRUE)
+out<-fastTps( CO2$lon.lat, CO2$y, theta=4, lambda=2.0)
+print( out)
+surface( out, type="I", nx=300, ny=150)
+out2<-fastTps( CO2$lon.lat, CO2$y, lon.lat=TRUE,lambda=1.5, theta=4*68) #
+print(out2)
+surface( out2, type="I", nx=300, ny=150)
+temp<- matrix( NA, ncol=ncol(CO2.true$z), nrow=nrow(CO2.true$z))#
+temp[ CO2.true$mask] <- CO2$y
+image.plot(CO2.true$x,CO2.true$y, temp)
+look<- predictSurface( out2, grid.list=list( x=CO2.true$x, y=CO2.true$y))#
+image.plot(look)
+rm(list=ls())
+set.seed(12345)
+library (network)
+library (sna) # load the package
+##Load old data
+rs18data<- read.csv ("/Users/juanrocha/Documents/JUAN/PhD-SRC/RS20+Analysis/rs18cld.csv")
+rs18net<-network(rs18data[,1:2],dir=T,loops=F)
+driv<-read.csv("/Users/juanrocha/Documents/JUAN/PhD-SRC/RS20+Analysis/drivname.csv")
+rs <- read.csv2('~/Documents/JUAN/PhD-SRC/RS20+Analysis/RS_CLD_2015.csv')
+rs <- rs[,-1]
+head(rs)
+rs4 <- network(rs[,1:2], dir=T, loops=F)
+rs4 %e% 'polarity' <- rs$Polarity
+plotnet <- function(net){#
+	plot.network(net, #mode='circle',#
+			vertex.col = 'goldenrod2',#
+			#label = network.vertex.names(net),#
+			# boxed.labels=F,#
+			# label.cex=0.8,#
+			usecurve=T,#
+			vertex.cex= degree(net, gmode='digraph')/2,#
+			label.pos=5,#
+			edge.col= 3+get.edge.attribute(net$mel, 'polarity'),#
+			edge.lwd = 1 + (net %e% 'fb')/2 , #0.05,#
+			edge.curve = 0.01,#
+			displayisolates=T, pad=1#
+			)#
+			}
+levels(rs$Regime.Shift)	# this are the RS currently on dataset
+com <- combn(levels(rs$Regime.Shift), m=2) # combinatories
+com
+rs.net <- function (dat, i){#
+	# build network#
+		rs.x <- network(subset(dat, #
+			Regime.Shift == levels(dat$Regime.Shift)[i])[,1:2])#
+	# add polarity to edges#
+		rs.x %e% 'polarity' <- subset(dat, Regime.Shift == levels #
+			(dat$Regime.Shift)[i])$Polarity#
+	# add cycles   #
+		fb.sum <- kcycle.census(rs.x, maxlen=20, mode='digraph', #
+		tabulate.by.vertex=T, cycle.comembership='sum')$cycle.comemb#
+		rs.x %e% 'fb' <-  fb.sum#
+		rs.x %n% 'name' <- levels(dat$Regime.Shift)[i]#
+	return(rs.x) #
+}
+rs1 <- rs.net(rs, 1)
+rs2 <- rs.net(rs, 2)
+rs3 <- rs.net(rs, 3)
+rs4 <- rs.net(rs, 4)
+# A function to merge networks based on edge lists aggregation#
+net.merge <- function(dat,i,j){#
+		rs.mix <- network(rbind(subset(dat, Regime.Shift == #
+			levels(dat$Regime.Shift)[i]), #
+			subset(dat, Regime.Shift== #
+			levels(dat$Regime.Shift)[j]))[,1:2])#
+		rs.mix %e% 'polarity' <- rbind(subset(dat, #
+			Regime.Shift == levels(dat$Regime.Shift)[i]), #
+			subset(dat, Regime.Shift== #
+			levels (dat$Regime.Shift)[j]))$Polarity#
+		# add cycles   #
+		fb.sum <- kcycle.census(rs.mix, maxlen=20, mode='digraph', #
+			tabulate.by.vertex=T, cycle.comembership='sum')$cycle.comemb#
+		rs.mix %e% 'fb' <-  fb.sum#
+		rs.mix %n% 'name' <- paste(levels(rs$Regime.Shift)[i], #
+			levels(rs$Regime.Shift)[j], sep=' - ')#
+	return(rs.mix)#
+}
+key <- combn(seq(1,4),2)
+cas1 <- net.merge(rs, i=1, j=2) # cascading effect network 1
+out <- list()
+for (i in 1:dim(key)[2]){#
+	out[[i]] <- net.merge(rs, i = key[1,i], j = key[2,i])#
+}
+source('~/Desktop/Code/themeJuan.R')
+source('~/Dropbox/Code/themeJuan.R')
 library(ggplot2)
-data(presidential, package = "ggplot2")#
-plotList <- list(#
-  qplot(name, data = presidential, geom = "bar", fill = party) + ylim(c(0,6)) + coord_flip(),#
-  qplot(party, data = presidential, geom = "bar", fill = party) + coord_flip()#
-)#
-pm <- ggmatrix(#
-  plotList,#
-  2, 1,#
-  yAxisLabels = c("Presidents", "Party"),#
-  xAxisLabels = c("Count"),#
-  title = "President Term Length"#
-)#
-pm # default spacing#
-# use print.ggmatrix parameters#
-print(pm, leftWidthProportion = 0.12, spacingProportion = 0.05)
-library(GGal)
-library(GGally)
-data(presidential, package = "ggplot2")#
-plotList <- list(#
-  qplot(name, data = presidential, geom = "bar", fill = party) + ylim(c(0,6)) + coord_flip(),#
-  qplot(party, data = presidential, geom = "bar", fill = party) + coord_flip()#
-)#
-pm <- ggmatrix(#
-  plotList,#
-  2, 1,#
-  yAxisLabels = c("Presidents", "Party"),#
-  xAxisLabels = c("Count"),#
-  title = "President Term Length"#
-)#
-pm # default spacing#
-# use print.ggmatrix parameters#
-print(pm, leftWidthProportion = 0.12, spacingProportion = 0.05)
-airports <- read.csv("http://datasets.flowingdata.com/tuts/maparcs/airports.csv", header = TRUE)#
-rownames(airports) <- airports$iata#
+source('~/Dropbox/Code/themeJuan.R')
+net.fb <- function(net1, net2, net3){#
 #
-# select some random flights#
-set.seed(1234)#
-flights <- data.frame(#
-  origin = sample(airports[200:400, ]$iata, 200, replace = TRUE),#
-  destination = sample(airports[200:400, ]$iata, 200, replace = TRUE)#
-)
-# convert to network#
-flights <- network(flights, directed = TRUE)
-library(network)
-# convert to network#
-flights <- network(flights, directed = TRUE)
-# add geographic coordinates#
-flights %v% "lat" <- airports[ network.vertex.names(flights), "lat" ]#
-flights %v% "lon" <- airports[ network.vertex.names(flights), "long" ]#
+	#count cycles for all networks#
+	x1cycle <- kcycle.census(net1, maxlen=20, mode='digraph',#
+		tabulate.by.vertex=T, cycle.comembership='sum')#
 #
-# drop isolated airports#
-delete.vertices(flights, which(degree(flights) < 2))#
+	x2cycle <- kcycle.census(net2, maxlen=20, mode='digraph',#
+		tabulate.by.vertex=T, cycle.comembership='sum')#
 #
-# compute degree centrality#
-flights %v% "degree" <- degree(flights, gmode = "digraph")#
+	x3cycle <- kcycle.census(net3, maxlen=20, mode='digraph',#
+		tabulate.by.vertex=T, cycle.comembership='sum')#
 #
-# add random groups#
-flights %v% "mygroup" <- sample(letters[1:4], network.size(flights), replace = TRUE)
-library(sna)
-# add geographic coordinates#
-flights %v% "lat" <- airports[ network.vertex.names(flights), "lat" ]#
-flights %v% "lon" <- airports[ network.vertex.names(flights), "long" ]#
+	#create a matrix with results#
+	feed.mat <- cbind(x1cycle$cycle.count[,1], x2cycle$cycle.count[,1],#
+		 x3cycle$cycle.count[,1]) # feedbacks matrix#
+	# put some colnames#
+	colnames(feed.mat) <- c('RS1', 'RS2', 'RS.mix')#
+	#c(net1 %n% 'name', net2 %n% 'name', net3 %n% 'name')#
 #
-# drop isolated airports#
-delete.vertices(flights, which(degree(flights) < 2))#
+	feed.mat <- as.data.frame(feed.mat)#
+	feed.mat$feed.length <- rownames(feed.mat)#
+	feed.mat$Inc.Feed <- feed.mat$RS.mix - (feed.mat$RS1 + feed.mat$RS2)#
 #
-# compute degree centrality#
-flights %v% "degree" <- degree(flights, gmode = "digraph")#
+	#put data on long format#
+	require(reshape2)#
+	x.long <- melt(feed.mat, id.var="feed.length",#
+			 measure.var= colnames(feed.mat)[c(1:3,5)],#
+			 value.name='value')#
 #
-# add random groups#
-flights %v% "mygroup" <- sample(letters[1:4], network.size(flights), replace = TRUE)
-usa <- ggplot(map_data("usa"), aes(x = long, y = lat)) +#
-  geom_polygon(aes(group = group), color = "grey65",#
-               fill = "#f9f9f9", size = 0.2)
-delete.vertices(flights, which(flights %v% "lon" < min(usa$data$long)))#
-delete.vertices(flights, which(flights %v% "lon" > max(usa$data$long)))#
-delete.vertices(flights, which(flights %v% "lat" < min(usa$data$lat)))#
-delete.vertices(flights, which(flights %v% "lat" > max(usa$data$lat)))
-# overlay network data to map#
-ggnetworkmap(usa, flights, size = 4, great.circles = TRUE,#
-             node.group = mygroup, segment.color = "steelblue",#
-             ring.group = degree, weight = degree)
-data(twitter_spambots)
-str(twitter_spambots)
-world <- fortify(map("world", plot = FALSE, fill = TRUE))#
-world <- ggplot(world, aes(x = long, y = lat)) +#
-  geom_polygon(aes(group = group), color = "grey65",#
-               fill = "#f9f9f9", size = 0.2)#
+	x.long$value <- as.integer(x.long$value)#
+	x.long$feed.length <- as.integer(x.long$feed.length)#
 #
-# view
-world
-ggnetworkmap(world, twitter_spambots)
-ggnetworkmap(net = twitter_spambots, arrow.size = 0.5)
-# compute indegree and outdegree centrality#
-twitter_spambots %v% "indegree" <- degree(twitter_spambots, cmode = "indegree")#
-twitter_spambots %v% "outdegree" <- degree(twitter_spambots, cmode = "outdegree")#
+	#plot it#
+	require(ggplot2)#
+	g <- ggplot(x.long, aes(x=feed.length, y=value), group=variable)#
+	g <- g + geom_bar(aes(fill=variable), position = 'stack',#
+		binwidth=1, stat='identity')  +#
+		ylab('Number of feedbacks') + xlab('Feedback length') +#
+		ggtitle(net3 %n% 'name') + theme_juan() +#
+		theme(legend.position=c(0.8,0.7), plot.title=element_text(size=rel(0.85))) + scale_fill_manual("Networks",values=c("#984EA3", "#4DAF4A", "#377EB8", "#E41A1C"))#
 #
-ggnetworkmap(net = twitter_spambots,#
-             arrow.size = 0.5,#
-             node.group = indegree,#
-             ring.group = outdegree, size = 4) +#
-  scale_fill_continuous("Indegree", high = "red", low = "yellow") +#
-  labs(color = "Outdegree")
-ggnetworkmap(net = twitter_spambots,#
-             arrow.size = 0.5,#
-             node.group = followers,#
-             ring.group = friends,#
-             size = 4,#
-             weight = indegree,#
-             label.nodes = TRUE, vjust = -1.5) +#
-  scale_fill_continuous("Followers", high = "red", low = "yellow") +#
-  labs(color = "Friends") +#
-  scale_color_continuous(low = "lightgreen", high = "darkgreen")
-ggnetworkmap(net = twitter_spambots,#
-             arrow.size = 0.1,#
-             node.group = followers,#
-             ring.group = friends,#
-             size = 4,#
-             weight = indegree,#
-             label.nodes = TRUE, vjust = -1.5) +#
-  scale_fill_continuous("Followers", high = "red", low = "yellow") +#
-  labs(color = "Friends") +#
-  scale_color_continuous(low = "lightgreen", high = "darkgreen")
-data(tips, package = "reshape")#
-pm <- ggpairs(tips)#
-pm
-## reduce the columns being displayed#
-## these two lines of code produce the same plot matrix#
-pm <- ggpairs(tips, columns = c(1, 6, 2))#
-pm <- ggpairs(tips, columns = c("total_bill", "time", "tip"), columnLabels = c("Total Bill", "Time of Day", "Tip"))#
-pm
-library(ggplot2)#
-pm <- ggpairs(tips, mapping = aes(color = sex), columns = c("total_bill", "time", "tip"))#
-pm
-library(ggplot2)#
-pm <- ggpairs(#
-  tips, columns = c("total_bill", "time", "tip"),#
-  lower = list(#
-    continuous = "smooth",#
-    combo = "facetdensity",#
-    mapping = aes(color = time)#
-  )#
-)#
-pm
-pm <- ggpairs(#
-  tips, columns = c("total_bill", "time", "tip"),#
-  upper = "blank",#
-  diag = NULL#
-)#
-pm
-my_bin <- function(data, mapping, ..., low = "#132B43", high = "#56B1F7") {#
-  ggplot(data = data, mapping = mapping) +#
-    geom_bin2d(...) +#
-    scale_fill_gradient(low = low, high = high)#
+	return(list(feed.mat, g))#
+}
+key
+x1 <- net.fb(rs1,rs2, out[[1]])[[2]]#
+x2 <- net.fb(rs1,rs3, out[[2]])[[2]] + theme(legend.position='none')#
+x3 <- net.fb(rs1,rs4, out[[3]])[[2]]#
+x4 <- net.fb(rs2,rs3, out[[4]])[[2]]#
+x5 <- net.fb(rs2,rs4, out[[5]])[[2]]#
+x6 <- net.fb(rs3,rs4, out[[6]])[[2]]
+quartz(title='Networks', width=7, height=7, pointsize=8,family='Helvetica')#
+par(mfrow= c(2,2))#
+n1 <- plotnet(rs1); title(main=rs1 %n% 'name')#
+n2 <- plotnet(rs2); title(main=rs2 %n% 'name')#
+n3 <- plotnet(rs3); title(main=rs3 %n% 'name')#
+n4 <- plotnet(rs4); title (main = rs4 %n% 'name')
+# Make matrix of combinations#
+quartz(title='NetMatrix', width=7, height=7, pointsize=6, family='Helvetica')#
+par(mfrow=c(4,4))#
+n1 <- plotnet(rs1); title(main=rs1 %n% 'name')#
+c1 <- plotnet(out[[1]]); title(main= out[[1]] %n% 'name')#
+c2 <- plotnet(out[[2]]); title(main= out[[2]] %n% 'name')#
+c3 <- plotnet(out[[3]]); title(main= out[[3]] %n% 'name')#
+plot(NULL)#
+n2 <- plotnet(rs2); title(main=rs2 %n% 'name')#
+c4 <- plotnet(out[[4]]); title(main= out[[4]] %n% 'name')#
+c5 <- plotnet(out[[5]]); title(main= out[[5]] %n% 'name')#
+plot(NULL)#
+plot(NULL)#
+n3 <- plotnet(rs3); title(main=rs3 %n% 'name')#
+c6 <- plotnet(out[[6]]); title(main= out[[6]] %n% 'name')#
+plot(NULL)#
+plot(NULL)#
+plot(NULL)#
+n4 <- plotnet(rs4); title (main = rs4 %n% 'name')
+quartz(title='NetMatrix', width=7, height=7, pointsize=5, family='Helvetica')#
+require (gridExtra); require(grid)#
+layt <- grid.layout(nrow=4, ncol=4)#
+#
+grid.newpage()#
+pushViewport(viewport(layout = layt))#
+print(x1, vp= viewport(layout.pos.row=2, layout.pos.col=1))#
+print(x2, vp= viewport(layout.pos.row=3, layout.pos.col=1))#
+print(x3, vp= viewport(layout.pos.row=4, layout.pos.col=1))#
+print(x4, vp= viewport(layout.pos.row=3, layout.pos.col=2))#
+print(x5, vp= viewport(layout.pos.row=4, layout.pos.col=2))#
+print(x6, vp= viewport(layout.pos.row=4, layout.pos.col=3))
+help(package = 'LoopAnalysis')
+library(LoopAnalysis)
+help(package = 'LoopAnalyst')
+enumerate.loops
+library (LoopAnalyst)
+enumerate.loops
+cm <- matrix(c(1,0,1,-1,0,0,1,1,1,-1,-1,-1,1,1,0), nrow = 3, ncol = 5)
+cm
+enumerate.loops(cm)
+plot.network(cm)
+net <- network(cm)
+plot.network (cm)
+plot.network (net)
+plot.network (net, dir = T)
+plot.network (net, digraph)
+net <- network(cm, dir = T, loops = T)
+plot.network (net)
+net
+net <- network(cm, directed = T, loops = T)
+net
+cm
+enumerate.loops
+LOVE
+cm
+cm <- cm[1:3,1:3]
+cm
+nrow(cm)
+beautiful
+library(rmarkdown)
+install.packages('rmarkdown')
+library(rmarkdown)
+help(package = 'rmarkdown')
+library(gdata)
+install.packages('gdata')
+tmp <- installed.packages()
+tmp
+install.packages('gdata')
+0.1/0.5
+1/3
+1/1
+2
+-1/1
+-0.4/3
+0.3/-0.9
+setwd("~/Documents/Projects/TAI/TransformedData/Data_Burkina&Ganha")#
+# load map for visualizations and data#
+volta.shp <- readShapeSpatial("~/Documents/Projects/TAI/TransformedData/Bundling/Volta_bundling1.shp")#
+#
+##### Useful functions for later:#
+#
+### Select only districts on the Volta Basin#
+volta.only <- function(x){#
+  x <- x [ is.element (x$TAI_ID1, volta.shp@data$TAI_ID1 ), ]#
+  x <- droplevels(x)#
 }#
-pm <- ggpairs(#
-  tips, columns = c("total_bill", "time", "tip"),#
-  lower = list(#
-    continuous = my_bin#
-  )#
-)#
-pm
-pm <- ggpairs(#
-  tips, columns = c("total_bill", "time", "tip"),#
-  lower = list(#
-    combo = wrap("facethist", binwidth = 1),#
-    continuous = wrap(my_bin, binwidth = c(5, 0.5), high = "red")#
-  )#
-)#
-pm
-pm <- ggpairs(tips, columns = c("total_bill", "time", "tip"))#
-# retrieve the third row, first column plot#
-p <- pm[3,1]#
-p <- p + aes(color = time)#
-p#
-pm[3,1] <- p#
-pm
-q9
-getwd()
-# clean work space#
-rm(list=ls())#
 #
-# load packages#
-require(rvest)#
-require(RSelenium)
-rm(list=ls())#
-require (tm)#
-require (SnowballC)#
-require (topicmodels)#
-require (RTextTools) #tokenize as bi-grams - check#
-require (lda)#
-require (RColorBrewer)#
-require (slam)
-load('~/Dropbox/pdf2text/ArcticAnalysis2/ArcticAnalysis150505.RData')
+### Normalizing by scaling everything to 0:1#
+rescale_hw <- function (x){ # This is Hadley Wickman function from his book R for DataScience#
+  rng <- range(x, na.rm= TRUE, finite = TRUE)#
+  (x - rng[1]) / (rng[2] - rng[1])#
+}#
+#
+### Correct the numeric format from excel files#
+correct.num <- function (x){#
+  l <- length(x)#
+  x[3:l] <- apply (x[3:l], 2, function (x){as.numeric(x)} )#
+  return(x)#
+}#
+#
+## Read data#
+#### New file with raw values from Katja: 160901#
+#
+file <- 'Volta_Vars_raw_160901.xlsx'#
+sn <- sheetNames(xls=file)#
+#
+users <- read.xls(file, sheet=2, dec=',')#
+users <- correct.num(users)#
+#
+resource <- read.xls (file, sheet=3, dec=',')#
+biophys <- resource [c(1,2,11:15)]#
+resource <- resource [-c(11:15)]#
+biophys <- correct.num(biophys)#
+resource <- correct.num (resource)#
+# biophys <- read.xls(file, sheet=3, dec=',')#
+#
+# Threre is 3 datasets for interactions depending on the sheet#
+# 4 = kcals per distric area in sq.km#
+# 5 = kcals_harv.area#
+# 6 = ratio_harv.area#
+# 7 = other#
+interact <- read.xls(file,sheet=5, dec=',')#
+interact <- correct.num(interact)#
+interact <- volta.only(interact)#
+#
+### Combine all datasets for clustering all#
+dat <- left_join (users, resource, by = c("TAI_ID1", "ADM_2"))#
+dat <- left_join(dat, biophys, by = c("TAI_ID1", "ADM_2"))#
+dat <- left_join(dat, interact, by = "TAI_ID1")#
+#
+dat <- dat[-26] # delete Province#
+#
+# Note this is non-normalized data, original values. After the following line all is "rescaled" to 0-1#
+dat[3:35] <- apply(dat[3:35], 2, rescale_hw)#
+## You can delete "Pop_dens_log" since it's rescaled and you already have pop_density.#
+dat <- dat[-4]
+rm(list = ls())
+## load libraries#
+library  ('gdata')#
+library ('dplyr')#
+library ('reshape')#
+library (corrgram)#
+library(vegan)#
+library (ggplot2)
+# load libraries for mapping#
+library(maptools)#
+library(rgeos)#
+library(RColorBrewer)
+# load libraries for clustering#
+library (vegan)#
+# library(rgl)#
+# library(cluster)#
+library(NbClust)#
+library(clValid)#
+# library(MASS)#
+library(kohonen)
+setwd("~/Documents/Projects/TAI/TransformedData/Data_Burkina&Ganha")#
+# load map for visualizations and data#
+volta.shp <- readShapeSpatial("~/Documents/Projects/TAI/TransformedData/Bundling/Volta_bundling1.shp")#
+#
+##### Useful functions for later:#
+#
+### Select only districts on the Volta Basin#
+volta.only <- function(x){#
+  x <- x [ is.element (x$TAI_ID1, volta.shp@data$TAI_ID1 ), ]#
+  x <- droplevels(x)#
+}#
+#
+### Normalizing by scaling everything to 0:1#
+rescale_hw <- function (x){ # This is Hadley Wickman function from his book R for DataScience#
+  rng <- range(x, na.rm= TRUE, finite = TRUE)#
+  (x - rng[1]) / (rng[2] - rng[1])#
+}#
+#
+### Correct the numeric format from excel files#
+correct.num <- function (x){#
+  l <- length(x)#
+  x[3:l] <- apply (x[3:l], 2, function (x){as.numeric(x)} )#
+  return(x)#
+}
+file <- 'Volta_Vars_raw_160901.xlsx'#
+sn <- sheetNames(xls=file)#
+#
+users <- read.xls(file, sheet=2, dec=',')#
+users <- correct.num(users)#
+#
+resource <- read.xls (file, sheet=3, dec=',')#
+biophys <- resource [c(1,2,11:15)]#
+resource <- resource [-c(11:15)]#
+biophys <- correct.num(biophys)#
+resource <- correct.num (resource)#
+# biophys <- read.xls(file, sheet=3, dec=',')#
+#
+# Threre is 3 datasets for interactions depending on the sheet#
+# 4 = kcals per distric area in sq.km#
+# 5 = kcals_harv.area#
+# 6 = ratio_harv.area#
+# 7 = other#
+interact <- read.xls(file,sheet=5, dec=',')#
+interact <- correct.num(interact)#
+interact <- volta.only(interact)#
+#
+### Combine all datasets for clustering all#
+dat <- left_join (users, resource, by = c("TAI_ID1", "ADM_2"))#
+dat <- left_join(dat, biophys, by = c("TAI_ID1", "ADM_2"))#
+dat <- left_join(dat, interact, by = "TAI_ID1")#
+#
+dat <- dat[-26] # delete Province
+# Note this is non-normalized data, original values. After the following line all is "rescaled" to 0-1#
+dat[3:35] <- apply(dat[3:35], 2, rescale_hw)#
+## You can delete "Pop_dens_log" since it's rescaled and you already have pop_density.#
+dat <- dat[-4]
+library (NbClust)
+clust_num <- NbClust( data = dat[-c(1,2)], dist = 'manhattan',  # diss = designdist(full [-c(2,23)], '1-J/sqrt(A*B)' )#
+                      min.nc = 3, max.nc = 12, method = 'ward.D2', alphaBeale = 0.1,#
+                      index = 'all')
+quartz()#
+par(mfrow=c(1,1))#
+hist(clust_num$Best.nc[1,],breaks=max(na.omit(clust_num$Best.nc[1,])),#
+     xlab="Number of clusters",col="lightgrey", main="Optimal number of clusters?")
+library (clValid)
+library (clValid)#
+## Internal validation#
+intern <- clValid(obj=as.data.frame(dat[-c(1,2)]), nClust=c(3:9),#
+                  clMethods=c('hierarchical', 'kmeans', 'diana', 'fanny','som',#
+                              'pam', 'sota', 'clara', 'model'),#
+                  validation='internal')#
+#
+## Stability validation#
+stab <- clValid(obj=as.data.frame(dat[-c(1,2)]), nClust=c(3:9),#
+                clMethods=c('hierarchical', 'kmeans', 'diana', 'fanny', 'som',#
+                            'pam', 'sota', 'clara', 'model'),#
+                validation='stability')#
+#
+summary (intern)
+mds <- metaMDS(dat[-c(1,2)], distance = 'manhattan', trymax = 1000, verbose = FALSE)#
+setwd('~/Documents/Projects/TAI/scripts/TAI-Volta')
+k <- c(7,9)#
+#
+par(mfrow=c(4,3))#
+#
+for (i in 1:length(k)){#
+  par(mai = c(0.1, 0.2, 0.1 , 0.1))#
+#
+  ## Best selected algorithms: hierarchical, k-means and som#
+  fitKM <- kmeans(dat[-c(1,2)], centers= k[i] ,iter.max=2000,nstart=50)#
+  fitSOM <- som(as.matrix(dat[-c(1,2)]), grid= somgrid(3,2,'hexagonal'))#
+  dis <- vegdist(dat[-c(1,2)], method='manhattan')#
+  clus <- hclust(dis, method='ward.D2')#
+  grp <- cutree(clus, k[i])#
+  fitHier <- grp#
+#
+  # create a clusters dataframe#
+  clusters <- data.frame( TAI_ID1 = dat$TAI_ID1, # codes#
+                        #clara = as.vector(fitClara$clustering ),#
+                        k_means = as.vector(fitKM$cluster),#
+                        #PAM = as.vector(fitPAM$clustering),#
+                        som = as.vector(fitSOM$unit.classif),#
+                        hierarchical = as.vector(fitHier))#
+#
+  # create colors#
+  levelCols <- brewer.pal(k [i], "Set1")#
+#
+  # plot#
+  for (j in 2:4){#
+    # Plot MDS with grouping according with each clustering algorithm#
+    ordiplot(mds, type='none', main= paste(k[i], colnames( clusters)[j],  sep = ' '), xlab = NULL, ylab = NULL )#
+    points(mds$points, cex=1, lwd=1.5,#
+         col= levelCols[clusters[,j]]) #volta.shp@data[,i]#
+    ordihull(mds, groups= clusters[,j], label = TRUE, cex=0.7,#
+           col="purple", lty=1)#
+    #plot(ef1, p.max=0.05, col='blue', cex=0.5)#
+    #plot(ef2, p.max=0.05, col='purple', cex=0.5)#
+  }#
+  for (j in 2:4){#
+    par(mai = c(0.2, 0.2, 0.2 , 0.2))#
+    # Plot map with resulting clusters#
+    plot(volta.shp, col= levelCols[clusters[,j]],lwd=0.1)  #
+         # main= paste(k[i], colnames( clusters)[j], sep = ' '))#
+#
+  }#
+}
 ls()
-sapply (tset.TM[1:3], slot, "alpha")
-dim(tset.tdm)
-lapply(tset.TM, logLik) #maximize loglik#
-lapply(tset.TM[c(1,2,4)], perplexity) #minimize perplexity#
-sapply (tset.TM, function (x)#
-  mean(apply(posterior(x)$topics,#
-             1, function (z) - sum(z * log(z))))) #maximize ENTROPY#
-#
-Topic <- topics(tset.TM [["VEM0"]], 1)
-quartz(width=3.5, height=3.5, family ='Helvetica', pointsize=6)#
-par (mfcol=c(2,2))#
-dotchart(unlist(sapply (tset.TM[1:3], slot, "alpha")), xlab="alpha")#
-dotchart(unlist(lapply(tset.TM, logLik)), xlab="logLik") #maximize loglik#
-dotchart(unlist(lapply(tset.TM[c(1,2,4)], perplexity)), xlab="Perplexity") #minimize perplexity#
-dotchart(unlist( sapply (tset.TM, function (x)#
-  mean(apply(posterior(x)$topics,#
-             1, function (z) - sum(z * log(z))))) ), xlab="Entropy")
-ls()
-quartz(width=3.5, height=3.5, family ='Helvetica', pointsize=6)#
-par (mfcol=c(2,2))#
-dotchart(unlist(sapply (tset.TM[1:3], slot, "alpha")), xlab="alpha")#
-dotchart(unlist(lapply(tset.TM, logLik)), xlab="logLik") #maximize loglik#
-dotchart(unlist(lapply(tset.TM[c(1,2,4)], perplexity)), xlab="Perplexity") #minimize perplexity#
-dotchart(unlist( sapply (tset.TM, function (x)#
-  mean(apply(posterior(x)$topics,#
-             1, function (z) - sum(z * log(z))))) ), xlab="Entropy")
-quartz(width=3.5, height=3.5, family ='Helvetica', pointsize=6)
-dotchart(unlist(sapply (tset.TM[1:3], slot, "alpha")), xlab="alpha")#
-dotchart(unlist(lapply(tset.TM, logLik)), xlab="logLik") #maximize loglik#
-dotchart(unlist(lapply(tset.TM[c(1,2,4)], perplexity)), xlab="Perplexity") #minimize perplexity#
-dotchart(unlist( sapply (tset.TM, function (x)#
-  mean(apply(posterior(x)$topics,#
-             1, function (z) - sum(z * log(z))))) ), xlab="Entropy")
-k1 <- 10#
-k2 <- 20#
-k3 <- 40#
-k4 <- 80#
-k5 <- 100#
-#
-topicNumber.Gibbs <- list (M1 = LDA(tset.dtm, k=k1, method='Gibbs', control = list ( seed = SEED)), M2 = LDA(tset.dtm, k=k2, method='Gibbs',control = list ( seed = SEED)),M3 = LDA(tset.dtm, k=k3, method='Gibbs', control = list ( seed = SEED)),M4 = LDA(tset.dtm, k=k4, method='Gibbs', control = list ( seed = SEED)),M5 = LDA(tset.dtm, k=k5, method='Gibbs', control = list ( seed = SEED)))
-topicNumber.TM <- topicNumber.Gibbs
-sapply (topicNumber.TM, function (x)#
-  mean(apply(posterior(x)$topics,#
-             1, function (z) - sum(z * log(z))))) #Entropy#
-sapply(topicNumber.TM, slot, "alpha")#
-lapply(topicNumber.TM, logLik)#
-lapply(topicNumber.TM, perplexity)
-dotchart(unlist( sapply (tset.TM, function (x)#
-  mean(apply(posterior(x)$topics,#
-             1, function (z) - sum(z * log(z))))) ), xlab="Entropy")
-quartz(width=3.5, height=3.5, family='Helvetica', pointsize=6)#
-par (mfcol=c(2,2))#
-dotchart(unlist(sapply (topicNumber.TM, slot, "alpha")), xlab="alpha")#
-dotchart(unlist(lapply(topicNumber.TM, logLik)), xlab="logLik")#
-dotchart(unlist(lapply(topicNumber.TM, perplexity)), xlab="Perplexity")#
-dotchart(unlist( sapply (topicNumber.TM, function (x)#
-  mean(apply(posterior(x)$topics,#
-             1, function (z) - sum(z * log(z))))) ), xlab="Entropy")
-ls()
-save.image(file='160419_AnalysisGibbs.RData') # completeley different to what is said on my notes above. M2 is not the best. It seems to over fit since I cannot fit more topics than documents and there is ~200 documents and best model M5 has 100 topics
-rm(list=ls())#
-#
-# load libraries#
-require (ggplot2)#
-require (dplyr)#
-require(gdata)#
-#
-# load data#
-#
-# survey <- read.xls(xls='~/Dropbox/BEST/Colombia/Survey/Consolidado-Game_Survey_database_.xlsx', sheet=1)#
-surv <- read.csv2(file='~/Dropbox/BEST/Colombia/Survey/Consolidado-Game_Survey_database_.csv', header=T, na.strings = '.')#
-key <- read.xls(xls='~/Dropbox/BEST/Colombia/Survey/Consolidado-Game_Survey_database_.xlsx', sheet=2)
-help(package='GGally')
-rm(list=ls())#
-require (tm)#
-require (SnowballC)#
-require (topicmodels)#
-require (RTextTools) #tokenize as bi-grams - check#
-require (lda)#
-require (RColorBrewer)#
-require (slam)
-load('~/Dropbox/pdf2text/ArcticAnalysis2/ArcticAnalysis150505.RData')
-ls()
-#Finding number of topics, remember it's likely to be <30#
-k1 <- 10#
-k2 <- 20#
-k3 <- 40#
-k4 <- 80#
-k5 <- 100
-topicNumber.TM <- list (VEM1 = LDA(tset.dtm, k=k1, control = list ( seed = SEED)), VEM2 = LDA(tset.dtm, k=k2, control = list ( seed = SEED)),VEM3 = LDA(tset.dtm, k=k3, control = list ( seed = SEED)),VEM4 = LDA(tset.dtm, k=k4, control = list ( seed = SEED)),VEM5 = LDA(tset.dtm, k=k5, control = list ( seed = SEED)))
-sapply (topicNumber.TM, function (x)#
-  mean(apply(posterior(x)$topics,#
-             1, function (z) - sum(z * log(z))))) #Entropy#
-sapply(topicNumber.TM, slot, "alpha")#
-lapply(topicNumber.TM, logLik)#
-lapply(topicNumber.TM, perplexity)#
-#
-quartz(width=3.5, height=3.5, family='Helvetica', pointsize=6)#
-par (mfcol=c(2,2))#
-dotchart(unlist(sapply (topicNumber.TM, slot, "alpha")), xlab="alpha")#
-dotchart(unlist(lapply(topicNumber.TM, logLik)), xlab="logLik")#
-dotchart(unlist(lapply(topicNumber.TM, perplexity)), xlab="Perplexity")#
-dotchart(unlist( sapply (topicNumber.TM, function (x)#
-  mean(apply(posterior(x)$topics,#
-             1, function (z) - sum(z * log(z))))) ), xlab="Entropy")
-getwd()
-save.image(file='160424_AnalysisVEM.RData') # completeley different to what is said on my notes above. M2 is not the best. It seems to over fit since I cannot fit more topics than documents and there is ~200 documents and best model M5 has 100 topics
-library(animation)
-help(package='animation')
-oopt = ani.options(interval = 2)#
-par(mar = c(3, 3, 1, 1.5), mgp = c(1.5, 0.5, 0))#
-kmeans.ani()
-x = rbind(matrix(rnorm(100, sd = 0.3), ncol = 2), matrix(rnorm(100, mean = 1, #
-    sd = 0.3), ncol = 2))
-colnames(x) = c("x", "y")#
-kmeans.ani(x, centers = 2)
-setwd(~/Documents/Projects/TAI/scripts/TAI-Volta)
-setwd("~/Documents/Projects/TAI/scripts/TAI-Volta")
-rmarkdown::render('~/Documents/Projects/TAI/scripts/TAI-Volta/01_VoltaPrelimAnalysis.Rmd')
+summary(dat)
+library(corrgram)
+help(corrgram)
+quartz()
+corrgram(dat[-c1,2], type = 'data', lower.panel= panel.pts, upper.panel= panel.conf, diag.panel= panel.density)
+corrgram(dat[-c(1,2)], type = 'data', lower.panel= panel.pts, upper.panel= panel.conf, diag.panel= panel.density)
+corrgram(dat[-c(1,2)], type = 'data', lower.panel= panel.pts, upper.panel= panel.shade, diag.panel= panel.density)
+names(dat)
+quartz('users')
+corrgram(dat[-c(1,2, 12:34)], type = 'data', lower.panel= panel.pts, upper.panel= panel.shade, diag.panel= panel.density)
+quartz('resource')
+corrgram(dat[-c(1:11, 20:34)], type = 'data', lower.panel= panel.pts, upper.panel= panel.shade, diag.panel= panel.density)
+quartz('biophysical')
+corrgram(dat[-c(1:19, 25:34)], type = 'data', lower.panel= panel.pts, upper.panel= panel.shade, diag.panel= panel.density)
+quartz('interactions')
+corrgram(dat[-c(1:24)], type = 'data', lower.panel= panel.pts, upper.panel= panel.shade, diag.panel= panel.density)
+quartz('all')
+corrgram(dat[-c(1,2)], type = 'data', lower.panel= panel.pts, upper.panel= panel.shade, diag.panel= panel.density)

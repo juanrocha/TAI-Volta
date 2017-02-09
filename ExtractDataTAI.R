@@ -31,7 +31,7 @@ sn <- sheetNames(xls= file)
 
 # do the first manual so you have a master file
 # areaG <- read.xls(xls= file, sheet=1)
-# names(areaG)[4:19] <- paste(names(areaG)[4:19], sn[1], sep='_') 
+# names(areaG)[4:19] <- paste(names(areaG)[4:19], sn[1], sep='_')
 
 # for (i in 2:7){ #is to 7 because I don't want all excel sheets
 	# df <- read.xls(xls=file, sheet=i)
@@ -43,7 +43,8 @@ sn <- sheetNames(xls= file)
 # then keep it on long format and fix it later by deleting columns
 areaG <- read.xls(xls= file, sheet=1)
 areaG$year <- rep(as.numeric(sn[1]), dim(areaG)[1])
-
+areaG <- areaG[-c(1,2)]
+areaG$TAI_ID1 <- as.factor(areaG$TAI_ID1)
 # x <- read.xls(xls= file, sheet=3)
 # x$year <- rep(as.numeric(sn[3]), dim(x)[1])
 # names(x) == names(areaG)
@@ -55,31 +56,33 @@ areaG$year <- rep(as.numeric(sn[1]), dim(areaG)[1])
 for (i in 2:7){
 	df <- read.xls(xls=file, sheet=i)
 	df$year <- rep(as.numeric(sn[i]), dim(df)[1])
+	df <- df[-c(1,2)]
+	df$TAI_ID1 <- as.factor(df$TAI_ID1)
 	areaG <- full_join(areaG, df)
 }
 
-# Now areaG has the cropped area per crops in all years we have. Some names refers to the same crop but have different spellings; the 'staple.crop' columns are just the sum, as well as 'total'. To keep the raw data, delete them. 
+# Now areaG has the cropped area per crops in all years we have. Some names refers to the same crop but have different spellings; the 'staple.crop' columns are just the sum, as well as 'total'. To keep the raw data, delete them.
 
 str(areaG)
 
-areaG <- areaG[,-c(33, 34, 32, 19)] # delete stapple crops, total and veg
+areaG <- areaG[,-c(31, 32, 30, 17)] # delete stapple crops, total and veg
 
-# replace NA with zeroes so the sum works. The original dataset does not have NA's, 
+# replace NA with zeroes so the sum works. The original dataset does not have NA's,
 # they were created when joining tables with different colnames, spelling problems.
 
 # cbind( areaG[29], replace(areaG[29], is.na(areaG[29]), 0)) # good way to do it
 # Here I just repeat the operation above across all numeric columns
-areaG[4:30] <- apply(areaG[4:30], 2, function(x){replace(x, is.na(x), 0)})
+areaG[2:28] <- apply(areaG[2:28], 2, function(x){replace(x, is.na(x), 0)})
 
 names(areaG)
-areaG[12] <- areaG[12] + areaG[20] # merge ground nuts
-areaG <- areaG[,-20] # delete the extra column
+areaG[10] <- areaG[10] + areaG[18] # merge ground nuts
+areaG <- areaG[,-18] # delete the extra column
 
-areaG[14] <- areaG[14] + areaG[20] # soyabean / soy.bean
-areaG <- areaG[,-20]
+areaG[12] <- areaG[12] + areaG[18] # soyabean / soy.bean
+areaG <- areaG[,-18]
 
-areaG[23] <- areaG[23] + areaG[18] + areaG[21] # g..egg, garden.egg, etc
-areaG <- areaG[,-c(18,21)]
+areaG[21] <- areaG[21] + areaG[16] + areaG[19] # g..egg, garden.egg, etc
+areaG <- areaG[,-c(16,19)]
 
 # Not all crops were measured all years, delete those that didn't
 
@@ -88,13 +91,13 @@ areaG <- areaG[,-c(18,21)]
 # rename the crops and use long form dataset agreggated by crop
 
 # colnames(areaG)[4:19] <- c('Maize', 'Rice', 'Cassava','Yam', 'Cocoyam', 'Platain',
-#                            'Sorghum','Millet', 'Ground nuts', 'Cowpea', 'Soy', 'Okro', 
+#                            'Sorghum','Millet', 'Ground nuts', 'Cowpea', 'Soy', 'Okro',
 #                            'Pepper', 'Tomato', 'Year', 'Garden eggs')
-# 
+#
 # areaG <- melt(areaG, id.vars=c('District', 'Region', 'TAI_ID1', 'Year'), measure.vars= names(areaG)[c(4:17,19)], variable_name= 'crop')
 
 ## without deleting crops or years:
- areaG <- melt(areaG, id.vars=c('District', 'Region', 'TAI_ID1', 'year'))
+ areaG <- melt(areaG, id.vars=c('TAI_ID1', 'year'))
 
 
 # now the dataset is clean and in long format with year being the long variable.
@@ -107,6 +110,10 @@ sn <- sheetNames(xls= file)
 
 areaB <- read.xls(xls= file, sheet=1, na.strings='N/A')
 areaB$crop <- rep(sn[1], dim(areaB)[1])
+areaB <- areaB[-c(1,3)] #get rid of variable names that can cause confusion
+areaB$TAI_ID1 <- as.factor(areaB$TAI_ID1) # make it into a facto so there is no confusion when joining
+
+
 ## We'are using average during the last 7 yrs. For BF it is 2006-2012, and for G it is 2002:2005-2007:09. Hence, delete all columns that !2006 onwards
 # areaB <- areaB[,-c(4:15)]
 
@@ -114,6 +121,8 @@ for (i in 2:length(sn)){
 	df <- read.xls(xls=file, sheet=i, na.strings='N/A')
 	df[4:dim(df)[2]] <- apply(df[4:dim(df)[2]], 2, as.numeric)
 	df$crop <- rep(sn[i], dim(df)[1])
+	df <- df[-c(1,3)]
+	df$TAI_ID1 <- as.factor(df$TAI_ID1)
 	#df <- df[,-c(4:15)]
 	areaB <- full_join(areaB, df)
 }
@@ -125,34 +134,39 @@ for (i in 2:length(sn)){
 str(areaB)
 summary(areaB)
 areaB$crop <- as.factor(areaB$crop)
-colnames(areaB)[4:23] <- c(1993:2012)# [3:9] <- c(2005:2011) 
+colnames(areaB)[2:21] <- c(1993:2012)# [3:9] <- c(2005:2011)
 # now the dataset needs to be rearranged to copy the Ghana structure
 
 
-areaB <- melt(areaB, id.vars=c('Province', 'TAI_ID1','TAI_ID2','crop'), variable_name='Year')
+areaB <- melt(areaB, id.vars=c( 'TAI_ID1','crop'), variable_name='Year')
+
+## 5092 NA that seems to come from the original file.
 
 # extra cleaning when using all years
-areaB <- areaB[,-3]
+# areaB <- areaB[,-3]
 str(areaG)
-levels(areaG$variable) <- c('Maize', 'Rice', 'Cassava','Yam', 'Cocoyam', 'Platain', 
-                            'Sorghum','Millet', 'Ground nuts', 'Cowpea', 'Soy', 'Okro', 
+levels(areaG$variable) <- c('Maize', 'Rice', 'Cassava','Yam', 'Cocoyam', 'Platain',
+                            'Sorghum','Millet', 'Ground nuts', 'Cowpea', 'Soy', 'Okro',
                             'Pepper', 'Tomato', 'Potato', 'Sweet potato', 'Garden eggs',
                             'Lettuce', 'Onion', 'Cucumber', 'Cabbage','Watermelon')
-names(areaG)[5] <- 'crop'
-names(areaG)[4] <- 'Year'
+names(areaG)[3] <- 'crop'
+names(areaG)[2] <- 'Year'
 
 # standardize names and classes
-colnames(areaG)[1] <- colnames(areaB)[1]
+# colnames(areaG)[1] <- colnames(areaB)[1]
 
-areaG <- areaG[,-2]
+# areaG <- areaG[,-2]
 # names(areaG)[3] <- 'Year'
 areaB$Year <- as.numeric(as.character(areaB$Year))
 
 area <- full_join(areaG, areaB)
-area$Province <- as.factor(area$Province)
+area$TAI_ID1 <- as.factor(area$TAI_ID1)
 area$crop <- as.factor(area$crop)
 summary(area)
 str(area)
+
+# If you want to see where the NA are:
+with(filter(area, is.na(value)) %>% select(Year, crop, value), table (Year, crop))
 
 # Note: I can drop rice_irr there is only 3 yrs of data.
 # now area data is clean on long format for both countries.
@@ -174,37 +188,43 @@ sn <- sheetNames(xls= file)
 
 prodG <- read.xls(xls= file, sheet=1)
 prodG$year <- rep(as.numeric(sn[1]), dim(prodG)[1])
+prodG <- prodG[-c(1,2)]
+prodG$TAI_ID1 <- as.factor(prodG$TAI_ID1)
 
 	for (i in 2:7){
 		df <- read.xls(xls=file, sheet=i)
 		df$year <- rep(as.numeric(sn[i]), dim(df)[1])
+		df <- df[-c(1,2)]
+		df$TAI_ID1 <- as.factor(df$TAI_ID1)
+		print(apply(df, 2, is.na) %>% colSums)
 		prodG <- full_join(prodG, df)
 	}
-	
-prodG <- prodG[,-c(34,24,25)] # delete stapple crops, total and veg
 
-prodG[4:31] <- apply(prodG[4:31], 2, function(x){replace(x, is.na(x), 0)})
+# The print command on the loop let me see that there is no NA on the original dataset, they are created when columns names are spelled differnetly.
+prodG <- prodG[,-c(30)] # delete  veg_total
+
+prodG[2:29] <- apply(prodG[2:29], 2, function(x){replace(x, is.na(x), 0)})
 
 names(prodG)
-prodG[12] <- prodG[12] + prodG[20] + prodG[24]  # merge ground nuts
-prodG <- prodG[,-c(20,24)] # delete the extra column
+prodG[10] <- prodG[10] + prodG[18] + prodG[22]  # merge ground nuts
+prodG <- prodG[,-c(18,22)] # delete the extra column
 
-prodG[14] <- prodG[14] + prodG[20] # soyabean / soy.bean
-prodG <- prodG[,-20]
+prodG[12] <- prodG[12] + prodG[18] # soyabean / soy.bean
+prodG <- prodG[,-18]
 
-prodG[18] <- prodG[18] + prodG[22] + prodG[21]+prodG[23] # g..egg, garden.egg, etc
-prodG <- prodG[,-c(21:23)]
+prodG[16] <- prodG[16] + prodG[20] + prodG[19]+prodG[21] # g..egg, garden.egg, etc
+prodG <- prodG[,-c(19:21)]
 
 # Not all crops were measured all years, delete those that didn't
 # prodG <- prodG[,-c(20:25)] # Note: trying with all data...
 
-colnames(prodG)[4:25] <- c('Maize', 'Rice', 'Cassava','Yam', 'Cocoyam', 'Platain',
-                           'Sorghum','Millet', 'Ground nuts', 'Cowpea', 'Soy', 'Okro', 
+colnames(prodG)[2:23] <- c('Maize', 'Rice', 'Cassava','Yam', 'Cocoyam', 'Platain',
+                           'Sorghum','Millet', 'Ground nuts', 'Cowpea', 'Soy', 'Okro',
                            'Pepper', 'Tomato', 'Garden eggs','Year','Sweet potato',
                            'Lettuce', 'Onion', 'Cucumber', 'Cabbage','Watermelon') #[4:19] <- c('Maize', 'Rice', 'Cassava','Yam', 'Cocoyam', 'Platain', 'Sorghum','Millet', 'Ground nuts', 'Cowpea', 'Soy', 'Okro', 'Pepper', 'Tomato', 'Garden eggs','Year' )
 
 # prodG <- melt(prodG, id.vars=c('District', 'Region', 'TAI_ID1', 'Year'), measure.vars= names(prodG)[c(4:18)], variable_name= 'crop')
-prodG <- melt(prodG, id.vars=c('District', 'Region', 'TAI_ID1', 'Year'), variable_name= 'crop')
+prodG <- melt(prodG, id.vars=c('TAI_ID1', 'Year'), variable_name= 'crop')
 
 ### Burkina Faso crop production
 file <- 'BF_Crop_production.xlsx'
@@ -212,6 +232,8 @@ sn <- sheetNames(xls= file)
 
 prodB <- read.xls(xls= file, sheet=1, na.strings='N/A')
 prodB$crop <- rep(sn[1], dim(prodB)[1])
+prodB <- prodB[-c(1,3)]
+prodB$TAI_ID1 <- as.factor(prodB$TAI_ID1)
 
 # prodB <- prodB[,-c(4:15,24)]
 
@@ -219,47 +241,59 @@ for (i in 2:length(sn)){
 	df <- read.xls(xls=file, sheet=i, na.strings='N/A')
 	df[4:dim(df)[2]] <- apply(df[4:dim(df)[2]], 2, as.numeric)
 	df$crop <- rep(sn[i], dim(df)[1])
+	df <- df[-c(1,3)]
+	df$TAI_ID1 <- as.factor(df$TAI_ID1)
+	print(apply(df, 2, is.na) %>% colSums)
+
 	# df <- df[,-c(4:15)]
 	prodB <- full_join(prodB, df)
 }
 
 # prodB <- prodB[,-c(3,11,13)] # Note J160401: keep all years and filter after
-prodB <- prodB[,-c(3,24,26,27)]
+prodB <- prodB[,-c(22,24,25)]
 
 str(prodB)
 summary(prodB)
 prodB$crop <- as.factor(prodB$crop)
-colnames(prodB)[3:22] <- c(1993:2012) #[3:9] <- c(2005:2011) 
+colnames(prodB)[2:21] <- c(1993:2012) #[3:9] <- c(2005:2011)
 
-prodB <- melt(prodB, id.vars=c('Province', 'TAI_ID1', 'crop'), variable_name='Year')
+prodB <- melt(prodB, id.vars=c('TAI_ID1', 'crop'), variable_name='Year')
 
 # standardize names and classes
-colnames(prodG)[1] <- colnames(prodB)[1]
-prodG <- prodG[,-2]
+# colnames(prodG)[1] <- colnames(prodB)[1]
+# prodG <- prodG[,-2]
 prodB$Year <- as.numeric(as.character(prodB$Year))
 
+
+# to see the common crops
+intersect(levels(prodB$crop),  levels(prodG$crop))
+
 prod <- full_join(prodG, prodB)
-prod$Province <- as.factor(prod$Province)
+# prod$Province <- as.factor(prod$Province)
 prod$crop <- as.factor(prod$crop)
+prod$TAI_ID1 <- as.factor(prod$TAI_ID1)
 summary(prod)
 str(prod)
 
+# If you want to see where the NA are:
+with(filter(prod, is.na(value)) %>% select(Year, crop, value), table (Year, crop))
 
-## with the two datasets
-area.volta <- (area[is.element(area$TAI_ID1, volta.shp@data$TAI_ID1),]) # volta data
 
-prod.volta <- prod [is.element(prod$TAI_ID1, volta.shp@data$TAI_ID1),]
+# ## with the two datasets
+# area.volta <- (area[is.element(area$TAI_ID1, volta.shp@data$TAI_ID1),]) # volta data
+#
+# prod.volta <- prod [is.element(prod$TAI_ID1, volta.shp@data$TAI_ID1),]
+#
+names(area)[4] <- "area"
+names(prod)[4] <- "prod"
+#
+# # Due to province names misspellings, just delete the columns and then recover after from map data
+# area.volta <- area.volta[,-1]
+# prod.volta <- prod.volta[,-1]
 
-names(area.volta)[5] <- "area"
-names(prod.volta)[5] <- "prod"
-
-# Due to province names misspellings, just delete the columns and then recover after from map data
-area.volta <- area.volta[,-1]
-prod.volta <- prod.volta[,-1]
-
-dat <- full_join(area.volta, prod.volta)
+dat <- full_join(area, prod)
 dat$crop <- as.factor(dat$crop)
-dat$country <- as.factor(dat$country)
+# dat$country <- as.factor(dat$country)
 
 summary (dat)
 str(dat)
@@ -269,7 +303,7 @@ table(dat$Year [is.na(dat$area)])
 table(dat$Year [is.na(dat$prod)])
 
 
-
+ save("dat", "area", "prod", file='161117_Volta.RData' )
 ###########
 # Population statistics
 ###########
@@ -293,9 +327,13 @@ colnames(popG)[c(1,2,5, 23)] <- c('District', 'Region', 'Total_habs', 'Total_emp
 
 # for Burkina Faso data from 2006
 file <- "BF_Population_2006.xlsx"
-popB <- read.xls(file, sheet=4) # this data sucks! 
+popB <- read.xls(file, sheet=4, dec = ',') # this data sucks!
 
-## Katja did a file with summary info for the bundling exercise. Use pop and other stats from such file. 
+# J161118: This way of importing the data does not work for this file. Numbers get imported as factors because of using , as . in numbers. Or, the file uses both formats. I think that's why I eded up using the processed data by Katja. Note however that there is interesting info in these files that can be useful on future analysis.
+
+
+
+## Katja did a file with summary info for the bundling exercise. Use pop and other stats from such file.
 file <- 'Volta_Bundling_prep.xlsx'
 users <- read.xls(file, sheet=1, dec=',')
 users[4:16] <- apply(users[4:16], 2, function (x) {as.numeric(x)} )
@@ -305,10 +343,10 @@ biophys <- read.xls(file, sheet=3, dec=',')
 interact <- read.xls(file,sheet=4, dec=',')
 
 # the problem with the sheets crop diversity from Katja is that she aggregates
-# summing over the years (I assumed) and temporal variablity is lost. However, 
+# summing over the years (I assumed) and temporal variablity is lost. However,
 # she has more crops on her tables and don't know where the info comes from. From
 # the original datasets (original from her), there is no fonio, sweet potatos,
-# cotton, etc in both countries. I can't say if she has the data or if she simply 
+# cotton, etc in both countries. I can't say if she has the data or if she simply
 # fill up with zero values.
 
 getwd()
@@ -318,7 +356,7 @@ save( 'biophys', 'interact', 'resource','users',  'dat', 'volta.shp', "datKeyCro
 ## exploratory graphics
 require (ggplot2)
 
-g <- ggplot(data = subset(area, crop == c('Rice' , 'Rice_irr')), aes(x=Year, y=value), color=crop) + 
+g <- ggplot(data = subset(area, crop == c('Rice' , 'Rice_irr')), aes(x=Year, y=value), color=crop) +
 		geom_line(position='identity', aes(group=crop)) +
 		facet_wrap( ~ Province, ncol=8)
 
@@ -326,7 +364,3 @@ g <- ggplot(data = subset(area, crop == c('Rice' , 'Rice_irr')), aes(x=Year, y=v
 #### New file with raw values from Katja: 160901
 
 file <- 'Volta_Vars_raw_160901.xlsx'
-
-
-
-

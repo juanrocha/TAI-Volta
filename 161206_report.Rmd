@@ -1,0 +1,546 @@
+---
+title: "What is wrong with the data"
+author: "Juan Rocha"
+date: "12/6/2016"
+output:
+  html_document:
+    self_contained: true
+    toc: true
+    toc_float:
+      collapsed: false
+      smooth_scroll: false
+    fig_width: 5
+    fig_height: 5
+    dev: png
+    code_folding: hide
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+
+## load libraries
+library  ('gdata')
+library ('readxl')
+library ('dplyr')
+library ('tidyr')
+library ('reshape')
+library (corrgram)
+library (ggplot2)
+
+# load libraries for mapping
+library(maptools)
+library(rgeos)
+library(RColorBrewer)
+
+# load libraries for clustering
+library (vegan)
+# library(rgl)
+# library(cluster)
+library(NbClust)
+library(clValid)
+# library(MASS)
+# library(kohonen)
+```
+
+## Intro
+
+This short report is meant to exemplify the problems I encountered dealing with TAI data. We have worked with many different versions of the dataset, each one with different executive decisions that we have not been documenting properly. Here I take the most recent version of the raw data (Katja's version after fieldwork, files from 161117 without replacing missing values), and try to walk you through the analysis of the paper documenting the choices I made.
+
+## The data
+
+The data was cleaned and formated in long format on a separate script avaialble on my Github repository TAI-Volta, file name `161201_ExtractData.R`. It extracts the data from each excel file per country, combine it on a unique dataset object on long format.
+
+```{r data}
+
+## Useful functions for later
+volta.only <- function(x){
+  x <- x [ is.element (x$TAI_ID1, volta.shp@data$TAI_ID1 ), ]
+  x <- droplevels(x)
+}
+
+### Normalizing by scaling everything to 0:1
+rescale_hw <- function (x){ # This is Hadley Wickman function from his book R for DataScience
+  rng <- range(x, na.rm= TRUE, finite = TRUE)
+  (x - rng[1]) / (rng[2] - rng[1])
+}
+
+### Correct the numeric format from excel files
+correct.num <- function (x){
+  l <- length(x)
+  x[3:l] <- apply (x[3:l], 2, function (x){as.numeric(x)} )
+  return(x)
+}
+
+## Update this with new importing data code
+setwd("~/Documents/Projects/TAI/TransformedData/Data_Burkina&Ganha")
+# load map for visualizations and data
+volta.shp <- readShapeSpatial("~/Documents/Projects/TAI/TransformedData/Bundling/Volta_bundling1.shp")
+
+
+## Read data
+load('~/Documents/Projects/TAI/TransformedData/Data_Burkina&Ganha/161205_Volta.RData')
+
+#### kcals and dams data
+    dams <- read_excel(path = 'Volta_Dam_density_KLC.xlsx', sheet = 1)
+    kcals <- read_excel("crop_kcals.xlsx", sheet = 1)
+
+
+## Select only volta places
+data <- dat %>% volta.only()
+
+### SES variables for later
+#### New file with raw values from Katja: 160901
+file <- 'Volta_Vars_raw_160901.xlsx'
+sn <- sheetNames(xls=file)
+
+
+dams$TAI_ID2 <- as.factor(dams$TAI_ID1)
+# dat <- left_join(dat, dams, by = c("ADM_2", "TAI_ID2"))
+
+users <- read.xls(file, sheet=2, dec=',')
+users <- correct.num(users)
+users$TAI_ID1 <- as.factor(users$TAI_ID1)
+resource <- read.xls (file, sheet=3, dec=',')
+biophys <- resource [c(1,2,11:15)]
+resource <- resource [-c(11:15)]
+biophys <- correct.num(biophys)
+resource <- correct.num(resource)
+resource$TAI_ID1 <- as.factor(resource$TAI_ID1)
+resource <- left_join(resource, dplyr::select(dams, TAI_ID2, Dams), by = c("TAI_ID1" = "TAI_ID2"))
+
+biophys$TAI_ID1 <- as.factor(biophys$TAI_ID1)
+biophys$Aridity <- 1-biophys$Aridity  # Invert the scale so results are easy to interpret.
+resource <- resource[-c(9)] #delete dams density
+# biophys <- read.xls(file, sheet=3, dec=',')
+
+# Threre is 3 datasets for interactions depending on the sheet in Katjas file
+# 4 = kcals per distric area in sq.km
+# 5 = kcals_harv.area
+# 6 = ratio_harv.area
+# 7 = other
+# interact <- read.xls(file,sheet=5, dec=',')
+# interact <- correct.num(interact)
+# interact <- volta.only(interact)
+
+
+head(data)
+str(data)
+
+```
+
+## Dealing with missing values
+
+Our dataset is far from complete. On its most recent version, our TAI data has `r dim(dat)[1]` observations. By observation I mean that we have a datapoint of a crop in a district with some production in Tons and some cropped area in Ha. Out of the 31200 observations `r sum(is.na(dat$area) | is.na(dat$prod))` are missing values: `NA's` or empty cells on the excel raw data. This is over 36% of the most complete version of the dataset. For the report sent last week I only used the 7 most complete crops, and still we had missing values. That situation hasn't change much.
+
+```{r nas}
+missing <- as.data.frame(with(filter(dat, !is.na(area), !is.na(prod)), table(Year, crop)))
+g <- ggplot(missing, aes(Year, crop)) + geom_raster(aes(fill = Freq))
+g + scale_fill_gradient(low = "#FFA50080", high = "#0000FF80") + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+
+On the figure above orange means we do not have data for a crop in a year, pretty much in any district or province. The darker the blue the better, the maximum value 99 means that we do have data poitns for that crop in that year for all spatial units. The only crops for which we have data for both countries are `r intersect(dat$crop[dat$country == 'GH'], dat$crop[dat$country =='BF'])`. For the final report I worked only with this 7 common crops where we have reasonable although still uncomplete data. For now I will keep that selection and discuss later with you which other crops to include and how to deal with missing values for such choices.
+
+```{r keycrops}
+## only key crops
+datKeyCrops <- (filter(data, crop == 'Maize' | crop == 'Millet'| crop == 'Rice'| crop == 'Yam'| crop == 'Sorghum'| crop == 'Cowpea'| crop == 'Soy' ))
+
+datKeyCrops <- drop.levels(datKeyCrops)
+
+## only years with most complete information (3% NA)
+datKeyCrops <- (filter(datKeyCrops, Year > 2001, Year < 2010, Year !=2006))
+
+datKeyCrops$TAI_ID2 <- datKeyCrops$TAI_ID1
+
+## Crop dat is now dat from the ExtracDataTAI file
+crop.dat <- datKeyCrops
+crop.dat$country <- ifelse(as.numeric(as.character(crop.dat$TAI_ID1)) > 3000, 'GH', 'BF')
+
+
+crop.dat <- crop.dat %>%
+        mutate(sq_prod = sqrt(prod), sq_area = sqrt(area)) %>%
+        mutate( #dt_prod = sq_prod - mean(sq_prod), Los detrending tienen que calcularse en el agregado de cada TAI_ID1, no para todos los datos!!!
+            # dt_area = sq_area - mean(sq_area),
+            log_prod = log(1+prod),
+            yield = ifelse(prod == 0 | area == 0, 0, prod/area),
+            log_yield = log(1+yield),
+            log_area = log(1+area)
+        )
+
+tot.area <- crop.dat %>%
+  dplyr::select (TAI_ID2, crop, area, Year) %>%
+  group_by ( TAI_ID2, Year) %>%
+  summarize (tot_area = sum(area, na.rm = TRUE))
+
+crop.dat <- left_join(crop.dat, tot.area, by = c("TAI_ID2", 'Year'))
+crop.dat <- crop.dat %>%
+  mutate(prop_cultivated_area = area / tot_area )
+
+
+### Calculate the 7 year mean
+crop.area <- crop.dat %>%
+    dplyr::select(TAI_ID2, crop, log_area, Year) %>%
+    group_by(TAI_ID2, crop) %>%
+    summarize(mean_area = mean(log_area, na.rm= TRUE))
+
+## remember we are using log-transformed area
+
+## Now do the same for kcals
+
+# kcals
+crops.nam <- tolower(levels(crop.dat$crop))
+# crops.nam[2] <- 'taro' # cocoyam is aka. taro
+crops.nam[6] <- 'soybean'
+crops.nam %in% kcals$CROPNAME
+
+cals.fao <- filter(kcals, CROPNAME %in% crops.nam) %>% dplyr::select(crop = CROPNAME, kcals_fao = kcals.per.ton.fao)
+
+cals.fao$crop <- as.factor(cals.fao$crop)
+levels(cals.fao$crop) <- levels(crop.dat$crop)
+
+crop.dat <- left_join(crop.dat, cals.fao, by = c("crop"))
+crop.dat <- crop.dat %>%
+        mutate(kcal_crop = (log_prod * kcals_fao))
+# remember we are using log-transformed production.
+
+kcals2 <- crop.dat %>%
+    dplyr::select(TAI_ID2, crop, kcal_crop, Year) %>%
+    group_by(TAI_ID2, crop) %>%
+    summarize(mean_kcal = mean(kcal_crop, na.rm= TRUE))
+
+dat.int <- left_join(crop.area, kcals2, by = c('TAI_ID2', 'crop'))
+
+# #interaction dataset: select the mean for kcals (log)
+interact <- dplyr::select(dat.int, TAI_ID2, crop, mean_kcal) %>%
+tidyr::spread( key = crop, value = mean_kcal) %>% dplyr::rename(m_cowpea = Cowpea, m_maize = Maize, m_millet = Millet, m_rice = Rice, m_sorghum = Sorghum, m_soy = Soy, m_yam = Yam)
+
+## add the selection of mean area (log)
+interact <- left_join(interact, (dplyr::select(dat.int, TAI_ID2, crop, mean_area) %>%
+tidyr::spread( key = crop, value = mean_area) %>% dplyr::rename(a_cowpea = Cowpea, a_maize = Maize, a_millet = Millet, a_rice = Rice, a_sorghum = Sorghum, a_soy = Soy, a_yam = Yam)))
+
+str(datKeyCrops)
+str(interact)
+```
+
+On the code chunk above I selected only the crops for which we have close to complete data. All data was log-transformed, total crop area calculated as well as the proportion of cultivated area per crop. Production in Tons was transformed to Kcals with data from FAO provided by Kate. And the mean for a 7 year period (skipping 2006) will be used for the interaction dataset in the clustering. Note that I'm keeping areas and kcals separately. I did calculate yields, but I'm not using it by recommendation of Kate and Katja. Here 'area' is used as a proxy of how much labour people put into crops, while kcals is how much reward, or how important it is for food security. I believe keeping both is important because: i) both have been present in our discussions and previous analysis, ii) as highlighted by Katja, they capture difference nuances of the data; and iii) if we use yield it tell us about the productivity of the land, not the labour that people put in nor the benefits people get from the cropping activities (the SES interaction in Ostrom's framework). The data for key crops has 4851 observations of which 4664 does NOT contain missing values. Now instead of >30% of missing data, we only have 3.85%. But who is missing? The following table tells you which provices by `TAI_ID1` are missing data points, it should be 7 (for 7 years) on the count under Freq. 
+
+```{r tab1}
+x <- with(filter(datKeyCrops, !is.na(area), !is.na(prod)) , table(TAI_ID1, crop)) %>% as.data.frame() %>% filter (Freq != 7)
+x
+```
+
+As you see from the long table above, we have 75 places where one or more data points in time are missing. When the data is close to zero is fair to assume it is zero when missing, but when is not close to zero, what we do by automatically replacing NA by zeroes is inflating the zeroes in our distributions and biasing the 7 yr means with zeroes that does not exist. To give you an example by examining the third case from the long table above: 
+
+```{r ex1}
+i = 3
+datKeyCrops %>% filter(crop == x[i,2], TAI_ID2 == x[i,1])
+```
+Dropping a zero on the data above for the district with `TAI_ID 2020` would be gross mistake: i) it will biase the mean, and ii) if one were to calculate or use the yield, it will through an error of division by zero. On the example below it is reasonable to assume the missing values to be zero, in fact zero is the mean of the existing observations.
+
+```{r ex2}
+i = 49
+datKeyCrops %>% filter(crop == x[i,2], TAI_ID2 == x[i,1])
+```
+
+The problem is, the assumption of zero is context dependent, it works for certain crops in certain areas, but if we applied without thinking where the zeroes are landing, we are fouling ourselves. Zero inflated data leads to highly skewed distributions that the clustering algorithm cannot tell appart. The more crops we incorporate where we add zeroes is recreating the problem. Currently we transform the raw data to logarithms to avoid highly skewed distributions, adding zeroes to a significantly large amount of missing data (say 10 or 20% of our datapoints) will bias the results and make it hard to trust them, or defend them from the reviewers.
+
+## Current analysis
+
+The current analysis is a conservative effort to make it work by dropping most of the incomplete information. The idea is to run an analysis that is fool proof, where if something does not work we understand where the errors come from. 
+
+```{r other_data}
+
+### Combine all datasets for clustering all
+dat <- left_join(users, resource, by = c("TAI_ID1", "ADM_2"))
+dat <- left_join(dat, biophys, by = c("TAI_ID1", "ADM_2"))
+dat$TAI_ID2 <- as.factor(dat$TAI_ID1)
+interact$TAI_ID2 <- as.factor(interact$TAI_ID2)
+dat <- left_join(dat, interact, by = c("TAI_ID2"))
+
+# delete columns that wont be used.
+dat <- dat[,-c(1,2,4)] # no pop_log_density, ADM_2 or TAI_ID1.
+
+# Note this is non-normalized data, original values. After the following line all is "rescaled" to 0-1
+dat[-23] <- apply(dat[-23], 2, rescale_hw)
+
+## Using mahalanobis distance help us dealing with colinearity or strong correlations.
+d <- vegdist(dat[-c(23)], method = "mahalanobis", tol= 10e-20)
+
+# X dataset for plotting final distributions in ggplot
+x <- gather(dat[-23], key = variable)
+x$variable <- as.factor(x$variable)
+
+g <- ggplot (x, aes(value), group = x) + geom_density()
+g+ facet_wrap(~variable)
+
+```
+
+The plots above shows the probability distribution of each variable used. After normalization they all are on the same scale from 0 to 1. There is skew distributions, but not L shape kind of distribution we were getting in previous rounds of the analysis.
+
+```{r clust_num}
+## Validating number of clusters
+## Number of clusters with NdClust: uses 30 different index and compare them to decide the optimal partition
+library (NbClust)
+# euclidean and manhattan are not good for gradient separation (see help vegdist)
+m <- 'ward.D2'
+clust_num <- NbClust( data = dat[-c(23)], dist = 'manhattan',
+                      min.nc = 3, max.nc = 12, method = m, alphaBeale = 0.1, index = 'all')
+
+clust_num_mb <- NbClust( data = dat[-c(23)], diss = d, dist = NULL,
+                    min.nc = 3, max.nc = 12, method = m, alphaBeale = 0.1, index = 'all')
+
+```
+
+The only combination that suggest 6 clusters is including: ratio of cropland, cattle and rummians per capita, and soil water; all of them were suggested to drop by Katja in our last skype meeting. My worry is that the analysis is incredibly sensible to what we put inside, most of the time it suggest 3 clusters (because that's the minimum option, if I allow 2 that is the preferred option). Now, what the `NbClust` routine does is taking the dataset, clustering with Wald method and compare 30 different indexes that were designed to help elucidate what is the best number of clusters. The result is the number of indexes that support different numbers of clusters. I've been using Ward agglomeration method because the authors of the paper suggest that this method minimizes the tota within-cluster variance. In previous attempts it worked better with higher numbers of clusters, and it was also used and suggested by JB and the coral reefs group. When I tried different alternatives, 'single' agglomeartion methods on the manhattan distance reder 4 clusters, as well as 'kmeans' on the mahalanobis distance.
+
+However, this is not the only method I'm using to find the optimal number of clusters. Additionally I'm running another routine called `clValid`. This routine test 9 different clustering algorithms and calculates 6 common indexes that help the researcher decide how many cluster there is in the data. According to the authors (Brock et al 2008) internal validations take only the dataset and teh clustering partition as input and use intrinsic information in the data to assess the quality of clustering. Stability validation evaluate the consistency of a clustering result by comparing it with clusters obtained after each column is removed, one at time. I really like the stability because it test for robusstness of the result, and luckily I've found the stability validation to suggest 9 cluster almost no matter what I use as input, even on our earliest versions of the dataset. Yet, the internal validation seldom suggest higher numbers of clusters, being the most common 3 groups.
+
+```{r clust_num2}
+
+library(clValid)
+# Internal validation
+intern <- clValid(obj=as.data.frame(dat[-c(23)]), nClust=c(3:9),
+                  clMethods=c('hierarchical', 'kmeans', 'diana', 'fanny','som',
+                              'pam', 'sota', 'clara', 'model'),
+                  validation='internal')
+
+## Stability validation
+stab <- clValid(obj=as.data.frame(dat[-c(23)]), nClust=c(3:9),
+                clMethods=c('hierarchical', 'kmeans', 'diana', 'fanny', 'som',
+                            'pam', 'sota', 'clara', 'model'),
+                validation='stability')
+
+summary(intern)
+# Optimal Scores:
+#
+#   Score   Method       Clusters
+# Connectivity 10.2159 hierarchical 3
+# Dunn          0.3697 hierarchical 5
+# Silhouette    0.3444 hierarchical 3
+
+
+summary(stab)
+# Optimal Scores:
+#
+#   Score  Method       Clusters
+# APN 0.0006 hierarchical 5
+# AD  0.9623 kmeans       9
+# ADM 0.0026 hierarchical 5
+# FOM 0.1385 som          9
+```
+
+## Recommendations
+
+**Dealing with correlations:** There is to some degree correlations in our data. When consulting with the statistician at Princeton he recommended using the Mahalanobis distance in our clustering exercise, its formula includes a covariance matrix that takes into account correlations. Since then I have kept both distances "manhattan" and "mahalanobis" in our clustering identification routine. Manhattan was at fist better when finding higher numbers of clusters, but the current best result (6 clusters) was using mahalanobis. The statistician was emphatic that correlations should not be a problem doing clustering because it is correlated datapoints that allows any algorithm to classify them as closer together, hence belonging to the same group. A data without correlation should find little to no clusters.
+
+**Adding crops back** In our latest conversation with Katja she suggest that cocoyam, cassava, ground nuts and to some extent plantain should be back into the dataset of key crops. For these crops one can safely assume that `NA` are real zeroes. 
+
+
+```{r more_crops}
+
+datKeyCrops <- (filter(data, crop == 'Maize' | crop == 'Millet'| crop == 'Rice'| crop == 'Yam'| crop == 'Sorghum'| crop == 'Cowpea'| crop == 'Soy'| crop == 'Cassava'| crop == 'Cocoyam'| crop == 'Ground nuts' | crop == "Platain"   ))
+
+datKeyCrops <- drop.levels(datKeyCrops)
+
+## only years with most complete information (3% NA)
+datKeyCrops <- (filter(datKeyCrops, Year > 2001, Year < 2010, Year !=2006))
+
+datKeyCrops$TAI_ID2 <- datKeyCrops$TAI_ID1
+
+## Crop dat is now dat from the ExtracDataTAI file
+crop.dat <- datKeyCrops
+crop.dat$country <- ifelse(as.numeric(as.character(crop.dat$TAI_ID1)) > 3000, 'GH', 'BF')
+
+## lets assume zero for all
+crop.dat$area[is.na(crop.dat$area)] <- 0
+crop.dat$prod[is.na(crop.dat$prod)] <- 0
+
+crop.dat <- crop.dat %>%
+        mutate(sq_prod = sqrt(prod), sq_area = sqrt(area)) %>%
+        mutate( #dt_prod = sq_prod - mean(sq_prod), Los detrending tienen que calcularse en el agregado de cada TAI_ID1, no para todos los datos!!!
+            # dt_area = sq_area - mean(sq_area),
+            log_prod = log(1+prod),
+            yield = ifelse(prod == 0 | area == 0, 0, prod/area),
+            log_yield = log(1+yield),
+            log_area = log(1+area)
+        )
+
+tot.area <- crop.dat %>%
+  dplyr::select (TAI_ID2, crop, area, Year) %>%
+  group_by ( TAI_ID2, Year) %>%
+  summarize (tot_area = sum(area, na.rm = TRUE))
+
+crop.dat <- left_join(crop.dat, tot.area, by = c("TAI_ID2", 'Year'))
+crop.dat <- crop.dat %>%
+  mutate(prop_cultivated_area = area / tot_area )
+
+
+### Calculate the 7 year mean
+crop.area <- crop.dat %>%
+    dplyr::select(TAI_ID2, crop, log_area, Year) %>%
+    group_by(TAI_ID2, crop) %>%
+    summarize(mean_area = mean(log_area, na.rm= TRUE))
+
+## remember we are using log-transformed area
+
+## Now do the same for kcals
+
+# kcals
+crops.nam <- tolower(levels(crop.dat$crop))
+crops.nam[2] <- 'taro' # cocoyam is aka. taro
+crops.nam[10] <- 'soybean'
+crops.nam[4] <- 'groundnut'
+crops.nam[7] <- 'plantain'
+# crops.nam %in% kcals$CROPNAME
+
+cals.fao <- filter(kcals, CROPNAME %in% crops.nam) %>% dplyr::select(crop = CROPNAME, kcals_fao = kcals.per.ton.fao)
+
+cals.fao$crop <- as.factor(cals.fao$crop)
+levels(cals.fao$crop) <- levels(crop.dat$crop)
+
+crop.dat <- left_join(crop.dat, cals.fao, by = c("crop"))
+crop.dat <- crop.dat %>%
+        mutate(kcal_crop = (log_prod * kcals_fao))
+# remember we are using log-transformed production.
+
+kcals2 <- crop.dat %>%
+    dplyr::select(TAI_ID2, crop, kcal_crop, Year) %>%
+    group_by(TAI_ID2, crop) %>%
+    summarize(mean_kcal = mean(kcal_crop, na.rm= TRUE))
+
+dat.int <- left_join(crop.area, kcals2, by = c('TAI_ID2', 'crop'))
+
+# #interaction dataset: select the mean for kcals (log)
+interact <- dplyr::select(dat.int, TAI_ID2, crop, mean_kcal) %>%
+tidyr::spread( key = crop, value = mean_kcal) %>% dplyr::rename(m_cowpea = Cowpea, m_maize = Maize, m_millet = Millet, m_rice = Rice, m_sorghum = Sorghum, m_soy = Soy, m_yam = Yam, m_cassava = Cassava, m_cocoyam = Cocoyam, m_plantain = Platain)
+colnames(interact)[5]<-"m_groundnuts"
+
+int2 <- dplyr::select(dat.int, TAI_ID2, crop, mean_area) %>%
+tidyr::spread( key = crop, value = mean_area) %>% dplyr::rename(a_cowpea = Cowpea, a_maize = Maize, a_millet = Millet, a_rice = Rice, a_sorghum = Sorghum, a_soy = Soy, a_yam = Yam, a_cassava = Cassava, a_cocoyam = Cocoyam, a_plantain = Platain)
+colnames(int2)[5]<-"a_groundnuts"
+
+## add the selection of mean area (log)
+interact <- left_join(interact, int2 )
+rm(int2)
+
+## Note that interact has created 39 NA in the added crops because we don't have data for all years. I proceed to fill with zeroes
+ 
+interact$m_cassava[is.na(interact$m_cassava)] <- 0
+interact$m_cocoyam[is.na(interact$m_cocoyam)] <- 0
+interact$m_groundnuts[is.na(interact$m_groundnuts)] <- 0
+interact$m_plantain[is.na(interact$m_plantain)] <- 0
+interact$a_plantain[is.na(interact$a_plantain)] <- 0
+interact$a_cassava[is.na(interact$a_cassava)] <- 0
+interact$a_cocoyam[is.na(interact$a_cocoyam)] <- 0
+interact$a_groundnuts[is.na(interact$a_groundnuts)] <- 0
+
+summary(interact)
+
+# 
+# interact <- mutate(interact, 
+#                    m_cereals = m_sorghum + m_millet,
+#                    a_cereals = a_sorghum + a_millet,
+#                    m_legumes = m_groundnuts + m_cowpea + m_soy,
+#                    a_legumes =  a_groundnuts + a_cowpea + a_soy , 
+#                    m_tubers = m_yam + m_cocoyam+ m_cassava,
+#                    a_tubers = a_yam + a_cocoyam+ a_cassava)
+# 
+# 
+# interact <- dplyr::select(interact, TAI_ID2, m_cereals, a_cereals, m_legumes, a_legumes, m_tubers, a_tubers, m_maize, a_maize, m_rice, a_rice)
+
+##
+### Combine all datasets for clustering all
+dat <- left_join(users, resource, by = c("TAI_ID1", "ADM_2"))
+dat <- left_join(dat, biophys, by = c("TAI_ID1", "ADM_2"))
+dat$TAI_ID2 <- as.factor(dat$TAI_ID1)
+interact$TAI_ID2 <- as.factor(interact$TAI_ID2)
+dat <- left_join(dat, interact, by = c("TAI_ID2"))
+
+# delete columns that wont be used.
+dat <- dat[,-c(1,2,4)] # no pop_log_density, ADM_2 or TAI_ID1.
+
+# Note this is non-normalized data, original values. After the following line all is "rescaled" to 0-1
+id <- 23 # the column of TAI_ID2
+dat[-23] <- apply(dat[-23], 2, rescale_hw)
+
+## Using mahalanobis distance help us dealing with colinearity or strong correlations.
+d <- vegdist(dat[-c(23)], method = "mahalanobis", tol= 10e-20)
+
+# X dataset for plotting final distributions in ggplot
+x <- gather(dat[-23], key = variable)
+x$variable <- as.factor(x$variable)
+
+g <- ggplot (x, aes(value), group = x) + geom_density()
+g+ facet_wrap(~variable)
+
+## Validating number of clusters
+## Number of clusters with NdClust: uses 30 different index and compare them to decide the optimal partition
+library (NbClust)
+# euclidean and manhattan are not good for gradient separation (see help vegdist)
+m <- 'ward.D2'
+clust_num <- NbClust( data = dat[-c(23)], dist = 'manhattan',
+                      min.nc = 3, max.nc = 12, method = m, alphaBeale = 0.1, index = 'all')
+
+clust_num_mb <- NbClust( data = dat[-c(23)], diss = d, dist = NULL,
+                    min.nc = 3, max.nc = 12, method = m, alphaBeale = 0.1, index = 'all')
+
+
+library(clValid)
+# Internal validation
+intern <- clValid(obj=as.data.frame(dat[-c(23)]), nClust=c(3:9),
+                  clMethods=c('hierarchical', 'kmeans', 'diana', 'fanny','som',
+                              'pam', 'sota', 'clara', 'model'),
+                  validation='internal')
+
+## Stability validation
+stab <- clValid(obj=as.data.frame(dat[-c(23)]), nClust=c(3:9),
+                clMethods=c('hierarchical', 'kmeans', 'diana', 'fanny', 'som',
+                            'pam', 'sota', 'clara', 'model'),
+                validation='stability')
+
+summary(intern)
+
+
+summary(stab)
+
+
+```
+
+## conclusion
+
+Deleting variables or adding crops replacing NA's by zeroes does not improve the fitting. Most combinations of data columns tested render low numbers of clusters. Few combinations have gave us 7 clusters (September aka paper version), 6 clusters (report last week TAI), and 4 clusters (kmeans).
+
+## what if?
+
+Cluster only on interactions: I get error of singular matrix when using the NbClust routine. clValid finishes with warnings and finds higher number of clusters on stability validation, 3,6,6 on internal.
+
+```{r whatif}
+
+d <- vegdist(interact[-1], method = "mahalanobis", tol= 10e-20)
+
+m <- 'ward.D2'
+clust_num <- NbClust( data = interact[-1], dist = 'manhattan',
+                      min.nc = 1, max.nc = 12, method = m, alphaBeale = 0.1, index = 'all')
+
+clust_num_mb <- NbClust( data = interact[-1], diss = d, dist = NULL,
+                    min.nc = 1, max.nc = 12, method = m, alphaBeale = 0.1, index = 'all')
+
+
+library(clValid)
+# Internal validation
+intern <- clValid(obj=as.data.frame(interact[-1]), nClust=c(3:12),
+                  clMethods=c('hierarchical', 'kmeans', 'diana', 'fanny','som',
+                              'pam', 'sota', 'clara', 'model'),
+                  validation='internal')
+summary(intern)
+## Stability validation
+stab <- clValid(obj=as.data.frame(interact[-1]), nClust=c(3:12),
+                clMethods=c('hierarchical', 'kmeans', 'diana', 'fanny', 'som',
+                            'pam', 'sota', 'clara', 'model'),
+                validation='stability')
+summary(stab)
+
+```
+
+
+

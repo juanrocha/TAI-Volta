@@ -1,10 +1,10 @@
 ## Analysis Volta Project
 ## TAI project
-## This script analyse crop time series over the Volta basin using MDS or 
-## PCA. It also uses data collected to match 2-3 tier Ostrom variables 
-## from the SES framework to see what determines the clustering of SES  
-## typologies identified. This script loads the data collected by Katja  
-## Malmborg and cleaned in ExtractionDataTAI.R by me. Preliminary analyses 
+## This script analyse crop time series over the Volta basin using MDS or
+## PCA. It also uses data collected to match 2-3 tier Ostrom variables
+## from the SES framework to see what determines the clustering of SES
+## typologies identified. This script loads the data collected by Katja
+## Malmborg and cleaned in ExtractionDataTAI.R by me. Preliminary analyses
 ## can be found in DataPlay.R, CropYields.R, and MapsVolta
 
 ## by Juan Carlos Rocha
@@ -32,56 +32,75 @@ setwd("~/Documents/Projects/TAI/figures")
 # load data
 
 # load('~/Documents/Projects/TAI/TransformedData/Data_Burkina&Ganha/Volta.RData')
-load('~/Documents/Projects/TAI/scripts/TAI-Volta/160414_Volta.RData')
-
+# load('~/Documents/Projects/TAI/scripts/TAI-Volta/160414_Volta.RData')
+load('~/Documents/Projects/TAI/scripts/TAI-Volta/161117_Volta.RData')
 # area is harvested area per crop per year, value = Hectares
 # prod is production in tons per crop per year, value = tons
 # interact is the preliminary data for interactions, only cattle density
 # resource has total.harvested.area, province.district.area, ratio.harvested.area, market.acces and tree.cover
 # biophys has aridity, mean.temp, soil.water, wet.season. slope75
-# users has sq_km total.pop wome, child, urban and rural totals, employees, 
+# users has sq_km total.pop wome, child, urban and rural totals, employees,
 # farmers, ration.children, ration.woman, pop.density, ratio.farmers, urbanization.
 
 # load map for visualizations and data
 volta.shp <- readShapeSpatial("~/Documents/Projects/TAI/TransformedData/Bundling/Volta_bundling1.shp")
 
+##### Useful functions for later:
 
+### Select only districts on the Volta Basin
+volta.only <- function(x){
+  x <- x [ is.element (x$TAI_ID1, volta.shp@data$TAI_ID1 ), ]
+  x <- droplevels(x)
+}
+
+### Normalizing by scaling everything to 0:1
+rescale_hw <- function (x){ # This is Hadley Wickman function from his book R for DataScience
+  rng <- range(x, na.rm= TRUE, finite = TRUE)
+  (x - rng[1]) / (rng[2] - rng[1])
+}
+
+### Correct the numeric format from excel files
+correct.num <- function (x){
+  l <- length(x)
+  x[3:l] <- apply (x[3:l], 2, function (x){as.numeric(x)} )
+  return(x)
+}
 # Explore production data
 
-# 
+#
 # prod$country <- ifelse(prod$TAI_ID > 3000, 'GH', 'BF')
 # area$country <- ifelse(area$TAI_ID > 3000, 'GH', 'BF')
 # # prod$TAI_ID1 <- as.factor(prod$TAI_ID1)
 # # area$TAI_ID1 <- as.factor(area$TAI_ID1)
-# 
+#
 # # use only common crops for both countries that occur every year.
 # common <- intersect(levels(areaB$crop),  levels(areaG$crop))
-# 
-# # note to self: I'm not sure if having different time periods is valid. 
-# # We have 7 years of data but different years. It can affect the aggregate 
-# # calculations later. But even if it works (e.g. by changing the year stamp by yr1, yr2...yr7), 
+#
+# # note to self: I'm not sure if having different time periods is valid.
+# # We have 7 years of data but different years. It can affect the aggregate
+# # calculations later. But even if it works (e.g. by changing the year stamp by yr1, yr2...yr7),
 # # in real life there were two different periods with probably different climate conditions, etc.
-# 
+#
 # index <- vector()
-# for (i in seq_along(common)){ 
+# for (i in seq_along(common)){
 # 	index <- c(index, which(prod$crop == common[i]))
 # 	}
-# 
+#
 # index2 <- vector()
-# for (i in seq_along(common)){ 
+# for (i in seq_along(common)){
 # 	index2 <- c(index2, which(area$crop == common[i]))
 # 	}
-# 
+#
 # prod <- droplevels(prod[sort(index),])#subset(prod, crop == common, drop=T)
 # area <- droplevels(area[sort(index2),]) #subset(area, crop == common, drop=T)
 # prod$year_a <- ifelse(prod$country == 'GH', prod$Year - 2001, prod$Year - 2004)
 # area$year_a <- ifelse(area$country == 'GH', area$Year - 2001, area$Year - 2004)
-# 
-# 
+#
+#
 # table(prod$year_a)
 # # correct for the missing year in GH
 # which(prod$country == 'GH' & prod$year_a>5)
-# 
+#
 # prod$year_a[which(prod$country == 'GH' & prod$year_a>5)] <- prod$year_a[which(prod$country == 'GH' & prod$year_a>5)] -1
 # area$year_a[which(area$country == 'GH' & area$year_a>5)] <- area$year_a[which(area$country == 'GH' & area$year_a>5)] -1
 # prod$TAI_ID2 <- as.factor(prod$TAI_ID1)
@@ -90,17 +109,20 @@ volta.shp <- readShapeSpatial("~/Documents/Projects/TAI/TransformedData/Bundling
 
 # str(prod); str(area)
 
+dat <- dat %>% volta.only()
+
+
 p <- ggplot(data=dat, mapping=aes(x=Year, y=sqrt(prod))) +
-  geom_line(aes(colour=crop, alpha=0.2, group = TAI_ID2)) + 
-  facet_grid( crop ~ country) + geom_smooth(stat='smooth', method='loess') + 
-  theme_bw(base_size=10, base_family='Helvetica') + 
-  theme(axis.text.x = element_text(angle=0))  + 
+  geom_line(aes(colour=crop, alpha=0.2, group = TAI_ID2)) +
+  facet_grid( crop ~ country) + geom_smooth(stat='smooth', method='loess') +
+  theme_bw(base_size=10, base_family='Helvetica') +
+  theme(axis.text.x = element_text(angle=0))  +
   ggtitle(expression(paste('Crop per Province in'~ sqrt(Tons))))
 
 p <- ggplot(data=dat, mapping=aes(x=year_a, y=area)) +
-  geom_line(aes(colour=crop, alpha=0.2, group = TAI_ID2)) + 
-  facet_grid( country ~ crop) + geom_smooth(stat='smooth', method='loess') + 
-  theme_bw(base_size=10, base_family='Helvetica') + 
+  geom_line(aes(colour=crop, alpha=0.2, group = TAI_ID2)) +
+  facet_grid( country ~ crop) + geom_smooth(stat='smooth', method='loess') +
+  theme_bw(base_size=10, base_family='Helvetica') +
   theme(axis.text.x = element_text(angle=0))  +
   ggtitle('Cultivated area per Province in Ha')
 
@@ -108,7 +130,7 @@ p
 
 # quartz.save(file='160630_CropProd_boxplots.png', type='png')
 
-p <- ggplot(data=dat, aes(crop, prod))+ geom_jitter(aes(colour=crop, alpha=0.2)) + 
+p <- ggplot(data=dat, aes(crop, prod))+ geom_jitter(aes(colour=crop, alpha=0.2)) +
   geom_boxplot(notch=T) + facet_grid(country~.)  +
   theme(axis.text.x = element_text(angle=90))+
   ggtitle('Production of crops (Tons) in the Volta basin')
@@ -117,27 +139,119 @@ p
 
 ## To do
 
-# write a function that divides prod / area cultivated and produce the 
+# write a function that divides prod / area cultivated and produce the
 # long dataset for ploting & ordination methods.
 
-
+dat$TAI_ID1 <- as.numeric(as.character(dat$TAI_ID1))
 dat$country <- ifelse(dat$TAI_ID1 > 3000, 'GH', 'BF')
 dat$TAI_ID2 <- as.factor(dat$TAI_ID1)
+
+# Revise where are the critical missing values
+with(dat, table(Year, crop))
+
+with(filter(dat, !is.na(area), !is.na(prod)), table(Year, crop))
+with(filter(dat, !is.na(area), !is.na(prod)), table(Year, crop))
+
+## NA count: 4638 / 22500 obs
+sum(is.na(dat$area) | is.na(dat$prod))
+
+# Is the number of points without missing values for per crop and year the same? Just add ==  between the next two lines:
+with(filter(dat, !is.na(area), !is.na(prod)) , table(Year, crop))
+
+with(filter(dat, !is.na(area), !is.na(prod)), table(Year, crop))
+
+
 
 # this is the way to get the common crops for the two countries
 intersect(dat$crop[dat$country == 'GH'], dat$crop[dat$country =='BF'])
 
 # then you can use filter to select them :) or a longer subsetting string
 datKeyCrops <- (filter(dat, crop == 'Maize' | crop == 'Millet'| crop == 'Rice'| crop == 'Yam'| crop == 'Sorghum'| crop == 'Cowpea'| crop == 'Soy' ))
+## extra crops Line and Katja want in | crop == 'Cocoyam'| crop == 'Platain'| crop == 'Ground nuts')
 datKeyCrops <- drop.levels(datKeyCrops)
+
+## NA count: 1300 / 8400 obs
+sum(is.na(datKeyCrops$area) | is.na(datKeyCrops$prod))
+
 p <- ggplot(data=datKeyCrops, mapping=aes(x=Year, y=sqrt(prod))) +
-  geom_line(aes(colour=crop, alpha=0.2, group = TAI_ID2)) + 
-  facet_grid( crop ~ country) + geom_smooth(stat='smooth', method='loess') + 
-  theme_bw(base_size=10, base_family='Helvetica') + 
-  theme(axis.text.x = element_text(angle=0))  + 
+  geom_line(aes(colour=crop, alpha=0.2, group = TAI_ID2)) +
+  facet_grid( crop ~ country) + geom_smooth(stat='smooth', method='loess') +
+  theme_bw(base_size=10, base_family='Helvetica') +
+  theme(axis.text.x = element_text(angle=0))  +
   ggtitle(expression(paste('Crop per Province in'~ sqrt(Tons))))
 
 p
+
+# Revise missing values
+with(filter(datKeyCrops, !is.na(area), !is.na(prod)) %>% select(Year,crop, area), table(Year, crop))
+with(filter(datKeyCrops, !is.na(area), !is.na(prod)) %>% select(Year,crop, prod), table(Year, crop)) == with(filter(datKeyCrops, !is.na(area), !is.na(prod)) %>% select(Year,crop, area), table(Year, crop))
+
+# Now per district:
+with(filter(datKeyCrops, !is.na(area), !is.na(prod)) %>% select(TAI_ID1,crop, area), table(TAI_ID1, crop)) %>% rowMeans() %>% mean()
+with(filter(datKeyCrops, !is.na(area), !is.na(prod)) %>% select(TAI_ID1,crop, prod), table(TAI_ID1, crop)) %>% rowMeans() %>% mean()
+
+
+
+# This shows there is only data for both countries in years Year == 2002:2005 | Year == 2007:2009
+datKeyCrops %>%
+	group_by( Year, crop) %>%
+	summarise(
+		year_n= n()) # %>%filter(Year > 2001)
+# Year == 2002:2005 | Year == 2007:2009
+datKeyCrops <- (filter(datKeyCrops, Year > 2001, Year < 2010, Year !=2006))# %>% filter(!is.na(area), !is.na(prod)))
+summary(datKeyCrops)
+str(datKeyCrops)
+datKeyCrops <- droplevels(datKeyCrops)
+
+datKeyCrops %>% filter(!is.na(area) , !is.na(prod)) %>% str()
+
+## Correct NA by adding values where missing with the mean for that crop in that particular place over time.
+length(levels(as.factor(datKeyCrops$Year)))
+
+x <- with(filter(datKeyCrops, !is.na(area), !is.na(prod)) , table(TAI_ID1, crop)) %>% as.data.frame() %>% filter (Freq != 7)
+
+datKeyCrops$TAI_ID2 <- datKeyCrops$TAI_ID1
+
+# x[1,]
+# if(datKeyCrops %>% filter(crop == x[1,2], TAI_ID2 == x[1,1]) %>%
+#         select(area) %>% is.na()) # end of If clause
+#
+        i = 3
+        datKeyCrops %>% filter(crop == x[i,2], TAI_ID2 == x[i,1]) #%>%
+#
+#         %>% sum() )  print('it is true' )
+#  I haven't been able to program this step when I add the mean of the area or prod per crop per area. However, for practical purposes, it's the same if I summarize droping NAs.
+
+p <- ggplot(data= datKeyCrops, mapping=aes(x=Year, y= sqrt(area))) +
+        geom_point(aes(colour=crop, alpha=0.2, group = TAI_ID2)) + geom_boxplot(aes(colour=crop, alpha=0.2, group = as.factor(Year))) +
+        #  facet_grid(crop ~ country)  +
+        theme_bw(base_size=10, base_family='Helvetica') +
+        theme(axis.text.x = element_text(angle=0)) +
+        ggtitle("area over time")
+  #+ ggtitle(expression(paste('Crop per Province in'~ sqrt(Tons)))) + geom_smooth(stat='smooth', method='loess')
+p
+# rm(p)
+
+## Plot the distributions to see what needs to be transformed.
+p <- ggplot(data= datKeyCrops, mapping=aes(x=sqrt(prod), group = TAI_ID2)) +
+        #geom_density(aes(fill=crop, alpha=0.2, group = TAI_ID2)) +
+        geom_boxplot(aes(colour=crop, alpha=0.2, group = TAI_ID2)) +
+        theme_bw(base_size=10, base_family='Helvetica') +
+        # theme(axis.text.x = element_text(angle=0)) +
+        ggtitle("Sqrt production per district")
+
+p  + facet_wrap(~TAI_ID2)
+
+
+# this doesn't work very well, the idea was to plot
+p <- ggplot(data= filter(crop.dat, !is.na(prop_cultivated_area)), mapping=aes(y=prop_cultivated_area, x=crop, group = Year)) +
+        #geom_density(aes(fill=crop, alpha=0.2, group = TAI_ID2)) +
+        geom_boxplot(aes(colour=crop, alpha=0.2)) +
+        theme_bw(base_size=10, base_family='Helvetica') +
+        # theme(axis.text.x = element_text(angle=0)) +
+        ggtitle("Sqrt production per district")
+
+p  + facet_wrap(~TAI_ID2)
 
 
 # calculate yieds
@@ -146,21 +260,12 @@ head(dat)
 datKeyCrops <- mutate(datKeyCrops, yield = ifelse(prod == 0 & area == 0, 0, prod/area))
 
 
-# This shows there is only data for both countries in years Year == 2002:2005 | Year == 2007:2009
-datKeyCrops %>% 
-	group_by( Year, country) %>%
-	summarise(
-		year_n= n()) %>%
-	filter(Year > 2001)
-
-datKeyCrops <- filter(datKeyCrops, Year == 2002:2005 | Year == 2007:2009)
-
 # Note there is few horrible outliers making life difficult:
-	filter(datKeyCrops, yield > 50) 
+	filter(datKeyCrops, yield > 50)
 
-p <- ggplot(data= filter (datKeyCrops, yield < 100), mapping=aes(x=Year, y= yield)) + 
-        geom_line(aes(colour=crop, alpha=0.2, group = TAI_ID2)) + facet_grid(crop ~ country)  + 
-        theme_bw(base_size=10, base_family='Helvetica') + 
+p <- ggplot(data= filter (datKeyCrops, yield < 100), mapping=aes(x=Year, y= yield)) +
+        geom_line(aes(colour=crop, alpha=0.2, group = TAI_ID2)) + facet_grid(crop ~ country)  +
+        theme_bw(base_size=10, base_family='Helvetica') +
         theme(axis.text.x = element_text(angle=0)) +
         ggtitle("Yield over time")
   #+ ggtitle(expression(paste('Crop per Province in'~ sqrt(Tons)))) + geom_smooth(stat='smooth', method='loess')
@@ -169,25 +274,25 @@ rm(p)
 # quartz.save(file='Crop_province_KeyCrops.png', type='png')
 
 ## Normalizing by district area or per capita would make crop production comparable.
-# Katja wisely says: 'If you do production through harvested area, you get yield, 
-# and that is something different – it doesn’t say that much about the importance 
-# of the crop in an area, but rather how productive it is.' In order to do that, 
+# Katja wisely says: 'If you do production through harvested area, you get yield,
+# and that is something different – it doesn’t say that much about the importance
+# of the crop in an area, but rather how productive it is.' In order to do that,
 # I need to join crop data with map data.
 
 datKeyCrops <- left_join(datKeyCrops, select(users, TAI_ID1, Sq_km, Pop= Total))
 
 # Normalize (do not confuse cropped area with area of the district 'Sq_km')
-datKeyCrops <- mutate(datKeyCrops, prod_km2 = prod / Sq_km, prod_capita = prod / Pop, yield_capita = yield / Pop) 
+datKeyCrops <- mutate(datKeyCrops, prod_km2 = prod / Sq_km, prod_capita = prod / Pop, yield_capita = yield / Pop)
 
 ### Note J160405: New problem: when importing data from excel it takes ,
-# as separator for decimals. Somehow many values get converted to NA after 
-# applying as.numeric to the columns of interest (see ExtracDataTAI.R file, lines 277 onwards)... 
+# as separator for decimals. Somehow many values get converted to NA after
+# applying as.numeric to the columns of interest (see ExtracDataTAI.R file, lines 277 onwards)...
 ## Update J160414: solved! it was a problem with the cell format (not number) on Excel that
 # makes spaces in between numbers that R interpreted as commas [,] so as.number did not work properly
 
-p <- ggplot(data= filter (datKeyCrops, yield < 100), mapping=aes(x=Year, y= prod_capita)) + 
-  geom_line(aes(colour=crop, alpha=0.2, group = TAI_ID2)) + facet_grid(country~crop)  + 
-  theme_bw(base_size=10, base_family='Helvetica') + 
+p <- ggplot(data= filter (datKeyCrops, yield < 100), mapping=aes(x=Year, y= prod_capita)) +
+  geom_line(aes(colour=crop, alpha=0.2, group = TAI_ID2)) + facet_grid(country~crop)  +
+  theme_bw(base_size=10, base_family='Helvetica') +
   theme(axis.text.x = element_text(angle=90)) +
   ggtitle("Production per capita")
 #+ ggtitle(expression(paste('Crop per Province in'~ sqrt(Tons)))) + geom_smooth(stat='smooth', method='loess')
@@ -200,7 +305,7 @@ sh_data <- volta.shp@data
 # minimize the dataset to what you really nead so joined tables are not super heavy
 volta.shp@data <- select(volta.shp@data, c(1:3))
 
-# then make a dataset with one year 
+# then make a dataset with one year
 # a <- select(datKeyCrops, -TAI_ID1 ) %>%
 #   filter(Year == 2002) %>%
 #   drop.levels() %>%
@@ -231,7 +336,7 @@ filter(select(datKeyCrops, TAI_ID2, crop, yield, prod_km2, prod_capita, Year), Y
 
 g <- ggplot(volta_f, aes(long,lat, group = group, fill= yield)) +
   geom_polygon() + # facet_grid(.~ crop) +
-  coord_equal() + theme_void() + 
+  coord_equal() + theme_void() +
   ggtitle(paste('Volta basin yields in', 2002, sep=' ') )
 
 system.time()
@@ -246,13 +351,13 @@ map.year <- function(datos, layer, year, crop){
   layer@data$id <- rownames(layer@data)
   lay_f <- left_join(lay_f, layer@data)
   print(format(object.size(lay_f), units='auto'))
-  
-  lay_f <- left_join (lay_f, 
+
+  lay_f <- left_join (lay_f,
                         filter(select(datos, TAI_ID2, crop, yield, prod_km2, prod_capita, Year), Year == year, crop == crop),
                         by=c('TAI_ID1' = 'TAI_ID2'))
  g <-  ggplot (data = lay_f, aes(long,lat, group = group, fill= yield)) +
     geom_polygon() + #facet_grid(.~ crop) +
-    coord_equal() + theme_void() + 
+    coord_equal() + theme_void() +
     ggtitle( paste ('Volta basin yields of in', year, sep=' '))
   return(g)
 }

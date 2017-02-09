@@ -1,4 +1,4 @@
-# 
+#
 
 
 
@@ -8,8 +8,8 @@ summary(dat)
 
 
 dat <- filter(dat, Year == 2002:2009)
-dat <- filter(dat, crop == 'Maize' | crop == 'Millet'| 
-                crop == 'Rice'| crop == 'Yam'| crop == 'Sorghum'| 
+dat <- filter(dat, crop == 'Maize' | crop == 'Millet'|
+                crop == 'Rice'| crop == 'Yam'| crop == 'Sorghum'|
                 crop == 'Cowpea'| crop == 'Soy' )
 
 dat$Year <- as.factor(dat$Year)
@@ -23,9 +23,12 @@ p1 <- ggplot(data=dat, aes(crop, prod)) +
 
 p1
 
+
+
 dat %>%
-  filter (Year == 2003) %>%
+  filter (Year == 2010, crop == 'Maize' | crop == 'Millet'|
+                  crop == 'Rice'| crop == 'Yam'| crop == 'Sorghum'|
+                  crop == 'Cowpea'| crop == 'Soy') %>%
   select(TAI_ID2, crop, prod) %>%
   spread (key = crop, value = prod) %>%
-  ncol()
-  
+  str()
