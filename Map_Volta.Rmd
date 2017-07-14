@@ -1,0 +1,29 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+## Interactive map Volta
+
+```{r map}
+# load libraries for mapping
+library(maptools)
+library(rgeos)
+library(RColorBrewer)
+library(tidyr)
+library(leaflet)
+library(rgdal)
+
+# load map for visualizations and data
+volta.shp <- readShapeSpatial("~/Documents/Projects/TAI/TransformedData/Bundling/Volta_bundling1.shp")
+proj4string(volta.shp) <- CRS('+init=epsg:4378')
+
+
+
+
+m <- leaflet() %>% addTiles() %>%
+  addPolygons(data = volta) 
+m
+```
+
+
