@@ -3,14 +3,14 @@ title: "Mapping Social Ecological Systems Archetypes"
 author: "Juan Rocha, Katja Malmborg, Line Gordon, Kate Brauman and Fabrice DeClerk"
 date: "`r Sys.Date()`"
 output:
+  word_document: null
+  html_document:
+    toc: yes
+    toc_depth: '2'
   pdf_document:
     citation_package: natbib
     toc: no
     toc_depth: 2
-  html_document:
-    toc: yes
-    toc_depth: '2'
-  word_document: null
 fontsize: 11pt
 cls: pnastwo.cls
 bibliography: MappingSES_bibliography.bib
@@ -74,7 +74,7 @@ Despite the differences in purpose, scale, resolution and datasets used, what th
 
 ### Data
 
-Since our analysis focus on food security issues the defining key interaction (I) of our SES characterization is crop production. It is a dummy variable that reflect both the capacity of the ecosystem to provide food services, but also the human labor and preferences necessary as input to co-produce the service. Crop data, both production and cropped area, were collected from national statistical bureaux. While data does exist for 32 crops from 1993-2012, here we only used 7 crops with minimum missing values, and the last 7 year averages to correct for outliers (See SM for crop selection). Users (U) and their social, economical and political settings (S) were here characterized by national census statistics and their change over the period 1996-2006 for Burkina Faso and 2000-2010 for Ghana. The ecological system (ECO) is characterized by biophysical variables from CRU [_Katja clarify here_] that summarizes aridity, mean temperature, precipitation and slope. The resource system (RS) is a combination of variables that facilitate or not agriculture (our key interaction) such as the percentage of area dedicated to crops, presence of water reservoirs, or the variance of kcals produced as a proxy of predictability. Resource units (RU) were characterized by cattle per capita, since it is a source of insurance for farmers in the area. All data is standardized to the range 0:1 and log transformed for distributions with heavy tails. Table 1 summarizes the framework and the proxies used.
+Since our analysis focus on food security issues the defining key interaction (I) of our SES characterization is crop production. It is a proxy that reflect both the capacity of the ecosystem to provide food services, but also the human labor and preferences necessary as input to co-produce the service. Crop data, both production and cropped area, were collected from national statistical bureaux. While data does exist for 32 crops from 1993-2012, here we only used 7 crops with minimum missing values, and the last 7 year averages to correct for outliers (See SM for crop selection). Users (U) and their social, economical and political settings (S) were here characterized by national census statistics and their change over the period 1996-2006 for Burkina Faso and 2000-2010 for Ghana. The ecological system (ECO) is characterized by biophysical variables from CRU [_Katja clarify here_] that summarizes aridity, mean temperature, precipitation and slope. The resource system (RS) is a combination of variables that facilitate or not agriculture (our key interaction) such as the percentage of area dedicated to crops, presence of water reservoirs, or the variance of kcals produced as a proxy of predictability. Resource units (RU) were characterized by cattle per capita, since it is a source of insurance for farmers in the area. All data is standardized to the range 0:1 and log transformed for distributions with heavy tails. Table 1 summarizes the framework and the proxies used.
 
 Table 1. Summary variables used and their equivalence with the Ostrom's SES framework.
 
@@ -104,7 +104,7 @@ Table 1. Summary variables used and their equivalence with the Ostrom's SES fram
 
 ### Clustering SES archetypes
 
-To test the optimal number of clusters, 30 different indexes were compared following the protocol described by Charrad et al [-@Charrad:2014tp]. We further test the internal validation and stability validation of 9 different clustering techniques: hierarchical clustering, self-organizing maps, k-means, partitioning around medoids _pam_, divisible hierarchical algorithm _diana_,  a sampling based clustering _clara_, a fuzzy clustering _fanny_, self-organizing trees _sota_, and model-based algorithm [@Brock:2008vz]. While the first technique offers a robust estimation of the number of clusters in the data, the second helps choosing an optimal clustering algorithm. Results are typically presented as non-metric multi dimensional ordinations and their spacial distribution in maps of the Volta basin. The maximum dissimilarity distance was used to maximize the distance between components, while the Ward aggregation method was used to minimize the total within-cluster variance [@Charrad:2014tp]. For visualizations we used a less restrictive Manhattan distance to ensure convergence. We further investigate the interdependences between Ostrom's nested variables, by reiterating the ordination on a set of variables of interest (e.g. interactions [I]) and performing vector fitting with the remaining variable sets (e.g. resource (RU and RS), social (U and S), ecological (ECO)).
+To test the optimal number of clusters, 30 different indexes were compared following the protocol described by Charrad et al [-@Charrad:2014tp]. We further test the internal validation and stability validation of 9 different clustering techniques: hierarchical clustering, self-organizing maps, k-means, partitioning around medoids _pam_, divisible hierarchical algorithm _diana_,  a sampling based clustering _clara_, a fuzzy clustering _fanny_, self-organizing trees _sota_, and model-based algorithm [@Brock:2008vz]. While the first technique offers a robust estimation of the number of clusters in the data, the second helps choosing an optimal clustering algorithm. Results are typically presented as non-metric multi dimensional ordinations and their spacial distribution in maps of the Volta basin (principal component analysis are shown in SM). The maximum dissimilarity distance was used to maximize the distance between components, while the Ward aggregation method was used to minimize the total within-cluster variance [@Charrad:2014tp]. For visualizations we used a less restrictive Manhattan distance to ensure convergence. We further investigate the interdependences between Ostrom's nested variables, by reiterating the ordination on a set of variables of interest (e.g. interactions [I]) and performing vector fitting with the remaining variable sets (e.g. resource (RU and RS), social (U and S), ecological (ECO)).
 
 
 [_Double check: Temporal trends were explored only on the interaction dataset. - I might change this and do it also in cultivated area that is not part anymore of the interaction dataset._]
@@ -522,7 +522,7 @@ plot(0,0, type = 'n', xlim = c(0,9), ylim=c(0,5), axes = F)
 legend(x = 0, y = 5,legend = colnames(df[-c(1,2)])[1:5], fill = FlowerCol [1:5], bty = 'n' , title = 'Ecological', cex = 1)
 legend(x = 2, y = 5,legend = colnames(df[-c(1,2)])[6:10], fill = FlowerCol [6:10], bty = 'n' , title = 'Users', cex = 1)
 legend(x = 4, y = 5,legend = colnames(df[-c(1,2)])[11:15], fill = FlowerCol [11:15], bty = 'n' , title = 'Social', cex = 1)
-legend(x = 6, y = 5,legend = colnames(df[-c(1,2)])[16:18], fill = FlowerCol [16:18], bty = 'n' , title = 'Resource', cex = 1)
+legend(x = 6, y = 5,legend = colnames(df[-c(1,2)])[16:19], fill = FlowerCol [16:19], bty = 'n' , title = 'Resource', cex = 1)
 legend(x = 8, y = 5,legend = colnames(df[-c(1,2)])[20:26], fill = FlowerCol [20:26], bty = 'n' , title = 'Interactions', cex = 1)
 
 # quartz.save(file = '161125_SESarchetypes.png', type = 'png', dpi = 200,width=7, height=7, pointsize = 8 )
@@ -691,12 +691,12 @@ To-do list:
 Crop data records available for Ghana and Burkina Faso go as back as `r min(dat$Year)`. Yet, out of the 32 crops recorded, complete data for the basin is only available for 7 crops used in the current analysis. The dataset is far from complete. On its most recent version, the data has `r dim(dat)[1]` observations. An observation is a datapoint of a crop in a district with some production in Tons and some cropped area in Ha. Out of the `r dim(dat)[1]` observations `r sum(is.na(dat$area) | is.na(dat$prod))` are missing values: `NA's` or empty cells on the raw data. This is over 36% of the most complete version of the dataset. For the analysis presented in the paper we only used the 7 most complete crops, and still we had missing values. SM Fig1 shows the missing values in orange, the darker the blue the better, meaning data is complete for the 99 spatial units analyzed. The only crops for which we have data for both countries are `r intersect(dat$crop[dat$country == 'GH'], dat$crop[dat$country =='BF'])`. All data was log-transformed, total crop area calculated as well as the proportion of cultivated area per crop. However area values were not used for the analysis due to high correlations with production data. Production in Tons was transformed to Kcals with data from FAO. And the mean for a 7 year period (skipping 2006) will be used for the interaction dataset in the clustering analysis. The data for key 7 crops has 4851 observations of which 4664 does not contain missing values. Now instead of >30%, missing values were reduced to 3.85%. Mean values and log-transformations were performed for each district or province droping the missing values, meaning that for some provices and some crops the mean is not based on 7 values but less (>4 in minimum cases). In doing so we avoid zero inflation on the distributions of the original data that can bias the clustering results.
 
 
-```{r SMFig1, fig.height = 3, fig.width = 3, fig.cap = 'SMFig1. Crop selection. ', dev.args = list(pointsize = 5)}
+```{r SMFig1, fig.height=3, fig.width=3, fig.cap = 'SMFig1. Crop selection. ', dev.args = list(pointsize = 5)}
 
 ## Missing values
 missing <- as.data.frame(with(filter(dat, !is.na(area), !is.na(prod)), table(Year, crop)))
 g <- ggplot(missing, aes(Year, crop)) + geom_raster(aes(fill = Freq)) + theme_minimal(base_size = 5)
-g + scale_fill_gradient(low = "#FFA50080", high = "#0000FF80")  + theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
+g + scale_fill_gradient(low = "#FFA50080", high = "#0000FF80")  + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ```
 
 
@@ -767,12 +767,39 @@ for (i in 1:length(k)){
 
 ```
 
-```{r SM_Fig3, echo = FALSE, fig.align='center', fig.height = 4, fig.width = 4 , error=FALSE, warning=FALSE, message=FALSE, fig.cap = "SMFig3. Correlogram for full dataset", dev.args= list(pointsize = 5)  }
+```{r SM_Fig3, echo=FALSE, fig.align='center', fig.height=4, fig.width=4 , error=FALSE, warning=FALSE, message=FALSE, fig.cap = "SMFig3. Correlogram for full dataset", dev.args= list(pointsize = 5)  }
 library (corrgram)
 corrgram(df, upper.panel = 'panel.pts', lower.panel = "panel.cor" )
 
 # GGally::ggscatmat(df, columns = 3:length(df)) + theme_grey(base_size = 6)
 ```
+
+### Principal component analysis
+
+An alternative approach to ordination is PCA. As we can see from the ordination plots the first principal component explains ~45% of the variability in the data while the second ~12%.
+
+```{r SM_Fig4, fig.height=2, fig.width=6, fig.cap="PCA results", dev.args=list(pointsize = 5) }
+library(FactoMineR)
+library(factoextra)
+par(mfrow=c(1,3))
+pca_1 <- PCA(df[-c(1,2,29)])
+barplot(pca_1$eig$eigenvalue, ylab="value", xlab="Eigenvalues", names.arg=as.character(1:26))
+```
+Similarly to the results presented with non-metric multidimensional scaling (Fig 1), PCA separate two big groups of clusters across the first component with a lot of overlap across the second component. The vectors confirm that green, purple and orange clusters are dominated by agroecosystems whose production focuses on millet, cowpeas, rice and sorghum. The purple and orange clusters have the higher aridity and mean temperatures, but also the higher concentration of water reservoirs and cattle per square kilometer. The orange cluster has the fasters growing population and also the highest variability in crop production as well as the highest concentration of farmers. The blue and yellow clusters in the south tend to be more urbanized, have higher rates of literacy, higher migration (both internal and regional), as well as agroecosystems dominated by the production of yam and maize. The red cluster has particularly high population density and market access.
+
+```{r SM_Fig5, echo=FALSE, fig.cap="Graphical illustration of differences in variables between archetypes based on PCA."}
+fviz_pca_biplot(pca_1, habillage = as.factor(df$clus), repel=TRUE, label="var", addEllipses=TRUE, palette = levelCols) + xlab("PC 1 (45.74%)") + ylab("PC 2 (12.39%)") + ggtitle("Ordination with principal component analysis")
+
+```
+
+SM Table 1 shows the loadings of each component. On the first component, variables with high positive values such as aridity, mean temperature, and produced kilocalores of cowpeas, millet or sorghum separate apart the orange, green and purple clusters; while variables with negative values such as wet season, literacy, regional migration and urbanization are responsible for the differentiation of the yellow, blue and red groups. On the vertical axis (teh second component) variables responsible for explaining variation includes population density, ratio of women, market access and production in kilocalories of yam and maize.
+
+```{r SM_table1, results='asis'}
+## loadings of the first two PCs of the PCA
+knitr::kable(sweep(pca_1$var$coord[,1:2],2,sqrt(pca_1$eig[1:ncol(pca_1$var$coord),1])[1:2],FUN="/"))
+
+```
+
 
 
 ## Outline
