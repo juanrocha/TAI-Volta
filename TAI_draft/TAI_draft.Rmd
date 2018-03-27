@@ -1,0 +1,246 @@
+---
+title: "Mapping Social Ecological Systems Archetypes"
+
+# Use letters for affiliations, numbers to show equal authorship (if applicable) and to indicate the corresponding author
+author:
+  - name: Juan C. Rocha
+    affiliation: a,b,1
+  - name: Katja Malmborg
+    affiliation: a
+  - name: Line Gordon
+    affiliation: a
+  - name: Kate Brauman
+    affiliation: c
+  - name: Fabrice De Clerk
+    affiliation: a,d
+    
+address:
+  - code: a
+    address: Stockholm Resilience Centre, Stockholm University, Stockholm, 10691 Sweden
+  - code: b
+    address: Beijer Institute, Swedish Royal Academy of Sciences, Stockholm, 10405 Sweden
+  - code: c
+    address: Institute of Environment, University of Minnesota, St	Paul,	MN	55108, USA
+  - code: d
+    address: Biodiversity International, CGIAR, Montpellier Cedex 5, France
+
+corresponding_author:
+  - code: 1
+    text: "To whom correspondence should be addressed. E-mail: juan.rocha@su.se"
+
+# For footer text
+lead_author_surname: Rocha
+
+## Remove this if not required    
+# equal_authors:
+#   - code: 1
+#     text: "A.O.(Author One) and A.T. (Author Two) contributed equally to this work (remove if not applicable)."
+
+
+author_contributions: |
+  Please provide details of author contributions here.
+
+## Remove this if not required
+conflict_of_interest: |
+  Please declare any conflict of interest here.
+
+abstract: |
+  Achieving sustainable development goals requires targeting and monitoring sustainable solutions tailored to different social and ecological contexts. Elinor Ostrom stressed that there is no panaceas or universal solutions to environmental problems, and developed a social-ecological systems' (SES) framework -a nested multi tier set of variables- to help diagnose problems, identify complex interactions, and solutions tailored to each SES arena. The framework has been applied to over a hundred cases, typically reflecting in-depth analysis of local case studies, but with relatively small coverage in space and time. While case studies are context rich and necessary, it can be difficult to upscale their lessons to policy making realms. Here we develop a data driven method for upscaling Ostrom's SES framework and apply it to a context where data is scarce, incomplete, but also where sustainable solutions are needed. The purpose of upscaling the framework is to create a tool that facilitates decision-making on data scarce contexts such as developing countries. We mapped SES by applying the SES framework to poverty alleviation and food security issues in the Volta River basin in Ghana and Burkina Faso. We found archetypical configurations of SES in space given data availability, we study their change over time, and discuss where agricultural innovations such as water reservoirs might have a stronger impact at increasing food security and therefore alleviating poverty and hunger. We conclude by outlining how the method can be used in other SES comparative studies.
+
+
+significance: |
+  Authors must submit a 120-word maximum statement about the significance of their research paper written at a level understandable to an undergraduate educated scientist outside their field of speciality. The primary goal of the Significance Statement is to explain the relevance of the work in broad context to a broad readership. The Significance Statement appears in the paper itself and is required for all research papers.
+
+acknowledgements: |
+  Please include your acknowledgments here, set in a single paragraph. Please do not include any acknowledgments in the Supporting Information, or anywhere else in the manuscript.
+
+keywords:
+  - social-ecological systems framework
+  - archetypes
+  - sustainable development goals
+  - data poor environments
+
+## must be one of: pnasresearcharticle (usual two-column layout), pnasmathematics (one column layout), or pnasinvited (invited submissions only)
+pnas_type: pnasresearcharticle
+
+bibliography: MappingSES_bibliography.bib
+csl: pnas.csl
+
+## change to true to add optional line numbering
+lineno: false
+
+output: rticles::pnas_article
+header-includes:
+- \graphicspath{ {figures/} }
+- \usepackage{graphicx}
+
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE, results = "hide", dev = 'png', dpi = 600)
+
+# knitr::opts_knit$set(progress = FALSE, verbose = FALSE)
+
+rm(list = ls())
+set.seed(12345)
+# this file combines code from the 161027 draft and the simplified version of the analysis
+
+## load libraries
+library(tidyverse)
+library(forcats)
+library  ('gdata')
+library (readxl)
+# library (corrgram)
+# library(GGally)
+library(broom)
+
+# load libraries for mapping
+library(maptools)
+library(rgeos)
+library(RColorBrewer)
+library(ggmap)
+library(grid)
+library(gridExtra)
+
+# load libraries for clustering
+library (vegan)
+# library(rgl)
+# library(cluster)
+library(NbClust)
+library(clValid)
+# library(MASS)
+library(kohonen)
+library(FactoMineR)
+library(factoextra)
+
+# setwd('~/Documents/Projects/TAI/scripts/TAI-Volta')
+```
+
+Zero hunger and no poverty are the first two sustainable development goals [@Assembly:2015th; @Lubchenco:2015eb]. Together with clean water and sanitation, they conform the most basic needs of human beings. Understanding how societies and ecosystems self-organise to provide these goods and services, to meet these basic needs, is a core challenge of sustainability science. Countries around the world have agreed on pursuing 17 sustainable development goals. Achieving them requires targeting and monitoring solutions that fit each different social-ecological context [@Griggs:2013cm]. These countries need to meet this challenge by understanding the diversity and dynamics of social and ecological characteristics of their territories. But data to meet these demands are not always available or even collected [@Reyers:2017gk], and methods development for data scarce countries is imperative.
+
+Nobel prize winner Elinor Ostrom advocated for embracing social-ecological complexity. Ostrom recognized that there is no universal solution to problems of destruction of overuse of natural resources [@Ostrom:2007je] and further developed a Social-Ecological Systems' (SES) framework hoping it would help accumulate knowledge and better understanding of what works and what does not in different SES [@Ostrom:2009p6785]. The SES framework is a nested multi tier set of variables that has been suggested as features that characterise distinctive aspects of SES. The framework has been typically applied to local case studies that cover relatively small areas and short periods of time (documented in two publicly available datasets: the [SES Library](https://seslibrary.asu.edu)  and the [SES Meta Analysis Database](https://sesmad.dartmouth.edu)). Over a hundred case studies have been coded in these databases, however the scale at which they are coded make it hard to bring their lessons directly to arenas relevant for policy making, or harness the power of comparison to better understand what interventions work and where.
+
+In order to target development interventions, we need to be able to characterise SES in data scarce places. The purpose of this paper is to develop a data driven method to upscale Ostrom's SES framework. It is targeted to countries where available data is restricted in quality and monitoring programs might not be on place. As a working example we studied the Volta River basin, a cross national watershed that covers roughly two thirds of Burkina Faso's and Ghana's joint territories. The West African Sahel is a highly vulnerable area due to wide-spread of poverty, recurrent droughts and dry spells, political upheaval, emergent diseases (e.g. malaria), rapid urbanization, and growing food demand (Lambin:2014eg). The region offers a sharp gradient in climate, humidity, as well as in economic development, from the relatively rich urbanized areas in southern Ghana to northern Burkina Faso where smallholder farming and pastoralism dominates. We consider as an intervention example how the construction of water reservoirs might have an impact on food security, a key sustainable development goal. The following section outlines how we operationalize the Ostrom's SES framework to the scale of the Volta River basin and apply it using publicly available data and national statistics. Next we describe the SES archetypes found, how they change over time and how reservoir development explain some trends. Finally, we discuss the overall results and the applicability of our methods to other data scarce context.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width = 7in, height = 3in]{fig_1}
+\caption{\textbf{Comparison of clustering techniques.} Social-Ecological systems archetypes found by applying 6 clustering techniques on 6 clusters (See SMFig1 for cluster number selection). Upper panel shows non-metric multi dimensional scaling of the data, and the lower panel the respective geographical distribution. Best performing algorithms are clara (a), partition around medioids (c), and  hierarchical clustering (e)}
+\label{fig:fig1}
+\end{figure*}
+
+
+<!-- ![**Comparison of clustering techniques**. Social-Ecological systems archetypes found by applying 6 clustering techniques on 6 clusters (See SMFig1 for cluster number selection). Upper panel shows non-metric multi dimensional scaling of the data, and the lower panel the respective geographical distribution. Best performing algorithms are clara (a), partition around medioids (c), and  hierarchical clustering (e)<span data-label="fig:fig1"></span>](figures/fig_1.png){width=100%} -->
+
+Clustering SES {#clustering .unnumbered}
+============================
+
+Identifying SES archetypes from data is in essence a clustering problem, this is a classification task of multiple elements by some measure of similarity. A plethora of methods exist to perform clustering analysis, but before explaining the details of our choices, first we present a brief overview of what others have done when trying to classify SES and how our work complements previous efforts.
+
+The idea that SES are intertwined and interdependent systems is not new: SES are human and natural coupled systems where people interact with biophysical components; they often exhibit nonlinear dynamics, reciprocal feedback loops, time lags, heterogeneity and resilience [@Liu:2007dq]. It has been suggested that complex adaptive systems, such as SES, should leave statistical signatures on social and ecological data that would allow pattern identification of typologies and make it possible to follow their spatial patterns as well as trajectories through time [@Holland:2012ur; @Levin:2000vk]. Earlier efforts to map SES have been more general in purpose, and global in scale, such as the attempt to identify Anthromes (“human biomes”) [@Ellis:2010p6408; @Ellis:2008p314], or general land system archetypes [@SurendranNair:2016tz; @Vaclavik:2013cs; @Ropero:2015bp]. Reflecting on global consequences of land use, Foley _et al._ [-@Foley:2005p190] proposed a conceptual framework for bundles of ecosystem services, the idea that landscape units can be classified by the sets of goods and services that a SES co-produces, or more generally, a set of social-ecological interactions. The idea of clustering bundles of ecosystem services has gained empirical support [@Spake:OJp4UgAP] with studies that range from the watershed to national scales in Canada [@RaudseppHearne:2010p5327; @Renard:2015ew], Sweden [@Meacham:2016cy; @Queiroz:2015cv], Germany [@Rabe:2016hp], and South Africa [@Hamann:2015cx]. Similar ordination methods has also been used to study regime shifts from foraging to farming societies in ancient SES [@Ullah:2015eb].
+
+Despite the differences in purpose, scale, resolution and datasets used, what the aforementioned studies have in common is that they attempt to map SES by combining multivariate methods of ordination and clustering algorithms to identify i) systems' typologies and ii) potential underlying variables of change. However, these do not provide guidance on how to make choices regarding optimal number of clusters or algorithmic selection, limiting their replicability when applied to different places or data. These choices remain idiosyncratic in the SES literature and there has been no way to weighting best practices. Here we follow a similar rationale of applying clustering techniques to SES data while explicitly addressing these limitations. To guide us in choice of variables, we use Ostrom’s SES framework. In Ostrom's parlance a SES has 6 key subsystems: i) resource units (RU), resource system (RS), governance system (GS), users (U), interactions (I) and outcomes (O); all framed by social, economic and political settings (S) as well as by related ecosystems (ECO). Each of these subsystems have a nested second tier of variables (53 in total in the original proposal) aimed to capture key features of the first tier [@Ostrom:2009p6785]. We obtained publicly available datasets covering the second administrative level for Ghana and Burkina Faso (districts and provinces respectively). From these, we matched any data that in a meaningful way could be used as proxies of the Ostrom variables.
+
+\begin{figure*}[htb]
+\centering
+\includegraphics[width = 7in, height = 7in]{fig_2}
+\caption{\textbf{Bundles of SES variables.} The SES framework was operationalized by analyzing datasets that are used as proxies for Ostrom's suggested variables at spatial units that correspond to the second administrative level (A). The clusters correspond to the best partition obtained with Hierarchical clustering (Fig 1). For each cluster there is a flower diagram of average normalized units for each second tier variable. The outer gray circle shows the unit circle, if the mean is equal to one the bar would be as high as the circle. The base of the bars shows then values of zero. The hight of the bar shows the mean of the variable for each cluster, while the error bars show standard deviations. Note that for some variables the error bars go above 1 or below zero, indicating that the mean is not necessarily the best summary statistic for all variables. (B) shows the distribution of each variable and allows for cluster comparison within variable; SM Fig 3 complements this figure by showing the intra cluster variation while SM Fig 4 shows the statistical differences between clusters per variable.}
+\label{fig:fig2}
+\end{figure*}
+
+
+<!-- ![**Bundles of SES variables.** The SES framework was operationalized by analyzing datasets that are used as proxies for Ostrom's suggested variables at spatial units that correspond to the second administrative level (A). The clusters correspond to the best partition obtained with Hierarchical clustering (Fig 1). For each cluster there is a flower diagram of average normalized units for each second tier variable. The outer gray circle shows the unit circle, if the mean is equal to one the bar would be as high as the circle. The base of the bars shows then values of zero. The hight of the bar shows the mean of the variable for each cluster, while the error bars show standard deviations. Note that for some variables the error bars go above 1 or below zero, indicating that the mean is not necessarily the best summary statistic for all variables. (B) shows the distribution of each variable and allows for cluster comparison within variable; SM Fig 3 complements this figure by showing the intra cluster variation while SM Fig 4 shows the statistical differences between clusters per variable. <span data-label="fig:2"></span>](figures/fig_2.png){width=100%} -->
+
+
+Data and choice of variables {#data-variables .unnumbered}
+----------------------------
+
+Since our analysis focuses on food security issues we use crop production as the defining key interaction (I) of our SES characterisation. It is a proxy that reflects both the capacity of the ecosystem to provide food services, but also the human input (e.g. fertilisers) and preferences (e.g. crop choices) necessary as input to co-produce the service. Crop data, both production and cultivated area, were obtained from national statistical bureaux. While data does exist for 32 crops from 1993-2012, there are large data gaps in the time series of these data (~36%) (SM Fig 1). We thus chose 7 crops with minimum missing values (3.85%), and the last 7 year averages to correct for outliers (See SM for crop selection). Users (U) and their social, economical and political settings (S) were here characterised by national census statistics and their change between the years 1996 and 2006 for Burkina Faso, and between 2000 and 2010 for Ghana. The ecological system (ECO) is characterised by biophysical variables from Mitchell et al. [@Mitchell:2005hx] that summarises aridity, mean temperature, precipitation and slope. The resource system (RS) is a combination of variables that facilitate or not agriculture (our key interaction), such as the presence of water reservoirs, and the variance of kcals produced as a proxy of predictability. Resource units (RU) were characterised by cattle per capita, since it is a source of insurance for farmers in the area. All data is standardised to the range 0:1 and log transformed for distributions with heavy tails. Table 1 summarises the framework and the proxies used.
+
+
+
+
+```{r data, cache = TRUE, echo = FALSE, error=FALSE, warning=FALSE, message=FALSE, results = 'hide'}
+
+## Read data
+load('~/Documents/Projects/TAI/scripts/TAI-Volta/180129_Volta.RData')
+df <- mutate(df, id = TAI_ID1)
+df$clus <- clusters$Hierarchical
+```
+
+Results {#results .unnumbered}
+=============================
+
+The results suggest that the Volta river basin has different sets of social-ecological systems. To test the optimal number of clusters, 30 different indexes were compared following the sensitivity analysis described by Charrad et al [-@Charrad:2014tp] (See SM Methods). The clustering search identifies an optimal number of 6 archetypes (SM Fig 1) suggested by 11 out of 30 indexes, followed by 3 clusters (4 indexes), and 9 clusters (4 indexes). We further test the internal validation and stability validation of 9 different clustering techniques. By comparing different algorithms, the test suggest that hierarchical clustering is the best performing technique with low numbers of clusters, while stability validation suggests _clara_ or _pam_ with higher number of clusters. Figure \ref{fig:fig1} compares the clustering of the second level administrative units into 6 clusters with the best performing clustering methods. All maps render very similar results, specially with _clara_, _pam_ or _hierarchical_ clustering. Henceforth we favour 6 clusters as the number of archetypes given the strong support found by comparing 30 the indexes proposed [@Charrad:2014tp], and subsequent results use hierarchical clustering.
+
+![**Relationships between SES framework components.** Each subsystem in the Ostrom's framework is ordered with non-metric multidimensional scaling and vectors are fitted for all other variables that significanlty (p < 0.001) explain the variation of the ordination. Each plot title shows the dataset in which the ordination was applied versus the dataset used for the vector fitting. The colors of points and contours correspond to the archetypes found in Fig 2. <span data-label="fig:fig3"></span>](figures/fig_3.png){width=50%}
+
+![**Influence of water reservoirs in kilocalories produced per crops and its variability.**  <span data-label="fig:fig4"></span>](figures/fig_5.png){width=50%}
+
+Following the analogy of bundles of ecosystem services [@Foley:2005p190; @RaudseppHearne:2010p5327], here we also map the sets of SES variables that co-variate in space using the archetypes found by the clustering analysis (Figure \ref{fig:fig2}). As expected, SES archetypes follow a north - south gradient, with SES in the north (cluster 1 and 2) being dominated by arid environments, the kilocalories produced come primarily from cowpea, millet and sorghum, with relatively higher rice and maize production in southern Burkina Faso (cluster 2). Despite these similarities, cluster 2 has in average higher cattle per $Km^2$, both higher intra and inter regional migration, higher literacy, faster population growth but less market connectivity, lower ratio of women and children (SM Fig 5). Cluster 3 concentrates a higher kilocalories production with relatively high production of all crops analysed except for maize. Maize reaches its production peak in the south (clusters 4-5). Clusters 4 and 5 are also characterised by the production of yam and rice, lower cattle per $Km^2$ as well as small ruminants per capita. The highest urbanisation and literacy occurs in clusters 4 and 5. External migration is low in cluster 3 but increases again further south. Cattle per $Km2$ and market access rich its highest in cluster 6. The south is also dominated by longer wet seasons and higher soil water content. Note that while water reservoir density is higher in cluster 1, the variance of resource dynamics is high both in clusters 1, 2, 3 and 5, suggesting that water reservoirs also can have positive impacts on clusters 2, 3 and 5. Figure SM3 and SM4 further explore significant differences between clusters for each second tier variable.
+
+The potential relationships between different components of the Ostrom's framework were further investigated by applying vector fitting to non-metric multi-dimensional scaling (Fig \ref{fig:fig3}). The ordination method applied to each set of variables reveals that the clustering (Fig \ref{fig:fig2}) is highly driven by the interactions (crops) data (Fig \ref{fig:fig3} top row). Clusters 1-2 tend to produce similar crops and rely heavily on cattle and small ruminants; and also where dams have been more abundant. The predictability of the resource system measured as the variance of kilocalories over 7 years of data shows that clusters 2-3 are the areas where crops are more unpredictable, and thus where food security might be compromised. They are also areas with higher concentrations of farmers and children. A similar ordination on the ecological variables (ECO) supports the idea that water reservoirs and cattle have been highly correlated to places with high aridity, and occur in places where the agricultural portfolio is characterised by soy, cowpea, sorghum and rice. These relationships across the different components of the Ostrom's framework holds when looking at years where complete crop data is available (SM Fig 4, also see SM Fig 1 for data gaps). It suggest that the results are robust in time despite limited longitudinal data.
+
+These results put together suggest that agricultural innovations related with water reservoirs development have had more influence in northern parts of Burkina Faso (cluster 1, Fig 3) but further developments would likely have a strong impact on the SES represented by clusters 2 and 3, where social and ecological conditions are relatively similar, but the standard deviation of kilocalories produced is at its maximum - indicating vulnerability on food security. To test this intuition we regressed the kilocalories produced per crop against dam density controlling for biophysical factors (e.g. aridity, wet season length, soil water) and social factors (literacy, number of farmers, market access) that can impact yields. Figure 4 shows that the presence of dams have a relatively small effect when compare with other coefficients, but positive and significant in the mean of kilocalories produced for cowpeas, rice (p < 0.05), and maize (p < 0.1), while it does have an effect on the standard deviation of the kilocalories produced for maize, millet and rice (p < 0.05). While these results confirm our speculation, they cannot be interpreted as causal effects. Our data does not provide extensive time series, instrumental variables, or randomized control trials required to test for causality. In addition, other factors that are expected to play a role on the production of crops are not controlled for due to lack of data at the appropriate spatial scale, such as the use of fertilizers and pesticides. In summary, we can identify patterns of where water reservoirs have been more abundant, where the abundance of reservoirs does correlate with production of certain crops, and based on this pattern triangulate where an additional dam is likely to have a similar effect, or more importantly. Further tests for causality would require longitudinal data on water reservoirs (when were they build, water storage capacity, location), complete longitudinal data on water and irrigation intensive crops such as vegetables, and proxies for fertilizers and pesticides use at the second-level administrative division.
+
+Discussion {#discussion .unnumbered}
+=======================
+
+The purpose of this paper was outlining a data driven routine for operationalising Ostrom's SES framework and map SES archetypes. The method relies entirely on publicly available data and open access software [@Brock:2008vz; @Charrad:2014tp], making suitable for replication in other data limited settings. By applying clustering with a sensitivity analysis routine to the Volta river basin case, we have demonstrated how the method performs in a setting with restricted data quality and still renders useful insights. We have found that the Volta basin can be best described by 6 SES archetypes strongly characterised by their crop productivity profiles, but also by social variables such as urbanisation, literacy or migration, as well as ecological variables such as temperature, soil water content and wet season length. Our results also suggest that the implementation of water reservoirs can improve food security in places in the basin historically exposed to high variability in the calories produced per capita.
+
+Our work complements previous efforts for mapping SES in that it considers a broader range of variables both social and ecological outlined by Ostrom. It provides, to our knowledge, a first attempt to upscale Ostrom's framework to a binational scale. Previous efforts have relied heavily in qualitative data which restricts the analysis to smaller sample sizes (See work by [@Leslie:2015gr], N=12). Instead of the richness provided by case studies, but constrained by very localised scales, here we have taken advantage of comparing a larger spatial scale at the more detailed level we could find standardised data for: namely the second administrative level for the whole basin. Thus the limits are imposed by data availability. For example, we have not included any variable in the Ostrom SES framework that describes the governance of the system (G), or the use of fertilizers (RS). Although governance and fertilizers use indicators do exist at national levels (e.g. governance indicators, World Bank database, only available for Ghana, fertilizers FAO database), it is not available at the scale of this study and limits our conclusions in that front. Ideal governance variables in our context would be proxies of social capital, how often people share food, what is the structure of the social networks in place, or how efficient are local institutions at managing existing water infrastructure. It suggests that including governance indicators on national monitoring programs such as census or national surveys is an important step forward in data collection. The advantage of the method is that once data of the kind is available for the Volta basin, or for other places where it already exists, it can be easily incorporated on the SES analysis here proposed.
+
+Our work also improves replicability and reproducibility compared to previous efforts of mapping SES [@RaudseppHearne:2010p5327; @Renard:2015ew; @Meacham:2016cy; @Queiroz:2015cv; @Rabe:2016hp; @Hamann:2015cx]. Previous work have relied on only one clustering technique, and heavily used context dependent knowledge to make subjective decisions such as the number of clusters to fit or the clustering technique to apply. It is a valid approach but limits its scalability and reproducibility in that the choices made for one place might not be the most appropriate in other places. Here we have used an updated routine with a sensibility analysis that helps the researcher to make such choices guided by the patterns already contained in the data. While a machine learning approach does not replace the richness of local knowledge, it does facilitates the practical application of the method in absence of field qualitative data (e.g. lack of coverage), or in settings where field work validation is restricted (e.g. war zones). It can complement and guide where qualitative research efforts are to be deployed. The results here presented are limited by the scope of the data and its resolution. For example we can not claim causality statements regarding impacts of water reservoirs on yield or kilocalories produced, to do that one needs extensive time series data and randomised control trials which are beyond the current data availability. However, the patterns here presented can be useful for policy making or identifying e.g. priority areas for future investments. Qualitative and quantitative efforts at a refined scale will provide ground validation of our results and hopefully will complement aspects not analysed here such as governance variables.
+
+Conclusion {#conclusion .unnumbered}
+======================
+
+Advancing theories on sustainability science requires articulating existing SES frameworks to generalisable and replicable analysis of large scale systems. Achieving sustainable development goals depends on distinguishing when a sustainable solution is context dependent or when it could be a generalisable pattern that is applicable to different SES arenas. Here we have advance methods to identifying SES by updating clustering routines with a sensitivity analysis that allow us to reinterpret a binational dataset in the Volta basin. We identified where and under which conditions an agricultural innovation such as water infrastructure development is likely to influence the food security of farmers thriving in one of the most arid areas of the world. These patterns although descriptive can inform policy decisions. We believe that identifying patterns of variables in space and time that characterise different social ecological systems is key for further developing theories of sustainability, testing when interventions work, and mapping how nations progress towards sustainable development goals. The methods here outlined are generalisable to other developing settings, and we hope they will help rigorously test under which conditions relationships between the Ostrom's SES framework can have policy relevant implications.
+
+
+Methods {#methods .unnumbered}
+======================
+The optimal number of clusters was tested by comparing 30 different indexes and their performance following a sensitivity analysis. In general, each index require maximisation or minimisation of some measure, that helps the researcher decide what is the number of clusters in the data. The interested reader can find the description and interpretation of each index in Charrad et al [-@Charrad:2014tp]. We further test the internal validation and stability validation of 9 different clustering techniques: hierarchical clustering, self-organizing maps, k-means, partitioning around medoids _pam_, divisible hierarchical algorithm _diana_,  a sampling based clustering _clara_, a fuzzy clustering _fanny_, self-organizing trees _sota_, and model-based algorithm [@Brock:2008vz]. While the first technique offers a robust estimation of the number of clusters in the data, the second helps choosing an optimal clustering algorithm. Results are typically presented as non-metric multi dimensional ordinations and their spacial distribution in maps of the Volta basin. Alternatively, principal component ordination results are shown in SM. The maximum dissimilarity distance was used to maximise the distance between components, while the Ward aggregation method was used to minimise the total within-cluster variance [@Charrad:2014tp]. For visualisations we used a less restrictive Manhattan distance to ensure convergence. We further investigate the interdependences between Ostrom's nested variables, by reiterating the ordination on a set of variables of interest (e.g. interactions [I]) and performing vector fitting with the remaining variable sets (e.g. resource (RU and RS), social (U and S), ecological (ECO)). The same procedure was performed over time for year with complete data to test how robust are our estimates over time.
+
+
+
+
+<!-- Leave these lines as they are at the end of your .Rmd file to ensure placement of methods & acknowledgements sections before the references-->
+\showmatmethods
+\showacknow
+\pnasbreak
+
+
+
+Supplementary material {#supplementary-material .unnumbered}
+======================
+
+
+Crop data selection{.unnumbered}
+--------------------
+
+Crop data records available for Ghana and Burkina Faso go as back as `r min(dat$Year)`. Yet, out of the 32 crops recorded, complete data for the basin is only available for 7 crops used in the current analysis. The dataset is far from complete. On its most recent version, the data has `r dim(dat)[1]` observations. An observation is a datapoint of a crop in a district with some production in Tons and some cropped area in Ha. Out of the `r dim(dat)[1]` observations `r sum(is.na(dat$area) | is.na(dat$prod))` are missing values: `NA's` or empty cells on the raw data. This is over 36% of the most complete version of the dataset. For the analysis presented in the paper we only used the 7 most complete crops, and still we had missing values. SM Fig1 shows the missing values in orange, the darker the blue the better, meaning data is complete for the 99 spatial units analyzed. All data was log-transformed, total crop area calculated as well as the proportion of cultivated area per crop. However area values were not used for the analysis due to high correlations with production data. Production in Tons was transformed to Kcals with data from FAO. And the mean for a 7 year period (skipping 2006) will be used for the interaction dataset in the clustering analysis. The data for key 7 crops has 4851 observations of which 4664 does not contain missing values. Now instead of >30%, missing values were reduced to 3.85%. Mean values and log-transformations were performed for each district or province droping the missing values, meaning that for some provices and some crops the mean is not based on 7 values but less (>4 in minimum cases). In doing so we avoid zero inflation on the distributions of the original data that can bias the clustering results.
+
+![Crop selection. Number of observations (N) per crop per year. Note that there is only 7 crops with almost complete data for 7 years from the complete dataset. <span data-label="sm_fig1"></span>](figures/sm_fig1.png){width=50%}
+
+\pagebreak
+
+
+![ SMFig1. Normalized values for second tier variables and their distribution in space<span data-label="sm_fig2"></span>](figures/sm_fig2.png)
+
+\pagebreak
+
+![SMFig3. Distribution of second tier variables per cluster. <span data-label="sm_fig3"></span>](figures/sm_fig3.png)
+
+\pagebreak
+
+![SM Fig 4. **Time robustness**. The interaction dataset is ordered with non-metric multidimensional scaling for multiple points in time and vectors are fitted for all other variables that significanlty (p < 0.001) explain the variation of the ordination. Each column is a different year with complete data, while each row corresponds to the dataset used for the vector fitting (resource, social, ecological). The colors of points and contours correspond to the archetypes found in Fig 2. <span data-label="fig:4"></span>](figures/fig_4.png){width=50%}
+
+\pagebreak
+
+![Differences between clusters per second tier variable. After an analysis of variance was performed for each variable with respect to each cluster, a Tukey test of difference is shows which clusters are significantly different or not from each other by each second tier variable analysed.<span data-label="sm_fig5"></span>](figures/sm_fig5.png){width=80%}
+
+\pagebreak
+
+![Graphical illustration of differences in variables between archetypes based on PCA.<span data-label="sm_fig6"></span>](figures/sm_fig6.pdf){width=50%}

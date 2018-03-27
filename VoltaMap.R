@@ -160,7 +160,7 @@ head(volta_f)
 ### create visualization
 g <- ggplot(volta_f, aes(long,lat, group = group, fill= sd_kcals)) +
   geom_polygon() + # ggtitle(names(dat)[i]) + # facet_grid(.~ crop) +
-  coord_equal() + theme_void() #+ scale_fill_brewer("S.d. kcals", palette = "OrRd") + #theme(legend.position = 'bottom') + 
+  coord_equal() + theme_void() #+ scale_fill_brewer("S.d. kcals", palette = "OrRd") + #theme(legend.position = 'bottom') +
   inset(
     grob = ggplotGrob( ggplot(data = df, aes(sd_kcals)) + geom_density() +
                         #geom_vline(xintercept = mean(dat$Pop_density), na.rm = T, aes(col = 'blue')) +
@@ -171,3 +171,60 @@ g <- ggplot(volta_f, aes(long,lat, group = group, fill= sd_kcals)) +
 
 format(object.size(g), units='auto')
 g
+
+
+
+### Try 2018-01-13
+# load map for visualizations and data
+volta.shp <- readShapeSpatial("~/Documents/Projects/TAI/TransformedData/Bundling/Volta_bundling1.shp")
+
+# minimize the dataset to what you really nead so joined tables are not super heavy
+volta.shp@data <- dplyr::select(volta.shp@data, c(1:3))
+
+volta_f <- tidy(volta.shp, region = "TAI_ID1") %>% as_tibble() %>% left_join(volta.shp@data, by = c("id" = "TAI_ID1")) %>% dplyr::rename(region = Region) %>% mutate(id = as_factor(id))
+
+df <- mutate(df, id = TAI_ID1)
+
+# old way without data
+g <- ggplot(
+    data = left_join(volta_f,
+        gather(df, key = second_tier, value = value, 3:28)) ,
+        # %>% filter(second_tier == "Aridity"),
+    aes(long, lat, group = id)) + geom_polygon(aes(fill = value)) +
+    coord_equal() + theme_void(base_size = 5) + facet_wrap(~second_tier) +
+    scale_fill_gradient(low = alpha("blue", 0.7),high = alpha("orange", 0.7)) #+
+
+# J180114: The facet does not work inside the inset, it plots something but does not plot each variable in order.
+    # inset(
+    #   grob = ggplotGrob(
+    #       ggplot(
+    #           data = gather(df, key = second_tier, value = value, 3:28),
+    #           # %>% filter(second_tier == "Aridity"),
+    #           aes(value)) + geom_density() +
+    #   theme_inset() + facet_wrap(~second_tier)),
+    #   xmin = 2e+05, xmax = 5e+05, ymin = 625000, ymax = 875000
+    # )
+
+g
+
+# new way following geom_map
+g <- ggplot(df, aes(fill = Aridity, map_id = id)) +
+    geom_map(map = volta_f) +
+    expand_limits(x = volta_f$long, y = volta_f$lat)
+
+
+# ggplot(df) + geom_map(aes(map_id=id, fill = Aridity), map = volta_f) + expand_limits(x = volta_f$long, y = volta_f$lat)
+
+
+##### Why don't use the open maps rather than the heavy shape file joined by Katja?
+
+burkina <- readRDS("~/Documents/Projects/TAI/BFA_adm2.rds")
+ghana <- readRDS("~/Documents/Projects/TAI/GHA_adm2.rds")
+
+burkina_ghana <- raster::union(burkina, ghana)
+bg_f <- tidy(burkina_ghana)
+
+g <- ggplot(bg_f, aes(long, lat, group = id)) + geom_polygon() + coord_equal()
+
+
+format(object.size(g), units='auto')
