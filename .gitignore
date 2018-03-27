@@ -9,9 +9,10 @@
 *.RData
 *.docx
 *.csv
-*.bib
 *.png
 *.xwm
 *.sty
 *.cls
 *.csl
+*.rdb
+*.rdx

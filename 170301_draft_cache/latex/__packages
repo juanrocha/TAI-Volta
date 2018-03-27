@@ -21,3 +21,12 @@ MASS
 kohonen
 mclust
 factoextra
+tidyverse
+tibble
+readr
+purrr
+forcats
+broom
+ggmap
+gridExtra
+FactoMineR
