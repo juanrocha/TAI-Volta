@@ -1,642 +1,821 @@
-t + facet_wrap( topic ~ . )
-head(df.time)
-str(df.time)
-t <- ggplot(data=df.time, aes(y=cont, x=time)) +#
-	 	geom_line()
-t + facet_wrap( ~ topic)
-marcus<-matrix(c(-1,1,-1,0),nrow=2,byrow=TRUE)
-marcus<-matrix(c(-1,0,-1,0,0,-1,-1,-1,1,1,0,-1,0,1,0,0),nrow=4,byrow=TRUE)
-marcus<-matrix(c(-1,1,0,0,0,0,-1,1,0,-1,0,0,-1,1,0,1,0,0,-1,0,0,0,0,1,-1), nrow=5, byrow=T)
-names<-scan("names2.txt", what=character(), sep="," )
+devtools::install_github("njtierney/naniar")
+library(ergm.count)
+help(ergm.count)
+help(ergm)
+vignette('ergm-term-crossRef')
+search.ergmTerms(valued)
+search.ergmTerms("valued")
+help(package = "ergm.count")
+library('spml')
+install.packages('spml')
+install.packages('spml', source = T)
+install.packages('splm', source = T)
+library('splm')
+data("Produc", package = "Ecdat")
+install.packages("Ecdat")
+data("Produc", package = "Ecdat")
+data("usaww")
+usaww
+library("spdep")
+usalw <- mat2listw(usaww)
+# transform weights matrix to list#
+usalw
+class(usalw)
+names(usalw)
+usalw$style
+usalw$neighbours
+usalw$weights
+fm <- log(gsp) ~ log(pcap) + log(pc) + log(emp) + unemp
+fm <- log(gsp) ~ log(pcap) + log(pc) + log(emp) + unemp#
+mod <- spml(formula = fm, data = Produc, index = NULL,#
+    listw = usalw, model = "random", lag = TRUE, spatial.error = "b")
+summary(mod)
+spml(formula = fm, data = Produc, index = NULL,#
++    listw = usalw, model = "random", lag = FALSE, spatial.error = "kkp")
+spml(formula = fm, data = Produc, index = NULL,#
+    listw = usalw, model = "random", lag = FALSE, spatial.error = "kkp")
+mod <- spml(formula = fm, data = Produc, index = NULL,
+listw = usalw, model = "random", lag = FALSE, spatial.error = "kkp")
+summary(mod)
+help(spml)
+mod$arcoef
+mod$errcomp
+## fixed effects models#
+mod <- spml(formula = fm, data = Produc, index = NULL,#
+    listw = usalw, lag = TRUE, spatial.error = "b", model = "within",#
+    effect = "individual", method = "eigen", na.action = na.fail,#
+    quiet = TRUE, zero.policy = NULL, interval = NULL,#
+    tol.solve = 1e-10, control = list(), legacy = FALSE)
+# fixed effects models#
+mod <- spml(formula = fm, data = Produc, index = NULL,#
+    listw = usalw, lag = TRUE, spatial.error = "b", model = "within",#
+    effect = "individual", method = "eigen", na.action = na.fail,#
+    quiet = TRUE, zero.policy = NULL, #
+    tol.solve = 1e-10, control = list(), legacy = FALSE)
+summary(mod)
+mod <- spml(formula = fm, data = Produc, index = NULL,#
+    listw = usalw, lag = TRUE, spatial.error = "b", model = "within",#
+    effect = "individual", method = "eigen", na.action = na.fail,#
+    quiet = TRUE, zero.policy = NULL, interval = NULL,#
+    tol.solve = 1e-10, control = list(), legacy = FALSE)
+mod <- spml(formula = fm, data = Produc, index = NULL, listw = usalw,
+model = "within", effect = "individual", method = "eigen",
+mod <- spml(formula = fm, data = Produc, index = NULL, listw = usalw,#
+    model = "within", effect = "individual", method = "eigen",#
+    na.action = na.fail, quiet = TRUE, zero.policy = NULL, interval = NULL,#
+    tol.solve = 1e-10, control = list(), legacy = FALSE)
+mod <- spml(formula = fm, data = Produc, index = NULL, listw = usalw,#
+    model = "within", effect = "individual", method = "eigen",#
+    na.action = na.fail, quiet = TRUE, zero.policy = NULL, #interval = NULL,#
+    tol.solve = 1e-10, control = list(), legacy = FALSE)
+summary(mod)
+eff <- effects(mod)
+dff
+eff
+dim(Produc)
+Produc
+dim(usalw)
+dim(usalww)
+dim(usaww)
+mod <- spml(formula = fm, data = Produc, index = NULL, listw = usalw,#
+    model = "within", effect = "time", method = "eigen",#
+    na.action = na.fail, quiet = TRUE, zero.policy = NULL, #interval = NULL,#
+    tol.solve = 1e-10, control = list(), legacy = FALSE)
+summary(mod)
+effects(mod)
+##generated panel data for yield#
+set.seed(97531)#
+yield.normal <- as.data.frame(matrix(rnorm(2387*1, mean=1.92, sd=0.5), ncol=1))#
+colnames(yield.normal) = "yield"#
+yield.normal$panelid = with(yield.normal, seq(1:77))#
+yield.normal$timeid = with(yield.normal, seq(1:31))#
+yield.normal$county = with(yield.normal, as.factor(seq(1:77)))#
+yield.normal$countyname = paste0("county",yield.normal$county)#
+yield.normal$trnd = with(yield.normal, seq(1:31))#
+#
+#generate coordinates of the 77 Oklahoma counties#
+latitude.county = sample(36.83013180:33.90212700, size = 77, replace = T)#
+longitude.county = sample(-94.81059550:-102.62162110, size = 77, replace = T)#
+lat.long.data = cbind2(longitude.county,latitude.county)#
+colnames(lat.long.data)=c("lon","lat")#
+#Create spatial weight matrix#
+distNeighbr = spdep::dnearneigh(lat.long.data, d1=0, d2=5)#
+wtmat1 = spdep::nb2listw(distNeighbr, style='W')
 ls()
-getwd()
-print("community matrix") print(marcus)
-print("community matrix")
-print(marcus)
-length(marcus)
-library("Rgraphviz")
-#rEG<-new("graphNEL", nodes=c(names), edgemode="directed") # plot(rEG)
-install.packages(Rgraphviz)
-install.packages("Rgraphviz")
-rEG<-new("graphNEL", nodes=c(names), edgemode="directed") # plot(rEG)
-library("LoopAnalyst")
-install.packages("LoopAnalyst")
-? graph.cm
-??graph.cm
-ls()
-class(marcus)
-graph.cm(marcus) # this comes from LoopAnalysis library
-library("LoopAnalyst")
-graph.cm(marcus) # this comes from LoopAnalysis library
-graph.cm(ma, file="marcus.dot") # this comes from LoopAnalysis library
-getwd()
-graph.cm(marcus, file="marcus.dot") # this comes from LoopAnalysis library
-library("network")
-g <-n etwork(marcus, direct=T, hyper=F, loops=T)
-g <-network(marcus, direct=T, hyper=F, loops=T)
-plot(g, usearrow=T, arrowhead.cex=2, loop.cex=3, vertex.cex=1, edge.col=4,
-plot.network(g, usearrow=T, arrowhead.cex=2, loop.cex=3, vertex.cex=1, edge.col=4,#
-vertex.col=1, label=network.vertex.names(g), displaylabels=T, boxed.labels=F, label.lwd=3, label.pos=0)
-plot.network(g, usearrow=T, arrowhead.cex=2, loop.cex=3, vertex.cex=1, edge.col=4, vertex.col=1, label=network.vertex.names(g), displaylabels=T, boxed.labels=F, label.lwd=3, label.pos=0)
-library("MASS")
-print("community matrix")
-print(marcus)
-k<-1
-m<-0 #
-	h<-0
-lev<-t(marcus)
-Det_m<-det(lev)
-Det_m
-det(lev)
-lev
-print("Determinant") #
-	print(Det_m)
-dl<-sqrt(length(lev))
-dl2<-dl^2
-print("dl")
-print(dl)
-length(lev)
-nacc<-as.vector(k, mode="integer")#
-	nacc[1]=0
-nacc
-nacc <-as.vector(k, mode="integer")
-nacc
-n_p<-as.vector(m, mode="integer")#
-	n_m<-as.vector(m, mode="integer") #
-	n_oo<-as.vector(m, mode="integer")
-for (m in 1:dl2) {(n_p[m]=0) & (n_m[m]=0) & (n_oo[m]=0)}#
+yield.normal
+head(yield.normal)
+wtmat1
+test1 <-  bsktest(x=fn, data = Produc, listw = mat2listw(usaww), test = "LM1")
+library('spml')#
+library("spdep")#
 #
-	n_plus<-as.vector(n_p, mode="integer") #
-	n_min<-as.vector(n_m, mode="integer") #
-	n_o<-as.vector(n_oo, mode="integer")
-ntent<-(length(lev)*1000)
-print(ntent)
-casuale<-matrix(rep(0,dl2),nrow=dl)
-casuale
-for (i in 1:dl)#
-		for(j in 1:dl) casuale[i,j]<-runif(n=1,min=1e-6,max=1)
-print(casuale)
-num=0 #
-	ww<-matrix(rep(NA,dl2),nrow=dl)
-for(i in 1:dl)#
-		for(j in 1:dl) {ww[i,j]<-(lev[i,j]*casuale[i,j])#
-			}
-ww
-lev
-casuale
-lev * casuale
-ww == lev * casuale
-det_ww<-round(det(ww), digits=6)
-eig_vre<-round(Re(eigen(ww)$values), digits=6)
-eig_vim<-round(Im(eigen(ww)$values), digits=6)
-det_ww
-eig_vre
-eig_vim
-eigen(ww)
-Re(23)
-Re(23o)
-i
-Re(23i)
-for (y in 1:dl) {if (eig_vre[y]<0) (num=num+1)}
-eig_vim
-eig_vre
-num
-if ((num-dl)==0) {(nacc[k]=nacc[k]+1) & (inv_ww<-(-round(ginv(ww), digits=6))) & (vector<- as.vector(inv_ww))#
-		for (m in 1:dl2){#
-			if (vector[m]>0) (n_plus[m]=n_plus[m]+1)#
-				else if (vector[m]<0) (n_min[m]=n_min[m]+1) #
-				else if (vector[m]==0) (n_o[m]=n_o[m]+1)#
-				}#
-			}
-(num-dl)==0
-(nacc[k]=nacc[k]+1)
-round(ginv(ww), digits=6)
-help(ginv)
-per_p<-round(matrix(c((n_plus*100)/nacc[k]), nrow=dl, byrow=T), digits=5)#
- 	per_m<-round(matrix(c((n_min*100)/nacc[k]), nrow=dl, byrow=T), digits=5) #
- 	per_o<-round(matrix(c((n_o*100)/nacc[k]), nrow=dl, byrow=T), digits=5)#
- 	v_p<-as.vector(per_p) #
- 	v_m<-as.vector(per_m) #
- 	v_o<-as.vector(per_o)#
- 	nacc[k+1]=nacc[k]
-nacc[k]
-OUT <- as.list(rep(NA,5))#
+# data for the exercise#
+data("Produc", package = "Ecdat")#
+data("usaww")#
 #
-	OUT[[1]]<-ntot #
-	OUT[[2]]<-k #
-	OUT[[3]]<-per_p #
-	OUT[[4]]<-per_m #
-	OUT[[5]]<-per_o
-ntot=nacc[k]#
+# transform weights matrix to list#
+usalw <- mat2listw(usaww)#
 #
-	OUT <- as.list(rep(NA,5))#
+## model with same spatial lag and spatial error weigths.#
+fm <- log(gsp) ~ log(pcap) + log(pc) + log(emp) + unemp#
+mod <- spml(formula = fm, data = Produc, index = NULL,#
+    listw = usalw, model = "random", lag = TRUE, spatial.error = "b")#
 #
-	OUT[[1]]<-ntot #
-	OUT[[2]]<-k #
-	OUT[[3]]<-per_p #
-	OUT[[4]]<-per_m #
-	OUT[[5]]<-per_o
-print("n° ACCEPTED MOVES") #
-	print(OUT[[1]])
-print("n° loops")#
-	print(OUT[[2]])
-print(" (%) + ") #
-	colnames(OUT[[3]])<-names #
-	rownames(OUT[[3]])<-names #
-	print(OUT[[3]])
-tab<-as.vector(h, mode="any")
-tab
-Loop(marcus)
-Loop <- function(marcus) {#
-	### initializing count####
-	# print ("WARNING!!! MASS PACKAGE NEEDED")#
-	print("community matrix") #
-	print(marcus)#
-	# names<-scan("names2.txt", what=character(), sep="," ) # rubbish#
-	k<-1#
-	m<-0 #
-	h<-0#
-	## #community matrix as sign matrix: lev ##
-	#MATRIX IS: a11, a21, a31,...ect. where aij=dfi/dxj change in the growth function of i 	due to j!############# #1°es. Predator-Prey#
-		lev<-t(marcus)#
-		Det_m<-det(lev)#
+summary(mod)
+library('spml')
+library("spdep")
+library('splm')
+library("spdep")
+data("Produc", package = "Ecdat")#
+data("usaww")
+usalw <- mat2listw(usaww)
+fm <- log(gsp) ~ log(pcap) + log(pc) + log(emp) + unemp#
+mod <- spml(formula = fm, data = Produc, index = NULL,#
+    listw = usalw, model = "random", lag = TRUE, spatial.error = "b")#
 #
-	print("Determinant") #
-	print(Det_m)#
-	dl<-sqrt(length(lev)) #
-	dl2<-dl^2#
-		print("dl") #
-		print(dl)#
-	# print(dl^2)#
-	nacc <-as.vector(k, mode="integer")#
-	nacc[1] = 0#
-	n_p<-as.vector(m, mode="integer")#
-	n_m<-as.vector(m, mode="integer") #
-	n_oo<-as.vector(m, mode="integer")#
+summary(mod)
+test1 <-  bsktest(x = fn, data = Produc, listw = mat2listw(usaww), test = "LM1")
+test1 <-  bsktest(x = fm, data = Produc, listw = mat2listw(usaww), test = "LM1")
+test2
+test1
+test2 <-  bsktest(x = fm, data = Produc, listw = mat2listw(usaww), test = "LM2")
+test2
+test3 <-  bsktest(x = fm, data = Produc, listw = mat2listw(usaww), test = "CLMlambda")
+test3
+test1 <- sphtest( x = fm, data = Produc, listw = mat2listw(usaww), spatial.model = "error", method = "GM")
+test1
+coeftest(mod§)
+coeftest(mod1)
+library('lmtest')
+coeftest(mod1)
+coeftest(mod)
+library('car')
+linearHypothesis(mod, "log(pcap) = log(pc)")
+?linearHypothesis
+linearHypothesis(mod, "log(pcap) = log(pc)", test = "F")
+##generated panel data for yield#
+set.seed(97531)#
+yield.normal <- as.data.frame(matrix(rnorm(2387*1, mean=1.92, sd=0.5), ncol=1))#
+colnames(yield.normal) = "yield"#
+yield.normal$panelid = with(yield.normal, seq(1:77))#
+yield.normal$timeid = with(yield.normal, seq(1:31))#
+yield.normal$county = with(yield.normal, as.factor(seq(1:77)))#
+yield.normal$countyname = paste0("county",yield.normal$county)#
+yield.normal$trnd = with(yield.normal, seq(1:31))#
 #
-	for (m in 1:dl2) {(n_p[m]=0) & (n_m[m]=0) & (n_oo[m]=0)}#
+#generate coordinates of the 77 Oklahoma counties#
+latitude.county = sample(36.83013180:33.90212700, size = 77, replace = T)#
+longitude.county = sample(-94.81059550:-102.62162110, size = 77, replace = T)#
+lat.long.data = cbind2(longitude.county,latitude.county)#
+colnames(lat.long.data)=c("lon","lat")#
+#Create spatial weight matrix#
+distNeighbr = spdep::dnearneigh(lat.long.data, d1=0, d2=5)#
+wtmat1 = spdep::nb2listw(distNeighbr, style='W')#
 #
-	n_plus<-as.vector(n_p, mode="integer") #
-	n_min<-as.vector(n_m, mode="integer") #
-	n_o<-as.vector(n_oo, mode="integer")#
-	######### NUMBER OF RUNS#
-	# ntent<-(length(lev)*100) #
-	# ntent<-(length(lev)*500)#
-	ntent<-(length(lev)*1000)#
-	# ntent<-(length(lev)*5000) #
-	# ntent<-(length(lev)*10000)#
+#E
+yield.normal
+head(yield.normal, 10)
+#Estimate the spatial fixed-effects model#
+spatial.FE.model = splm::spml(yield~trnd, data = yield.normal, index = c("timeid", "panelid"), listw = wtmat1,  model = "within", effect ="individual", method = "eigen")
+yield.normal <- as_tibble(yield.normal)
+library(tidyverse)
+yield.normal <- as_tibble(yield.normal)
+yield.normal
+yield.normal <- as.data.frame(matrix(rnorm(2387*1, mean=1.92, sd=0.5), ncol=1))#
+colnames(yield.normal) = "yield"#
+yield.normal$panelid = with(yield.normal, seq(1:77))#
+yield.normal$timeid = with(yield.normal, seq(1:31))#
+yield.normal$county = with(yield.normal, as.factor(seq(1:7)))#
+yield.normal$countyname = paste0("county",yield.normal$county)#
+yield.normal$trnd = with(yield.normal, seq(1:31))
+yield.normal <- as_tibble(yield.normal)
+yield.normal
+yield.normal <- yield.normal %>%#
+    arrange(county, panelid, timeid)
+yield.normal
+#generate coordinates of the 77 Oklahoma counties#
+latitude.county = sample(36.83013180:33.90212700, size = 77, replace = T)#
+longitude.county = sample(-94.81059550:-102.62162110, size = 77, replace = T)#
+lat.long.data = cbind2(longitude.county,latitude.county)#
+colnames(lat.long.data)=c("lon","lat")#
+#Create spatial weight matrix#
+distNeighbr = spdep::dnearneigh(lat.long.data, d1=0, d2=5)#
+wtmat1 = spdep::nb2listw(distNeighbr, style='W')
+spatial.FE.model = splm::spml(yield~trnd, data = yield.normal, index = c("timeid", "panelid"), listw = wtmat1,  model = "within", effect ="individual", method = "eigen")
+set.seed(97531)#
+yield.normal <- as.data.frame(matrix(rnorm(2387*1, mean=1.92, sd=0.5), ncol=1))#
+colnames(yield.normal) = "yield"#
+yield.normal$panelid = with(yield.normal, seq(1:77))#
+yield.normal$timeid = with(yield.normal, seq(1:31))#
+yield.normal$county = with(yield.normal, as.factor(seq(1:77)))#
+yield.normal$countyname = paste0("county",yield.normal$county)#
+yield.normal$trnd = with(yield.normal, seq(1:31))#
 #
-	print(ntent) ##########
+yield.normal <- as_tibble(yield.normal)#
 #
-	for (k in 1:ntent){#
+yield.normal <- yield.normal %>%#
+    arrange(county, panelid, timeid)
+#generate coordinates of the 77 Oklahoma counties#
+latitude.county = sample(36.83013180:33.90212700, size = 77, replace = T)#
+longitude.county = sample(-94.81059550:-102.62162110, size = 77, replace = T)#
+lat.long.data = cbind2(longitude.county,latitude.county)#
+colnames(lat.long.data)=c("lon","lat")#
+#Create spatial weight matrix#
+distNeighbr = spdep::dnearneigh(lat.long.data, d1=0, d2=5)#
+wtmat1 = spdep::nb2listw(distNeighbr, style='W')#
 #
-	######################### #
-	#random matrix: casuale # #
-	##########################
-	casuale <- matrix(rep(0,dl2),nrow=dl)#
-	###### RANDOM MATRIX GENERATION (NAME IS: casuale) in [1e-6,1] #
-	for (i in 1:dl)#
-		for(j in 1:dl) casuale[i,j]<-runif(n=1,min=1e-6,max=1) #
-	### J: this is a very unefficient way ot creating a random matrix!!! 2 for loops!!!#
-	# print(casuale)#
-	################################################### #
-	#weighted matrix (on degree tot for each variable) # #
-	###################################################
-	num=0 #
-	ww<-matrix(rep(NA,dl2),nrow=dl)#
-	for(i in 1:dl)#
-		for(j in 1:dl) {ww[i,j]<-(lev[i,j]*casuale[i,j])#
-			}#
-	det_ww <-round(det(ww), digits=6)#
-	eig_vre <-round(Re(eigen(ww)$values), digits=6) #
-	eig_vim <-round(Im(eigen(ww)$values), digits=6)#
-	for (y in 1:dl) {if (eig_vre[y]<0) (num=num+1)}#
-##########A MINUS SIGN IS INSERTED DURING MATRIX INVERSION TO TAKE INTO ACCOUNT THE SIGN OF COEFF b=-dfi/dc ##########
+#Estimate the spatial fixed-effects model#
+spatial.FE.model = splm::spml(yield~trnd, data = yield.normal, index = c("timeid", "panelid"), listw = wtmat1,  model = "within", effect ="individual", method = "eigen")
+wtmat1
+distNeighbr
+class(wtmat1)
+class(A)
+spatial.FE.model = splm::spml(yield~trnd, data = yield.normal, index = c("timeid", "panelid"), listw = wtmat1,  model = "within", effect ="individual", method = "eigen")
+#Estimate the spatial fixed-effects model#
+spatial.FE.model = splm::spml(yield~trnd, data = yield.normal, index = c("panelid","timeid"), listw = wtmat1,  model = "within", effect ="individual", method = "eigen")
+head(Produc)
+usalw
+as_tibble(Produc)
+levels(Produc$state)
+yield.normal
+#Estimate the spatial fixed-effects model#
+spatial.FE.model = splm::spml(yield~trnd, data = yield.normal, index = c("countyname","timeid"), listw = wtmat1,  model = "within", effect ="individual", method = "eigen")
+spatial.FE.model = splm::spml(yield~trnd, data = yield.normal, index = c("county","timeid"), listw = wtmat1,  model = "within", effect ="individual", method = "eigen")
+spatial.FE.model = splm::spml(yield~trnd, data = yield.normal, index = c("timeid", "county"), listw = wtmat1,  model = "within", effect ="individual", method = "eigen")
+class(Produc)
+spatial.FE.model = splm::spml(yield~trnd, data = yield.normal, index = c("county", "timeid"), listw = wtmat1,  model = "within", effect ="individual", method = "eigen")
+## fixed effects models#
+mod <- spml(formula = fm, data = Produc, index = NULL,#
+    listw = usalw, lag = TRUE, spatial.error = "b", model = "within",#
+    effect = "individual", method = "eigen", na.action = na.fail,#
+    quiet = TRUE, zero.policy = NULL,#
+    tol.solve = 1e-10, control = list(), legacy = FALSE)
+summary(mod)
+usalw
+lag.listw(usaw)
+lag.listw(usalw)
+head(Prod)
+head(Produ)
+head(Produc)
+vcovDC(mod)
+library(plm)
+vcovDC(mod)
+vcovHC(mod)
+sandwich::vcovHC(mod)
+plm::vcovHC(mod)
+plm::vcovNW(mod)
+bsktest(yield~trnd, data = yield.normal, listw =  wtmat1, test = "LM1")
+pdat <- pdata.frame(yield.normal)
+pdat
+head(pdat)
+pdat <- pdata.frame(yield.normal, c('county', 'timeid'))
+head(pdat)
+pdat <- pdata.frame(yield.normal, c('panelid', 'timeid'))
+bsktest(yield~trnd, data = yield.normal, listw =  wtmat1, test = "LM1")
+bsktest(yield~trnd, data = pdat, listw =  wtmat1, test = "LM1")
+bsktest(yield~trnd, data = pdat, listw =  wtmat1, test = "LM2")
+## only individual fixed effects:#
+mod <- spml(formula = fm, data = Produc, index = NULL, listw = usalw,#
+    model = "within", effect = "individual", method = "eigen",#
+    na.action = na.fail, quiet = TRUE, zero.policy = NULL, #interval = NULL,#
+    tol.solve = 1e-10, control = list(), legacy = FALSE)
+summary(mod)
+eff <- effects(mod)
+eff
+mod <- spml(formula = fm, data = Produc, index = NULL, listw = usalw,#
+    model = "within", effect = "time", method = "eigen",#
+    na.action = na.fail, quiet = TRUE, zero.policy = NULL, #interval = NULL,#
+    tol.solve = 1e-10, control = list(), legacy = FALSE)#
 #
-	if ((num-dl)==0) {(nacc[k]=nacc[k]+1) & (inv_ww<-(-round(ginv(ww), digits=6))) & (vector<- as.vector(inv_ww))#
-		for (m in 1:dl2){#
-			if (vector[m]>0) (n_plus[m]=n_plus[m]+1)#
-				else if (vector[m]<0) (n_min[m]=n_min[m]+1) #
-				else if (vector[m]==0) (n_o[m]=n_o[m]+1)#
-				}#
-			}#
+# time period fixed effects and the intercept can be recoverd as follows:#
+effects(mod)
+GM_error <- spgm(formula = fm, data = Produc, listw = usaww,#
+   moments = "fullweights", model = "random", spatial.error = TRUE)
+summary(GM_error)
+GM_error <- spgm(formula = fm, data = Produc, lag = TRUE,#
+    listw = usaww, model = "within", spatial.error = TRUE)
+summary(GM_error)
+?spgm
+yield.normal <- as.data.frame(matrix(rnorm(2387*1, mean=1.92, sd=0.5), ncol=1))#
+colnames(yield.normal) = "yield"#
+yield.normal$panelid = with(yield.normal, seq(1:77))#
+yield.normal$timeid = with(yield.normal, seq(1:31))#
+yield.normal$county = with(yield.normal, as.factor(seq(1:77)))#
+yield.normal$countyname = paste0("county",yield.normal$county)#
+yield.normal$trnd = with(yield.normal, seq(1:31))#
 #
- 	round(ginv(ww), digits=6)#
- 	per_p<-round(matrix(c((n_plus*100)/nacc[k]), nrow=dl, byrow=T), digits=5)#
- 	per_m<-round(matrix(c((n_min*100)/nacc[k]), nrow=dl, byrow=T), digits=5) #
- 	per_o<-round(matrix(c((n_o*100)/nacc[k]), nrow=dl, byrow=T), digits=5)#
- 	v_p<-as.vector(per_p) #
- 	v_m<-as.vector(per_m) #
- 	v_o<-as.vector(per_o)#
- 	nacc[k+1]=nacc[k]#
- 	#############################################
- 	}#
-	ntot=nacc[k]#
+yield.normal <- as_tibble(yield.normal)#
 #
-	OUT <- as.list(rep(NA,5))#
+yield.normal <- yield.normal %>%#
+    arrange(county, panelid, timeid)#
 #
-	OUT[[1]]<-ntot #
-	OUT[[2]]<-k #
-	OUT[[3]]<-per_p #
-	OUT[[4]]<-per_m #
-	OUT[[5]]<-per_o#
+pdat <- pdata.frame(yield.normal, c('panelid', 'timeid'))#
 #
-	print("n° ACCEPTED MOVES") #
-	print(OUT[[1]])#
-	print("n° loops")#
-	print(OUT[[2]])#
-	print(" (%) + ") #
-	colnames(OUT[[3]])<-names #
-	rownames(OUT[[3]])<-names #
-	print(OUT[[3]])#
-	print(" (%) - ") #
-	colnames(OUT[[4]])<-names #
-	rownames(OUT[[4]])<-names #
-	print(OUT[[4]])#
-	print(" (%) 0 ")#
-	colnames(OUT[[5]])<-names #
-	rownames(OUT[[5]])<-names #
-	print(OUT[[5]])#
+#generate coordinates of the 77 Oklahoma counties#
+latitude.county = sample(36.83013180:33.90212700, size = 77, replace = T)#
+longitude.county = sample(-94.81059550:-102.62162110, size = 77, replace = T)#
+lat.long.data = cbind2(longitude.county,latitude.county)#
+colnames(lat.long.data)=c("lon","lat")#
+#Create spatial weight matrix#
+distNeighbr = spdep::dnearneigh(lat.long.data, d1=0, d2=5)#
+wtmat1 = spdep::nb2listw(distNeighbr, style='W')#
 #
-	tab <-as.vector(h, mode="any")#
-#
-	for (h in 1:dl2) {#
-		if (v_o[h]==100) (tab[h]<-0)#
-			else if (v_p[h]>=75) (tab[h]<-"+")#
-			else if (v_p[h]<=25 & v_p[h]>=0) (tab[h]<-"-")#
-			else if (abs(v_p[h]-v_m[h])<=20) (tab[h]<-"0*") #
-			else if (25<v_p[h] & v_p[h]<40) (tab[h]<-"?-")#
-			else if (60<v_p[h] & v_p[h]<75) (tab[h]<-"?+") #
-	}#
-	tab_m<-matrix(c(tab), nrow=dl, byrow=T) #
-	tabella_predizioni<-t(tab_m)#
-#
-	### insert as external######### #
-	colnames(tabella_predizioni)<-names #
-	rownames(tabella_predizioni)<-names#
-	print("tabella_predizioni") #
-	print.noquote(tabella_predizioni)#
-}
-Loop(marcus)
-library (statnet)
-help(modularity)
-?? modularity
-help(package = 'sna')
-ls()
-hello
-library('fields')
-help(package='fields')
-help(fields.hints)
-x<- 1:20#
-y<- 1:15#
-z<-  outer( x,y,"+")#
-zr<- range( c(z))
-par( oma=c(4,0,0,0))#
-set.panel( 3,2)#
-par( mar=c(1,1,0,0))
-for ( k in 1:6){#
-image( x,y,z, axes=FALSE, xlab="", ylab="", zlim=zr)#
-}
-par( oma=c(0,0,0,0))#
-image.plot( zlim=zr, legend.only=TRUE, horizontal=TRUE, legend.mar=5)
-par( oma=c(8,6,1,1))#
-set.panel( 3,2)#
-par( mar=c(1,1,0,0))
-for ( k in 1:6){#
- image( x,y,z, axes=FALSE, xlab="", ylab="", zlim=zr)#
- box() # box around figure
-# maybe draw an x axis #
-  if( k  %in% c(5,6) ){#
-  axis( 1, cex.axis=1.5)#
-  mtext( line=4, side=1, "Xstuff")}#
-#
-# maybe draw a y axis#
-  if( k  %in% c(1,3,5) ){#
-  axis( 2, cex.axis=1.5)#
-  mtext( line=4, side=2, "Ystuff")}#
-}
-# same trick of adding a legend strip. #
-par( oma=c(0,0,0,0))#
-image.plot( zlim=zr, legend.only=TRUE, horizontal=TRUE, legend.mar=5)
-# reset panel #
-set.panel()
-clab<- colors()#
-n<- length( clab)#
-N<- ceiling( sqrt(n) )#
-M<- N#
-temp<- rep( NA,M*N)#
-temp[1:n] <- 1:n#
-z<- matrix(temp, M,N)#
-#
-image(seq(.5,M+.5,,M+1), seq(.5,N+.5,,N+1)#
-       , z,  col=clab, axes=FALSE, xlab="", ylab="")
-clab<- colors()#
-#
-for( nn in clab){#
-  temp<- signif(col2rgb(nn)/256, 3)#
-   cat(#
-    "\definecolor{", #
-                nn, "}",#
-    "{rgb}{", temp[1], #
-          ",", temp[2], #
-          ",", temp[3], #
-           "}", fill=TRUE , sep="")#
- }
-data(CO2)
-quilt.plot( CO2$lon.lat, CO2$y)#
-world( add=TRUE)
-out<-fastTps( CO2$lon.lat, CO2$y, theta=4, lambda=2.0)
-print( out)
-surface( out, type="I", nx=300, ny=150)
-out2<-fastTps( CO2$lon.lat, CO2$y, lon.lat=TRUE,lambda=1.5, theta=4*68) #
-print(out2)
-surface( out2, type="I", nx=300, ny=150)
-temp<- matrix( NA, ncol=ncol(CO2.true$z), nrow=nrow(CO2.true$z))#
-temp[ CO2.true$mask] <- CO2$y
-image.plot(CO2.true$x,CO2.true$y, temp)
-look<- predictSurface( out2, grid.list=list( x=CO2.true$x, y=CO2.true$y))#
-image.plot(look)
-rm(list=ls())
-set.seed(12345)
-library (network)
-library (sna) # load the package
-##Load old data
-rs18data<- read.csv ("/Users/juanrocha/Documents/JUAN/PhD-SRC/RS20+Analysis/rs18cld.csv")
-rs18net<-network(rs18data[,1:2],dir=T,loops=F)
-driv<-read.csv("/Users/juanrocha/Documents/JUAN/PhD-SRC/RS20+Analysis/drivname.csv")
-rs <- read.csv2('~/Documents/JUAN/PhD-SRC/RS20+Analysis/RS_CLD_2015.csv')
-rs <- rs[,-1]
-head(rs)
-rs4 <- network(rs[,1:2], dir=T, loops=F)
-rs4 %e% 'polarity' <- rs$Polarity
-plotnet <- function(net){#
-	plot.network(net, #mode='circle',#
-			vertex.col = 'goldenrod2',#
-			#label = network.vertex.names(net),#
-			# boxed.labels=F,#
-			# label.cex=0.8,#
-			usecurve=T,#
-			vertex.cex= degree(net, gmode='digraph')/2,#
-			label.pos=5,#
-			edge.col= 3+get.edge.attribute(net$mel, 'polarity'),#
-			edge.lwd = 1 + (net %e% 'fb')/2 , #0.05,#
-			edge.curve = 0.01,#
-			displayisolates=T, pad=1#
-			)#
-			}
-levels(rs$Regime.Shift)	# this are the RS currently on dataset
-com <- combn(levels(rs$Regime.Shift), m=2) # combinatories
-com
-rs.net <- function (dat, i){#
-	# build network#
-		rs.x <- network(subset(dat, #
-			Regime.Shift == levels(dat$Regime.Shift)[i])[,1:2])#
-	# add polarity to edges#
-		rs.x %e% 'polarity' <- subset(dat, Regime.Shift == levels #
-			(dat$Regime.Shift)[i])$Polarity#
-	# add cycles   #
-		fb.sum <- kcycle.census(rs.x, maxlen=20, mode='digraph', #
-		tabulate.by.vertex=T, cycle.comembership='sum')$cycle.comemb#
-		rs.x %e% 'fb' <-  fb.sum#
-		rs.x %n% 'name' <- levels(dat$Regime.Shift)[i]#
-	return(rs.x) #
-}
-rs1 <- rs.net(rs, 1)
-rs2 <- rs.net(rs, 2)
-rs3 <- rs.net(rs, 3)
-rs4 <- rs.net(rs, 4)
-# A function to merge networks based on edge lists aggregation#
-net.merge <- function(dat,i,j){#
-		rs.mix <- network(rbind(subset(dat, Regime.Shift == #
-			levels(dat$Regime.Shift)[i]), #
-			subset(dat, Regime.Shift== #
-			levels(dat$Regime.Shift)[j]))[,1:2])#
-		rs.mix %e% 'polarity' <- rbind(subset(dat, #
-			Regime.Shift == levels(dat$Regime.Shift)[i]), #
-			subset(dat, Regime.Shift== #
-			levels (dat$Regime.Shift)[j]))$Polarity#
-		# add cycles   #
-		fb.sum <- kcycle.census(rs.mix, maxlen=20, mode='digraph', #
-			tabulate.by.vertex=T, cycle.comembership='sum')$cycle.comemb#
-		rs.mix %e% 'fb' <-  fb.sum#
-		rs.mix %n% 'name' <- paste(levels(rs$Regime.Shift)[i], #
-			levels(rs$Regime.Shift)[j], sep=' - ')#
-	return(rs.mix)#
-}
-key <- combn(seq(1,4),2)
-cas1 <- net.merge(rs, i=1, j=2) # cascading effect network 1
-out <- list()
-for (i in 1:dim(key)[2]){#
-	out[[i]] <- net.merge(rs, i = key[1,i], j = key[2,i])#
-}
-source('~/Desktop/Code/themeJuan.R')
-source('~/Dropbox/Code/themeJuan.R')
-library(ggplot2)
-source('~/Dropbox/Code/themeJuan.R')
-net.fb <- function(net1, net2, net3){#
-#
-	#count cycles for all networks#
-	x1cycle <- kcycle.census(net1, maxlen=20, mode='digraph',#
-		tabulate.by.vertex=T, cycle.comembership='sum')#
-#
-	x2cycle <- kcycle.census(net2, maxlen=20, mode='digraph',#
-		tabulate.by.vertex=T, cycle.comembership='sum')#
-#
-	x3cycle <- kcycle.census(net3, maxlen=20, mode='digraph',#
-		tabulate.by.vertex=T, cycle.comembership='sum')#
-#
-	#create a matrix with results#
-	feed.mat <- cbind(x1cycle$cycle.count[,1], x2cycle$cycle.count[,1],#
-		 x3cycle$cycle.count[,1]) # feedbacks matrix#
-	# put some colnames#
-	colnames(feed.mat) <- c('RS1', 'RS2', 'RS.mix')#
-	#c(net1 %n% 'name', net2 %n% 'name', net3 %n% 'name')#
-#
-	feed.mat <- as.data.frame(feed.mat)#
-	feed.mat$feed.length <- rownames(feed.mat)#
-	feed.mat$Inc.Feed <- feed.mat$RS.mix - (feed.mat$RS1 + feed.mat$RS2)#
-#
-	#put data on long format#
-	require(reshape2)#
-	x.long <- melt(feed.mat, id.var="feed.length",#
-			 measure.var= colnames(feed.mat)[c(1:3,5)],#
-			 value.name='value')#
-#
-	x.long$value <- as.integer(x.long$value)#
-	x.long$feed.length <- as.integer(x.long$feed.length)#
-#
-	#plot it#
-	require(ggplot2)#
-	g <- ggplot(x.long, aes(x=feed.length, y=value), group=variable)#
-	g <- g + geom_bar(aes(fill=variable), position = 'stack',#
-		binwidth=1, stat='identity')  +#
-		ylab('Number of feedbacks') + xlab('Feedback length') +#
-		ggtitle(net3 %n% 'name') + theme_juan() +#
-		theme(legend.position=c(0.8,0.7), plot.title=element_text(size=rel(0.85))) + scale_fill_manual("Networks",values=c("#984EA3", "#4DAF4A", "#377EB8", "#E41A1C"))#
-#
-	return(list(feed.mat, g))#
-}
-key
-x1 <- net.fb(rs1,rs2, out[[1]])[[2]]#
-x2 <- net.fb(rs1,rs3, out[[2]])[[2]] + theme(legend.position='none')#
-x3 <- net.fb(rs1,rs4, out[[3]])[[2]]#
-x4 <- net.fb(rs2,rs3, out[[4]])[[2]]#
-x5 <- net.fb(rs2,rs4, out[[5]])[[2]]#
-x6 <- net.fb(rs3,rs4, out[[6]])[[2]]
-quartz(title='Networks', width=7, height=7, pointsize=8,family='Helvetica')#
-par(mfrow= c(2,2))#
-n1 <- plotnet(rs1); title(main=rs1 %n% 'name')#
-n2 <- plotnet(rs2); title(main=rs2 %n% 'name')#
-n3 <- plotnet(rs3); title(main=rs3 %n% 'name')#
-n4 <- plotnet(rs4); title (main = rs4 %n% 'name')
-# Make matrix of combinations#
-quartz(title='NetMatrix', width=7, height=7, pointsize=6, family='Helvetica')#
-par(mfrow=c(4,4))#
-n1 <- plotnet(rs1); title(main=rs1 %n% 'name')#
-c1 <- plotnet(out[[1]]); title(main= out[[1]] %n% 'name')#
-c2 <- plotnet(out[[2]]); title(main= out[[2]] %n% 'name')#
-c3 <- plotnet(out[[3]]); title(main= out[[3]] %n% 'name')#
-plot(NULL)#
-n2 <- plotnet(rs2); title(main=rs2 %n% 'name')#
-c4 <- plotnet(out[[4]]); title(main= out[[4]] %n% 'name')#
-c5 <- plotnet(out[[5]]); title(main= out[[5]] %n% 'name')#
-plot(NULL)#
-plot(NULL)#
-n3 <- plotnet(rs3); title(main=rs3 %n% 'name')#
-c6 <- plotnet(out[[6]]); title(main= out[[6]] %n% 'name')#
-plot(NULL)#
-plot(NULL)#
-plot(NULL)#
-n4 <- plotnet(rs4); title (main = rs4 %n% 'name')
-quartz(title='NetMatrix', width=7, height=7, pointsize=5, family='Helvetica')#
-require (gridExtra); require(grid)#
-layt <- grid.layout(nrow=4, ncol=4)#
-#
-grid.newpage()#
-pushViewport(viewport(layout = layt))#
-print(x1, vp= viewport(layout.pos.row=2, layout.pos.col=1))#
-print(x2, vp= viewport(layout.pos.row=3, layout.pos.col=1))#
-print(x3, vp= viewport(layout.pos.row=4, layout.pos.col=1))#
-print(x4, vp= viewport(layout.pos.row=3, layout.pos.col=2))#
-print(x5, vp= viewport(layout.pos.row=4, layout.pos.col=2))#
-print(x6, vp= viewport(layout.pos.row=4, layout.pos.col=3))
-help(package = 'LoopAnalysis')
-library(LoopAnalysis)
-help(package = 'LoopAnalyst')
-enumerate.loops
-library (LoopAnalyst)
-enumerate.loops
-cm <- matrix(c(1,0,1,-1,0,0,1,1,1,-1,-1,-1,1,1,0), nrow = 3, ncol = 5)
-cm
-enumerate.loops(cm)
-plot.network(cm)
-net <- network(cm)
-plot.network (cm)
-plot.network (net)
-plot.network (net, dir = T)
-plot.network (net, digraph)
-net <- network(cm, dir = T, loops = T)
-plot.network (net)
-net
-net <- network(cm, directed = T, loops = T)
-net
-cm
-enumerate.loops
-LOVE
-cm
-cm <- cm[1:3,1:3]
-cm
-nrow(cm)
-beautiful
-library(rmarkdown)
-install.packages('rmarkdown')
-library(rmarkdown)
-help(package = 'rmarkdown')
-library(gdata)
-install.packages('gdata')
-tmp <- installed.packages()
-tmp
-install.packages('gdata')
-0.1/0.5
-1/3
-1/1
-2
--1/1
--0.4/3
-0.3/-0.9
-setwd("~/Documents/Projects/TAI/TransformedData/Data_Burkina&Ganha")#
-# load map for visualizations and data#
-volta.shp <- readShapeSpatial("~/Documents/Projects/TAI/TransformedData/Bundling/Volta_bundling1.shp")#
-#
-##### Useful functions for later:#
-#
-### Select only districts on the Volta Basin#
-volta.only <- function(x){#
-  x <- x [ is.element (x$TAI_ID1, volta.shp@data$TAI_ID1 ), ]#
-  x <- droplevels(x)#
-}#
-#
-### Normalizing by scaling everything to 0:1#
-rescale_hw <- function (x){ # This is Hadley Wickman function from his book R for DataScience#
-  rng <- range(x, na.rm= TRUE, finite = TRUE)#
-  (x - rng[1]) / (rng[2] - rng[1])#
-}#
-#
-### Correct the numeric format from excel files#
-correct.num <- function (x){#
-  l <- length(x)#
-  x[3:l] <- apply (x[3:l], 2, function (x){as.numeric(x)} )#
-  return(x)#
-}#
-#
-## Read data#
-#### New file with raw values from Katja: 160901#
-#
-file <- 'Volta_Vars_raw_160901.xlsx'#
-sn <- sheetNames(xls=file)#
-#
-users <- read.xls(file, sheet=2, dec=',')#
-users <- correct.num(users)#
-#
-resource <- read.xls (file, sheet=3, dec=',')#
-biophys <- resource [c(1,2,11:15)]#
-resource <- resource [-c(11:15)]#
-biophys <- correct.num(biophys)#
-resource <- correct.num (resource)#
-# biophys <- read.xls(file, sheet=3, dec=',')#
-#
-# Threre is 3 datasets for interactions depending on the sheet#
-# 4 = kcals per distric area in sq.km#
-# 5 = kcals_harv.area#
-# 6 = ratio_harv.area#
-# 7 = other#
-interact <- read.xls(file,sheet=5, dec=',')#
-interact <- correct.num(interact)#
-interact <- volta.only(interact)#
-#
-### Combine all datasets for clustering all#
-dat <- left_join (users, resource, by = c("TAI_ID1", "ADM_2"))#
-dat <- left_join(dat, biophys, by = c("TAI_ID1", "ADM_2"))#
-dat <- left_join(dat, interact, by = "TAI_ID1")#
-#
-dat <- dat[-26] # delete Province#
-#
-# Note this is non-normalized data, original values. After the following line all is "rescaled" to 0-1#
-dat[3:35] <- apply(dat[3:35], 2, rescale_hw)#
-## You can delete "Pop_dens_log" since it's rescaled and you already have pop_density.#
-dat <- dat[-4]
+#Estimate the spatial fixed-effects model#
+spatial.FE.model = splm::spml(yield~trnd, data = yield.normal, index = c("county", "timeid"), listw = wtmat1,  model = "within", effect ="individual", method = "eigen")
+## fiexed#
+GM_error <- spgm(yield~trnd, data = yield.normal, index = c("county", "timeid"), listw = wtmat1,  model = "within", lag = TRUE, spatial.error = TRUE)
+## fiexed#
+GM_error <- spgm(yield~trnd, data = yield.normal, listw = wtmat1,  model = "within", lag = TRUE, spatial.error = TRUE)
+traceback()
+devtools::install_github("ropenscilabs/skimr")
 rm(list = ls())
+knitr::opts_chunk$set(echo = TRUE, dev = "pdf", dpi = 300)#
+options(knitr.table.format = "latex")#
+#
+rm(list = ls())#
+set.seed(12345)#
+library(knitr)#
+library (dplyr)#
+library (tidyr)#
+library(forcats)#
+library (network)#
+library (sna)#
+library(RColorBrewer)#
+library(ggplot2)#
+library(GGally)#
+library(viridis)#
+library(ggrepel)#
+#
+# for plotting#
+library(ggmap)#
+library(maptools)#
+library(maps)#
+library(mapproj)#
+#
+library(gridBase)#
+library(grid)#
+library(gridExtra)#
+library(png)#
+## for cleaning models#
+library(car)#
+library(broom)#
+library(sandwich); library(lmtest)#
+#
+### ERGMS for Regime Shifts#
+library(ergm.count)#
+#
+## for tables#
+library(kableExtra)
+load('~/Documents/Projects/Cascading Effects/170525_ergm_data.RData')#
+## updated functions ###
+## this can be deleted in the future#
+#
+## Updated ploting function#
+plotnet <- function(net, ...){#
+	plot.network(net, #mode='circle',#
+			vertex.col = alpha(net %v% 'col', 0.7),#
+			# label = network.vertex.names(net),#
+			# label.cex= 1,#
+			main = net %n% 'name', col.main = "gray44", cex.main = 1.2,#
+			vertex.border = 0,#
+			usecurve=T,#
+			vertex.cex= 2, #2 + scale(net %v% 'fb'),#
+			label.pos= 5,#
+			edge.col= alpha(net %e% 'col' , 1),#
+			edge.lwd =  rep(0.01, max(valid.eids(net))), #0.05 + net %e% 'fb',#
+			edge.curve = 0.01,#
+			displayisolates=T, pad = 0#
+			)#
+}#
+#
+plotnet2 <- function(net, ...){#
+	plot.network(net, #mode='circle',#
+			vertex.col = alpha(net %v% 'col', 0.7),#
+			# label = network.vertex.names(net),#
+			# label.cex= 1,#
+			main = net %n% 'name', col.main = "gray44", cex.main = 1.2,#
+			vertex.border = 0,#
+			usecurve=T,#
+			vertex.cex= 2 + scale(net %v% 'fb'),#
+			label.pos= 5,#
+			edge.col= alpha(net %e% 'col' , 1),#
+			edge.lwd =  0.01 * net %e% 'fb',#
+			edge.curve = 0.01,#
+			displayisolates=T, pad = 0 # no need of pad for labels#
+			)#
+		}#
+## A function to create the network, add polarity and cycles / feedbacks as edge attributes#
+## J161105: Edge attributes are tricky to set because once the network is created the ordering of edges is lost and I cannot find the default order to set the right values. Reading the help of 'loading.attributes' I found that when declared as edgelist one can add attributes directly on the dataframe.#
+rs.net <- function (dat, i){#
+	# filter dataset#
+	dat <- filter(dat, Regime.Shift == levels(dat$Regime.Shift)[i],#
+	 Polarity == 1 | Polarity == -1)#
+	#dat <- droplevels(dat)#
+	# This ordering step is necessary to make sure polarity and other attributes are assigned correctly#
+	# dat <- dat[order(dat$Tail, partial = dat$Head, decreasing = F),]#
+	# tab <- table(dat$Tail, dat$Head, dat$Polarity) # tab is an array of tables#
+		# dimnames(tab) [[3]] "-1"   "-0.5" "0.5"  "1"#
+		# v <- as.matrix(tab[,,1]*-1) + as.matrix(tab[,,2])#
+	# build network#
+		rs.x <- network(select(dat, Tail, Head, Polarity, col), directed = T, ignore.eval=FALSE, matrix.type = 'edgelist')#
+	# add polarity to edges: Outated, the way I create the network includes already the polarities by using ignore.eval = F. Edge color is also set on the network creation line.#
+		# rs.x %e% 'polarity' <- dat$Polarity#
+		# set.edge.value(rs.x, 'polarity', value = as.matrix(v))#
+		# rs.x %e% 'col' <- ifelse(rs.x %e% "Polarity" == -1, 'red', 'blue')#
+	# add cycles to nodes and edges.#
+		fb.sum <- kcycle.census(rs.x, maxlen=network.size(rs.x), mode='digraph',	tabulate.by.vertex=T, cycle.comembership='sum')#
+		# number of cycles per nodes#
+		rs.x %v% 'fb' <-  diag(fb.sum$cycle.comemb)#
+		# number of cycles per edge#
+		rs.x %e% 'fb' <- as.sociomatrix(rs.x) * fb.sum$cycle.comemb#
+		#J161106: Note that cycle.comemb is a matrix with comemberships, so two nodes that are not connected in the network can belong to the same cycles. That's why I multiply by the adjacency matrix, to isolate only the edges. cycle.comemb can be used later for discovery of inconvenient feedbacks.#
+	## add vertex attributes#
+		rs.x %v% 'col' <- ifelse(colSums(fb.sum$cycle.count)[-1] == 0, "#E41A1C","#8DA0CB") # "#FFD92F"#
+		rs.x %n% 'name' <- levels(dat$Regime.Shift)[i]#
+	return(rs.x)#
+}
+#x <- mode.1(bip1)[[2]] # x is the regime shifts one-mode network#
+z <- mode.1(bip1)[[1]]#
+# and#
+# bip.edgelist <- bind_rows(bip.edgelist)#
+# bipmat <- as.matrix(table(bip.edgelist))#
+#
+df_rs_type <- tibble(#
+    tail = rsdb$name,#
+    type = c("Aquatic", "Earth", "Aquatic", "Terrestrial", "Terrestrial", "Aquatic",#
+             "Terrestrial", "Aquatic", "Aquatic", "Terrestrial", "Aquatic", "Earth",#
+             "Aquatic", "Aquatic", "Land-water interface", "Aquatic",#
+             "Aquatic", "Earth", "Land-water interface", "Aquatic","Land-water interface",#
+             "Land-water interface", "Aquatic","Terrestrial","Terrestrial","Terrestrial",#
+             "Earth","Land-water interface", "Terrestrial", "Earth")#
+)#
+#
+g1 <- ggplot(#
+    data = as.sociomatrix(x, "paths") %>% as_tibble() %>% mutate(tail = rownames(as.sociomatrix(x))) %>%#
+        gather(key = head, value = paths,  1:30) %>% left_join(df_rs_type) %>%#
+        mutate(tail = as.factor(tail) ) %>%#
+        mutate(tail = forcats::fct_reorder(tail, paths, fun = sum, .desc = FALSE)),#
+    aes(tail, paths, fill = type, color = type)) +#
+    geom_boxplot(outlier.alpha = 0.5, alpha=0.5,#
+                 outlier.size = 0.8) +#
+    geom_point(#
+        data = bip.edgelist %>% mutate(value = 1) %>%#
+            group_by(rs) %>%#
+            summarize(paths = sum(value)) %>% left_join(df_rs_type, by = c("rs" = "tail")) ,#
+        aes(rs, paths), color = "black", size = 1.5, show.legend = FALSE#
+    ) +#
+    scale_fill_manual("Ecosystem type",values = c("blue", "purple", "red","orange")) +#
+    scale_color_manual("Ecosystem type",values = c("blue", "purple", "red","orange")) +#
+    coord_flip() +  xlab("regime shifts") + ylab("number of drivers") + ggtitle("A") +#
+    theme_minimal(base_size = 6) +#
+    theme(legend.position = c(0.75, 0.2),#
+          legend.background = element_rect(fill = "white", linetype = 0),#
+          legend.text = element_text(size = 4), legend.title = element_text(size = 4))#
+#
+g2 <- ggplot(#
+    data = as.sociomatrix(z, "paths") %>% as_tibble() %>% mutate(tail = rownames(as.sociomatrix(z))) %>%#
+        gather(key = head, value = paths,  1:79) %>%#
+        group_by(tail) %>% filter(mean(paths) >  1 ) %>% ungroup() %>%#
+        mutate(tail = as.factor(tail)) %>%#
+        mutate(tail = forcats::fct_reorder(tail, paths, fun = sum, .desc = FALSE)),#
+    aes(tail, paths)) +#
+    geom_boxplot(fill = alpha("grey", 0.7), color = "grey", outlier.alpha = 0.5,#
+                 outlier.size = 0.8) +#
+    # geom_point(#
+    #     data = bip.edgelist %>% mutate(value = 1) %>%#
+    #         group_by(drivers) %>%#
+    #         summarize(paths = sum(value)),#
+    #     aes(drivers, paths), color = "purple"#
+    # ) +#
+    coord_flip() +  xlab("most shared drivers\n [mean > 1]") + ylab("number of regime shifts") +  ggtitle("B") +#
+    theme_minimal(base_size = 6)#
+#
+m1 <- ggplot(#
+    data = as.sociomatrix(x, "paths") %>% as_tibble() %>% mutate(tail = rownames(as.sociomatrix(x))) %>%#
+        gather(key = head, value = paths,  1:30)  %>%#
+        mutate(tail = as.factor(tail), # %>% forcats::fct_rev(),#
+               head = as.factor(head) %>% forcats::fct_rev()),#
+    aes(tail, head)) +#
+    geom_tile(aes(fill = paths)) + ylab("") + xlab("") + ggtitle("Drivers sharing") +#
+    scale_fill_gradient(low = "gray84" ,high = "#0000FF80", na.value = "grey50",#
+                         guide = guide_colorbar("shared drivers", barheight = 0.7)) +#
+    theme_light (base_size = 6) +#
+    theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5 ),#
+          legend.position = "bottom")#
+#
+## Heatmap with ggplot#
+m2 <- ggplot(#
+    data = out %>%#
+         mutate(Tail = as.factor(Tail) %>% forcats::fct_rev(),#
+               Head = as.factor(Head)), #%>% forcats::fct_rev()),#
+    aes( Head, Tail)) +#
+    geom_tile(aes(fill = weight)) + ggtitle("Domino effects") +#
+    ylab("Independent regime shift") + xlab("Dependent regime shift") +#
+    scale_fill_gradient(high = "red", low = "gray84", na.value = "grey50",#
+                         guide = guide_colorbar("domino effects", barheight = 0.7))  +#
+    theme_light(base_size = 6) +#
+    theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5 ),#
+          legend.position = "bottom")#
+#
+df_domino <- out %>%#
+        mutate(Tail = as.factor(Tail), Head = as.factor(Head)) %>%#
+        filter(weight > 0) %>% pull(Tail) %>% fct_count() %>% rename(outdegree = n)#
+#
+df_domino <- left_join(df_domino,#
+        out %>%#
+        mutate(Tail = as.factor(Tail), Head = as.factor(Head)) %>%#
+        filter(weight > 0) %>% pull(Head) %>% fct_count() %>% rename(indegree = n)#
+)#
+#
+df_domino <- left_join(df_domino,#
+    out %>% group_by(Tail) %>%#
+        summarize(out_avg = mean(weight), out_max = max(weight)) %>%#
+        rename(f = Tail)#
+)#
+#
+df_domino <- left_join(df_domino,#
+    out %>% group_by(Head) %>%#
+        summarize(in_avg = mean(weight), in_max = max(weight)) %>%#
+        rename(f = Head)#
+)#
+#
+df_poly <- data_frame(#
+    id = rep(factor(c("1", "2")), each = 3),#
+    x = c(0,0,10, 0,25,25),#
+    y = c(0,25,25, 0,10,0),#
+    value = c(rep(alpha("orange", 0.4),3), rep(alpha("green", 0.4),3))#
+)#
+#
+g3 <- ggplot(#
+    data = df_domino %>% left_join (df_rs_type, by = c("f" = "tail")) ,#
+    aes(y = outdegree, x = indegree)) +#
+    geom_point( aes(color = type), size = 1.5, show.legend = TRUE) +#
+    #geom_errorbar(aes(ymin = in_avg, ymax = in_max, color = type)) +#
+    #geom_errorbarh(aes(xmin = out_avg, xmax = out_max, color = type)) +#
+    geom_text_repel(data = df_domino %>% filter(out_max > 3 | in_max > 3),#
+                    aes(label = f), size = 1.5) +#
+    geom_polygon(data = df_poly,  mapping = aes(x, y, group = id, fill = value), show.legend = FALSE, position = "identity", stat = "identity", inherit.aes = FALSE) +#
+    scale_fill_manual(values = c(alpha("orange", 0.2),alpha("green", 0.2))) +#
+    scale_color_manual("Ecosystem type",values = c("blue", "purple", "red","orange")) +#
+    ggtitle("A") + coord_equal() +#
+    labs(x = "indegree\n [dependent regime shifts]", y = "outdegree\n [independent regime shifts]") +#
+    theme_minimal(base_size = 6) +#
+    theme(legend.position = c(0.8, 0.8),#
+          legend.background = element_rect(fill = "white", linetype = 0),#
+          legend.text = element_text(size = 5), legend.title = element_text(size =5)#
+          )#
+g4 <- ggplot(#
+    out %>% filter(weight > 0) %>%#
+        pull(driv2feed) %>% stringr::str_split(pattern = ", ") %>%#
+        unlist() %>% as_tibble() %>% rename(driver = value) %>%#
+        group_by(driver) %>% summarize(n = n()) %>% ungroup() %>%#
+        mutate(driver = as_factor(driver)) %>%#
+        mutate(driver = fct_reorder(driver, n, .desc = FALSE)) %>%#
+        filter(n > 1),#
+    aes(driver, n)) +#
+    geom_bar(stat = "identity") + coord_flip() + ylab("number of domino effects") + xlab("key variables")+#
+    ggtitle('B') + theme_minimal(base_size = 6)#
+## Heatmap with ggplot#
+m3 <- ggplot(#
+    data = df_inc %>%#
+         mutate(Tail = as.factor(Tail) %>% forcats::fct_rev(),#
+               Head = as.factor(Head)), #%>% forcats::fct_rev()),#
+    aes( Head, Tail)) +#
+    geom_tile(aes(fill = log(inc)))  + ggtitle("Hidden feedbacks") +#
+    ylab("") + xlab("") +#
+    scale_fill_gradient(low = "#FFA50080", high = "#0000FF80", na.value = "grey50",#
+                        guide = guide_colorbar("hidden feedbacks [log]", barheight = 0.7)) +#
+    theme_minimal(base_size = 6) +#
+    theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5 ),#
+          legend.position = "bottom")  +#
+    inset(#
+        grob = ggplotGrob(#
+            ggplot(data = df_inc, aes(inc)) +#
+                geom_histogram() + xlab('Hidden feedbacks') +#
+                theme_light(base_size = 6) ) , xmin = 0, xmax =15 , ymin = 0, ymax = 15)#
+#
+## I need to make the matrix symmetric so it does count the degrees correctly.#
+df_inc2 <- data.frame(inc = inc, Head = levels(dat$Regime.Shift)[key[1,]], Tail = levels(dat$Regime.Shift)[key[2,]])#
+#
+df_inc3 <- bind_rows(df_inc, df_inc2)#
+#
+g5 <- ggplot(#
+    data = df_inc3 %>%#
+        mutate(Tail = as.factor(Tail), Head = as.factor(Head)) %>%#
+        left_join (df_rs_type, by = c("Tail" = "tail")) %>%#
+        mutate(Tail = fct_reorder(Tail, inc, fun = mean, .desc = FALSE )) %>% filter(inc > 0)  ,#
+    aes(Tail, inc, color = type, fill = type)) +#
+    geom_boxplot( outlier.alpha = 0.5, alpha = 0.5,#
+                 outlier.size = 0.8, show.legend = TRUE) +#
+    # geom_point(#
+    #     data = df_inc3 %>%#
+    #         group_by(Tail) %>%#
+    #         summarize(outdegree = sum(inc > 0)),#
+    #     aes(Tail, outdegree), color = "orange", size = 1.5, shape = 12#
+    # ) +#
+    scale_y_log10()+#
+    scale_fill_manual("Ecosystem type",values = c("blue", "purple", "red","orange")) +#
+    scale_color_manual("Ecosystem type",values = c("blue", "purple", "red","orange")) +#
+    coord_flip() +#
+    xlab("regime shifts") + ylab("hidden feedbacks") + ggtitle("A") +#
+    theme_minimal(base_size = 6)+#
+    theme(legend.position = c(0.85, 0.2),#
+          legend.background = element_rect(fill = "white", linetype = 0),#
+          legend.text = element_text(size = 4), legend.title = element_text(size = 4)#
+          )#
+#
+z <- bind_rows(out_dat)#
+#
+z <- gather(z,`Inconvenient`,`Expected`, key = Feedbacks, value = count)#
+#
+z$Feedbacks <- factor(z$Feedbacks)#
+levels(z$Feedbacks)[2] <- "Hidden"#
+#
+## J171213: Alternative to g6#
+ brain <- network(select(dat, Tail, Head, Polarity, col), directed = T, ignore.eval=FALSE, matrix.type = 'edgelist')#
+ df_brain <- tibble(#
+     variable = network.vertex.names(brain),#
+     betweenness = betweenness(brain, cmode = "directed", rescale = TRUE),#
+     indeg = degree(brain, cmode ="indegree"),#
+     outdeg = degree(brain, cmode = "outdegree"),#
+     closeness = closeness(brain, cmode = "suminvdir", rescale = TRUE))#
+#
+g6 <- ggplot(data = df_brain, aes(betweenness, closeness)) +#
+    geom_point(aes(color = indeg, fill = outdeg),#
+               shape = 21, size = 1, stroke = 1, alpha = 0.9) +#
+    geom_text_repel(data = filter(df_brain, betweenness > 0.015 | closeness > 0.0052),  #
+                    aes(label = variable), size = 1.5) +#
+    scale_color_gradient(low = "#6495ED", high = "#00008B", guide = "colorbar", name = " Indegree") +#
+    scale_fill_gradient(low = "#FFD700", high = "#8B0000", guide = "colorbar", name =  "Outdegree") +#
+    theme_minimal(base_size = 6) + ggtitle("B") +#
+    theme(legend.position = "right", legend.direction = "vertical",#
+          legend.text = element_text(size = 4), legend.title = element_text(size = 4)) #+#
+    # inset(#
+    #     grob = ggplotGrob(#
+    #         ggnet2(brain, size=1, arrow.size = 1.5, arrow.gap = 0.01, edge.alpha = 0.5,#
+    #                edge.size = 0.1)#
+    #     ), xmin = 0.015, xmax =0.04 , ymin = 0, ymax = 0.004#
+    # )#
+### Insert figures with models here.#
+## Models for sharing drivers#
+df1 <- tidy(fit.w1); df1$model <- 'sharing drivers'#
+df1$term <- c("Non-zero",'Sum', "Landuse","Ecosystem type", "Ecosystem processes", "Provisioning services","Regulating services", "Cultural services", "Impacts on human wellbeing", "Spatial scale: national", "Spatial scale: subcontinental", "Temporal scale: month - year", "Temporal scale: week - month", "Temporal scale: year - decade", "Match spatial scale", "Match temporal scale", "Reversibility", "Evidence type")#
+## model for domino effects#
+df2 <- tidy(fit.w2); df2$model <- 'domino effects'#
+df2$term <- c("Non-zero",'Sum', "Landuse","Ecosystem type", "Ecosystem processes", "Provisioning services","Regulating services", "Cultural services", "Impacts on human wellbeing",#
+               #"Indegree - Spatial scale: national", "Indegree - Spatial scale: subcontinental", "Indegree - Temporal scale: month - year", "Indegree - Temporal scale: week - month", "Indegree - Temporal scale: year - decade",#
+               #"Outdegree - Spatial scale: national", "Outdegree - Spatial scale: subcontinental", "Outdegree - Temporal scale: month - year", "Outdegree - Temporal scale: week - month", "Outdegree - Temporal scale: year - decade",#
+              #"Match spatial scale: local","Match spatial scale: national","Match spatial scale: sub-continental", "Match temporal scale",#
+              "Spatial scale", "Temporal scale",#
+              "Reversibility", "Evidence type")#
+## model for hidden feedbacks#
+df3 <- tidy(fit.w3a); df3$model <- 'hidden feedbacks'#
+df3$term <- c("Non-zero",'Sum', "Landuse","Ecosystem type", "Ecosystem processes", "Provisioning services","Regulating services", "Cultural services", "Impacts on human wellbeing",#
+              "Spatial scale: national", "Spatial scale: subcontinental", "Temporal scale: month - year", "Temporal scale: week - month", "Temporal scale: year - decade", "Match spatial scale", "Match temporal scale",#
+              "Reversibility", "Evidence type")#
+#
+df <- full_join(df1, df2) %>% full_join(df3) %>% as_tibble()#
+# df <-df %>% mutate(estimate = exp(estimate), std.error = exp(std.error)) ## In case you want to read probabilities directly instead of log odds#
+df <- mutate(df, conf.hi = estimate + std.error, conf.low = estimate - std.error)#
+df$P <- ifelse(df$p.value <= 0.05, "< 0.05", "> 0.05")#
+df$term <- as.factor(df$term)#
+#
+# ## change names of places and reorder levels#
+df$term <- factor(df$term, levels(df$term)[c(9,16,6,3,2,10,11,1,5, 13,17,14,15,19,18,20,7,8, 12,4)] )#
+# df$term <- factor(df$term, levels(df$term)[c(17, 28, 11,3,2,23,24,1,5, 26,27, 30,29,31, 6:10,18:22,  12:16, 25,4)] )#
+df$term <- factor(df$term, rev(levels(df$term)))#
+#
+df$model <- as.factor(df$model)#
+df$model <- factor(df$model, levels(df$model)[c(3,1,2)])#
+#
+## plot results#
+p <- ggplot(df, aes(estimate, term))+#
+    geom_point(aes(shape = factor(P)), size = 2, show.legend = T) +#
+    scale_shape_manual(name = "p value", values = c(19,1)) +#
+    geom_errorbarh(aes(xmax = conf.hi, xmin = conf.low, height = .25),#
+                   show.legend = T) + #ggtitle("g)") +#
+    geom_vline(xintercept = 0, color = 'grey', show.legend = F, linetype = 2)  +#
+    facet_wrap(~ model, scales = "free_x") + theme_light(base_size = 6) +#
+    theme(legend.position = "right", plot.margin = margin(t=2,r=5,b=2,l=5,"pt"))#
+## Combine the figure old way#
+# gg <- list (g1,g2,g3,g4,g5,g6, p)#
+# source('~/Dropbox/Code/multiplot.R')#
+# layout <- matrix(c(1:6,7,7,7), ncol = 3, nrow = 3, byrow = T)#
+# multiplot(plotlist = gg, layout = layout)#
+## New way:#
+gg <- list (g1,g2)#
+source('~/Dropbox/Code/multiplot.R')#
+layout <- matrix(c(1,2), ncol = 2, nrow = 1, byrow = T)#
+multiplot(plotlist = gg, layout = layout)
+g3
+df_poly <- data_frame(#
+    id = rep(factor(c("1", "2")), each = 3),#
+    x = c(0,0,10, 0,25,25),#
+    y = c(0,25,25, 0,10,0),#
+    value = as.factor(c(rep(alpha("orange", 0.4),3), rep(alpha("green", 0.4),3)))#
+)
+g3 <- ggplot(#
+    data = df_domino %>% left_join (df_rs_type, by = c("f" = "tail")) ,#
+    aes(y = outdegree, x = indegree)) +#
+    geom_point( aes(color = type), size = 1.5, show.legend = TRUE) +#
+    #geom_errorbar(aes(ymin = in_avg, ymax = in_max, color = type)) +#
+    #geom_errorbarh(aes(xmin = out_avg, xmax = out_max, color = type)) +#
+    geom_text_repel(data = df_domino %>% filter(out_max > 3 | in_max > 3),#
+                    aes(label = f), size = 1.5) +#
+    geom_polygon(data = df_poly,  mapping = aes(x, y, group = id, fill = value), show.legend = FALSE, position = "identity", stat = "identity", inherit.aes = FALSE) +#
+    scale_fill_manual(values = c(alpha("orange", 0.2),alpha("green", 0.2))) +#
+    scale_color_manual("Ecosystem type",values = c("blue", "purple", "red","orange")) +#
+    ggtitle("A") + coord_equal() +#
+    labs(x = "indegree\n [dependent regime shifts]", y = "outdegree\n [independent regime shifts]") +#
+    theme_minimal(base_size = 6) +#
+    theme(legend.position = c(0.8, 0.8),#
+          legend.background = element_rect(fill = "white", linetype = 0),#
+          legend.text = element_text(size = 5), legend.title = element_text(size =5)#
+          )
+g3
+ggplot(#
+    data = df_domino %>% left_join (df_rs_type, by = c("f" = "tail")) ,#
+    aes(y = outdegree, x = indegree)) +#
+    geom_point( aes(color = type), size = 1.5, show.legend = TRUE) +#
+    #geom_errorbar(aes(ymin = in_avg, ymax = in_max, color = type)) +#
+    #geom_errorbarh(aes(xmin = out_avg, xmax = out_max, color = type)) +#
+    geom_text_repel(data = df_domino %>% filter(out_max > 3 | in_max > 3),#
+                    aes(label = f), size = 1.5) +#
+    geom_polygon(data = df_poly,  mapping = aes(x, y, group = id, fill = value), show.legend = FALSE, position = "identity", stat = "identity", inherit.aes = FALSE) +#
+    scale_fill_manual(guide = NULL, values = c(alpha("orange", 0.2),alpha("green", 0.2))) +#
+    scale_color_manual("Ecosystem type",values = c("blue", "purple", "red","orange")) +#
+    ggtitle("A") + coord_equal() +#
+    labs(x = "indegree\n [dependent regime shifts]", y = "outdegree\n [independent regime shifts]") +#
+    theme_minimal(base_size = 6) +#
+    theme(legend.position = c(0.8, 0.8),#
+          legend.background = element_rect(fill = "white", linetype = 0),#
+          legend.text = element_text(size = 5), legend.title = element_text(size =5)#
+          )
+ggplot(#
+    data = df_domino %>% left_join (df_rs_type, by = c("f" = "tail")) ,#
+    aes(y = outdegree, x = indegree)) +#
+    geom_point( aes(color = type), size = 1.5, show.legend = TRUE) +#
+    #geom_errorbar(aes(ymin = in_avg, ymax = in_max, color = type)) +#
+    #geom_errorbarh(aes(xmin = out_avg, xmax = out_max, color = type)) +#
+    geom_text_repel(data = df_domino %>% filter(out_max > 3 | in_max > 3),#
+                    aes(label = f), size = 1.5) +#
+    geom_polygon(data = df_poly,  mapping = aes(x, y, group = id, fill = value), show.legend = FALSE, position = "identity", stat = "identity", inherit.aes = FALSE) +#
+    scale_fill_manual(guide = "none", values = c(alpha("orange", 0.2),alpha("green", 0.2))) +#
+    scale_color_manual("Ecosystem type",values = c("blue", "purple", "red","orange")) +#
+    ggtitle("A") + coord_equal() +#
+    labs(x = "indegree\n [dependent regime shifts]", y = "outdegree\n [independent regime shifts]") +#
+    theme_minimal(base_size = 6) +#
+    theme(legend.position = c(0.8, 0.8),#
+          legend.background = element_rect(fill = "white", linetype = 0),#
+          legend.text = element_text(size = 5), legend.title = element_text(size =5)#
+          )
+library(tidyverse)
+?read_xls
+library(readxl)
+dat <- read_xls("~/Documents/Projects/Students & Interns/Aracely/Budget distribución normal.xlsx")
+dat <- read_xlsx("~/Documents/Projects/Students & Interns/Aracely/Budget distribución normal.xlsx")
+dat
+g <- ggplot(dat, aes(COP)) + geom_density()
+g
+g <- ggplot(dat, aes(log1p(COP))) + geom_density()
+g
+range(dat$COP)
+pull(dat$COP)
+is.na(dat$COP)
+dat
+dat <- filter(dat, !is.na(COP))
+dat
+g <- ggplot(dat, aes(log1p(COP))) + geom_density()
+g
+g <- ggplot(dat, aes(log(COP))) + geom_density()
+g
+summary((dat$COP))
+g <- ggplot(dat, aes(COP)) + geom_density()
+g
+g <- ggplot(dat, aes(log(COP))) + geom_density()
+g
+summary(log(dat$COP))
+rm(list = ls())
+set.seed(12345)#
+# this file combines code from the 161027 draft and the simplified version of the analysis#
+#
 ## load libraries#
+library(tidyverse)#
+library(forcats)#
 library  ('gdata')#
-library ('dplyr')#
-library ('reshape')#
-library (corrgram)#
-library(vegan)#
-library (ggplot2)
+library (readxl)#
+# library (corrgram)#
+# library(GGally)#
+library(broom)#
+#
 # load libraries for mapping#
 library(maptools)#
 library(rgeos)#
-library(RColorBrewer)
+library(RColorBrewer)#
+library(ggmap)#
+library(grid)#
+library(gridExtra)#
+#
 # load libraries for clustering#
 library (vegan)#
 # library(rgl)#
@@ -644,149 +823,293 @@ library (vegan)#
 library(NbClust)#
 library(clValid)#
 # library(MASS)#
-library(kohonen)
-setwd("~/Documents/Projects/TAI/TransformedData/Data_Burkina&Ganha")#
-# load map for visualizations and data#
-volta.shp <- readShapeSpatial("~/Documents/Projects/TAI/TransformedData/Bundling/Volta_bundling1.shp")#
-#
-##### Useful functions for later:#
-#
-### Select only districts on the Volta Basin#
-volta.only <- function(x){#
-  x <- x [ is.element (x$TAI_ID1, volta.shp@data$TAI_ID1 ), ]#
-  x <- droplevels(x)#
-}#
-#
-### Normalizing by scaling everything to 0:1#
-rescale_hw <- function (x){ # This is Hadley Wickman function from his book R for DataScience#
-  rng <- range(x, na.rm= TRUE, finite = TRUE)#
-  (x - rng[1]) / (rng[2] - rng[1])#
-}#
-#
-### Correct the numeric format from excel files#
-correct.num <- function (x){#
-  l <- length(x)#
-  x[3:l] <- apply (x[3:l], 2, function (x){as.numeric(x)} )#
-  return(x)#
-}
-file <- 'Volta_Vars_raw_160901.xlsx'#
-sn <- sheetNames(xls=file)#
-#
-users <- read.xls(file, sheet=2, dec=',')#
-users <- correct.num(users)#
-#
-resource <- read.xls (file, sheet=3, dec=',')#
-biophys <- resource [c(1,2,11:15)]#
-resource <- resource [-c(11:15)]#
-biophys <- correct.num(biophys)#
-resource <- correct.num (resource)#
-# biophys <- read.xls(file, sheet=3, dec=',')#
-#
-# Threre is 3 datasets for interactions depending on the sheet#
-# 4 = kcals per distric area in sq.km#
-# 5 = kcals_harv.area#
-# 6 = ratio_harv.area#
-# 7 = other#
-interact <- read.xls(file,sheet=5, dec=',')#
-interact <- correct.num(interact)#
-interact <- volta.only(interact)#
-#
-### Combine all datasets for clustering all#
-dat <- left_join (users, resource, by = c("TAI_ID1", "ADM_2"))#
-dat <- left_join(dat, biophys, by = c("TAI_ID1", "ADM_2"))#
-dat <- left_join(dat, interact, by = "TAI_ID1")#
-#
-dat <- dat[-26] # delete Province
-# Note this is non-normalized data, original values. After the following line all is "rescaled" to 0-1#
-dat[3:35] <- apply(dat[3:35], 2, rescale_hw)#
-## You can delete "Pop_dens_log" since it's rescaled and you already have pop_density.#
-dat <- dat[-4]
-library (NbClust)
-clust_num <- NbClust( data = dat[-c(1,2)], dist = 'manhattan',  # diss = designdist(full [-c(2,23)], '1-J/sqrt(A*B)' )#
-                      min.nc = 3, max.nc = 12, method = 'ward.D2', alphaBeale = 0.1,#
-                      index = 'all')
-quartz()#
-par(mfrow=c(1,1))#
-hist(clust_num$Best.nc[1,],breaks=max(na.omit(clust_num$Best.nc[1,])),#
-     xlab="Number of clusters",col="lightgrey", main="Optimal number of clusters?")
-library (clValid)
-library (clValid)#
-## Internal validation#
-intern <- clValid(obj=as.data.frame(dat[-c(1,2)]), nClust=c(3:9),#
-                  clMethods=c('hierarchical', 'kmeans', 'diana', 'fanny','som',#
-                              'pam', 'sota', 'clara', 'model'),#
-                  validation='internal')#
-#
-## Stability validation#
-stab <- clValid(obj=as.data.frame(dat[-c(1,2)]), nClust=c(3:9),#
-                clMethods=c('hierarchical', 'kmeans', 'diana', 'fanny', 'som',#
-                            'pam', 'sota', 'clara', 'model'),#
-                validation='stability')#
-#
-summary (intern)
-mds <- metaMDS(dat[-c(1,2)], distance = 'manhattan', trymax = 1000, verbose = FALSE)#
+library(kohonen)#
+library(FactoMineR)#
+library(factoextra)
+## Read data#
+load("180129_Volta.RData")#
+df <- mutate(df, id = TAI_ID1)#
+df$clus <- clusters$Hierarchical
 setwd('~/Documents/Projects/TAI/scripts/TAI-Volta')
-k <- c(7,9)#
+## Read data#
+load("180129_Volta.RData")#
+df <- mutate(df, id = TAI_ID1)#
+df$clus <- clusters$Hierarchical
+## correct the intercept issue.#
+fit <- list()#
+fit <- map2(select(df_lm, starts_with("m2_")), select(df_lm, starts_with("a_")), ~ lm(.x ~ .y + Aridity + Mean_temp + Wet_season + Soil_water + Slope75 + Farmers + Literacy + Market_access + Dams, data = df_lm))#
 #
-par(mfrow=c(4,3))#
+stargazer::stargazer(#
+    fit, align = F, header = F, type = 'latex', digits = 2,#
+    float = T, no.space = F, single.row = F, font.size = "small",#
+    float.env = "sidewaystable", #style = "aer",#
+    dep.var.labels = "crop", dep.var.labels.include = T,#
+    column.labels = str_sub(names(fit), start = 4L, end = -1L),#
+    covariate.labels = c("Cropped area", "Aridity", "Mean temperature", "Wet season",#
+                         "Soil water", "Slope", "Farmers", "Literacy", "Market access",#
+                         "Dams density"),#
+    title = "Regression on mean kilocalorie production per crop",#
+    notes = "Units of are kilocalorie per capita for each administrative unit", notes.append = TRUE#
+)
+## correct the intercept issue:#
+fit_sd <- list()#
+fit_sd <-  map2(#
+    select(df_lm, starts_with("sd_"), -sd_kcals),#
+    select(df_lm, starts_with("a_")), ~ lm(.x ~ .y + Aridity + Mean_temp + Wet_season + Soil_water + Slope75 + Farmers + Literacy + Market_access + Dams, data = df_lm))
+are on log-scale already.#
+fit2 <- list()#
+fit2 <- map2(select(df_lm, starts_with("m_")), select(df_lm, starts_with("a_")), ~ lm(.x ~ .y + Aridity + Mean_temp + Wet_season + Soil_water + Slope75 + Farmers + Literacy + Market_access + Dams, data = df_lm))
+df_lm <- df_lm %>%#
+  mutate(sd_cowpea = log1p(sd_cowpea),#
+         sd_maize = log1p(sd_maize),#
+         sd_millet = log1p(sd_millet),#
+         sd_rice = log1p(sd_rice),#
+         sd_sorghum = log1p(sd_sorghum),#
+         sd_soy = log1p(sd_soy), #
+         sd_yam = log1p(sd_yam))#
 #
-for (i in 1:length(k)){#
-  par(mai = c(0.1, 0.2, 0.1 , 0.1))#
+fit_sd2 <- list()#
+fit_sd2 <-  map2(#
+    select(df_lm, starts_with("sd_"), -sd_kcals),#
+    select(df_lm, starts_with("a_")), ~ lm(.x ~ .y + Aridity + Mean_temp + Wet_season + Soil_water + Slope75 + Farmers + Literacy + Market_access + Dams, data = df_lm))
+z <- names(select(df_lm, starts_with("m2_")))#
 #
-  ## Best selected algorithms: hierarchical, k-means and som#
-  fitKM <- kmeans(dat[-c(1,2)], centers= k[i] ,iter.max=2000,nstart=50)#
-  fitSOM <- som(as.matrix(dat[-c(1,2)]), grid= somgrid(3,2,'hexagonal'))#
-  dis <- vegdist(dat[-c(1,2)], method='manhattan')#
-  clus <- hclust(dis, method='ward.D2')#
-  grp <- cutree(clus, k[i])#
-  fitHier <- grp#
+df_kc <- fit %>% purrr::map(tidy) %>%#
+    purrr::map(function(x){x$term[1] <- "area";return(x)})#
 #
-  # create a clusters dataframe#
-  clusters <- data.frame( TAI_ID1 = dat$TAI_ID1, # codes#
-                        #clara = as.vector(fitClara$clustering ),#
-                        k_means = as.vector(fitKM$cluster),#
-                        #PAM = as.vector(fitPAM$clustering),#
-                        som = as.vector(fitSOM$unit.classif),#
-                        hierarchical = as.vector(fitHier))#
+for(i in seq_along(z)) {df_kc[[i]]$response <- z[[i]] }#
 #
-  # create colors#
-  levelCols <- brewer.pal(k [i], "Set1")#
+df_kc <- df_kc %>% purrr::map(#
+    function(x) separate(x, col = response, into = c("type", "response"))#
+)#
+z <- names(select(df_lm, starts_with("sd_"), -sd_kcals))#
 #
-  # plot#
-  for (j in 2:4){#
-    # Plot MDS with grouping according with each clustering algorithm#
-    ordiplot(mds, type='none', main= paste(k[i], colnames( clusters)[j],  sep = ' '), xlab = NULL, ylab = NULL )#
-    points(mds$points, cex=1, lwd=1.5,#
-         col= levelCols[clusters[,j]]) #volta.shp@data[,i]#
-    ordihull(mds, groups= clusters[,j], label = TRUE, cex=0.7,#
-           col="purple", lty=1)#
-    #plot(ef1, p.max=0.05, col='blue', cex=0.5)#
-    #plot(ef2, p.max=0.05, col='purple', cex=0.5)#
-  }#
-  for (j in 2:4){#
-    par(mai = c(0.2, 0.2, 0.2 , 0.2))#
-    # Plot map with resulting clusters#
-    plot(volta.shp, col= levelCols[clusters[,j]],lwd=0.1)  #
-         # main= paste(k[i], colnames( clusters)[j], sep = ' '))#
+df_sd <- fit_sd %>% purrr::map(tidy) %>%#
+    purrr::map(function(x){x$term[1] <- "area";return(x)})#
 #
-  }#
-}
-ls()
-summary(dat)
-library(corrgram)
-help(corrgram)
-quartz()
-corrgram(dat[-c1,2], type = 'data', lower.panel= panel.pts, upper.panel= panel.conf, diag.panel= panel.density)
-corrgram(dat[-c(1,2)], type = 'data', lower.panel= panel.pts, upper.panel= panel.conf, diag.panel= panel.density)
-corrgram(dat[-c(1,2)], type = 'data', lower.panel= panel.pts, upper.panel= panel.shade, diag.panel= panel.density)
-names(dat)
-quartz('users')
-corrgram(dat[-c(1,2, 12:34)], type = 'data', lower.panel= panel.pts, upper.panel= panel.shade, diag.panel= panel.density)
-quartz('resource')
-corrgram(dat[-c(1:11, 20:34)], type = 'data', lower.panel= panel.pts, upper.panel= panel.shade, diag.panel= panel.density)
-quartz('biophysical')
-corrgram(dat[-c(1:19, 25:34)], type = 'data', lower.panel= panel.pts, upper.panel= panel.shade, diag.panel= panel.density)
-quartz('interactions')
-corrgram(dat[-c(1:24)], type = 'data', lower.panel= panel.pts, upper.panel= panel.shade, diag.panel= panel.density)
-quartz('all')
-corrgram(dat[-c(1,2)], type = 'data', lower.panel= panel.pts, upper.panel= panel.shade, diag.panel= panel.density)
+for(i in seq_along(z)) {df_sd[[i]]$response <- z[[i]] }#
+#
+df_sd <- df_sd %>% purrr::map(#
+    function(x) separate(x, col = response, into = c("type", "response"))#
+)
+quartz(width = 3.5, height = 4, pointsize = 6)
+bind_rows(#
+    bind_rows(df_kc),#
+    bind_rows(df_sd)#
+) %>% mutate(term = as_factor(term) %>% fct_rev()) %>%#
+filter(term != 'area') %>%#
+    ggplot(aes(estimate, term)) +#
+        geom_vline(xintercept = 0, color = "grey84", linetype = 2) +#
+        geom_point(aes(shape = ifelse(#
+            p.value < 0.05, "< 0.05" ,#
+                ifelse(p.value < 0.1, "< 0.1", "> 0.1")#
+            )), size = 1, show.legend = TRUE) +#
+        scale_shape_manual(name = "p value", values = c(19,7,1)) +#
+        geom_errorbarh(aes(xmin = estimate - std.error , xmax = estimate + std.error, height = .25), size = 0.25)+#
+        #geom_text(data = df_r2, x=-Inf, y=Inf, hjust = 0, vjust = 45, size = 3, aes(label = paste("italic(R) ^ 2 == ", round(r_squared,2))), parse = T) +#
+        theme_light(base_size = 6)+ theme(legend.position = "right")+#
+        facet_grid(response ~ type, scales = "free")
+## Read data#
+load("180129_Volta.RData")#
+df <- mutate(df, id = TAI_ID1)#
+df$clus <- clusters$Hierarchical
+fit2 <- list()#
+fit2 <- map2(select(df_lm, starts_with("m_")), select(df_lm, starts_with("a_")), ~ lm(.x ~ log1p(.y) + Aridity + Mean_temp + Wet_season + Soil_water + Slope75 + Farmers + Literacy + Market_access + Dams, data = df_lm))
+df_lm <- df_lm %>%#
+  mutate(sd_cowpea = log1p(sd_cowpea),#
+         sd_maize = log1p(sd_maize),#
+         sd_millet = log1p(sd_millet),#
+         sd_rice = log1p(sd_rice),#
+         sd_sorghum = log1p(sd_sorghum),#
+         sd_soy = log1p(sd_soy), #
+         sd_yam = log1p(sd_yam))#
+#
+fit_sd2 <- list()#
+fit_sd2 <-  map2(#
+    select(df_lm, starts_with("sd_"), -sd_kcals),#
+    select(df_lm, starts_with("a_")), ~ lm(.x ~ log1p(.y) + Aridity + Mean_temp + Wet_season + Soil_water + Slope75 + Farmers + Literacy + Market_access + Dams, data = df_lm))
+z <- names(select(df_lm, starts_with("m2_")))#
+#
+df_kc <- fit %>% purrr::map(tidy) %>%#
+    purrr::map(function(x){x$term[1] <- "area";return(x)})#
+#
+for(i in seq_along(z)) {df_kc[[i]]$response <- z[[i]] }#
+#
+df_kc <- df_kc %>% purrr::map(#
+    function(x) separate(x, col = response, into = c("type", "response"))#
+)#
+z <- names(select(df_lm, starts_with("sd_"), -sd_kcals))#
+#
+df_sd <- fit_sd %>% purrr::map(tidy) %>%#
+    purrr::map(function(x){x$term[1] <- "area";return(x)})#
+#
+for(i in seq_along(z)) {df_sd[[i]]$response <- z[[i]] }#
+#
+df_sd <- df_sd %>% purrr::map(#
+    function(x) separate(x, col = response, into = c("type", "response"))#
+)
+quartz(width = 3.5, height = 4, pointsize = 6)#
+#
+bind_rows(#
+    bind_rows(df_kc),#
+    bind_rows(df_sd)#
+) %>% mutate(term = as_factor(term) %>% fct_rev()) %>%#
+filter(term != 'area') %>%#
+    ggplot(aes(estimate, term)) +#
+        geom_vline(xintercept = 0, color = "grey84", linetype = 2) +#
+        geom_point(aes(shape = ifelse(#
+            p.value < 0.05, "< 0.05" ,#
+                ifelse(p.value < 0.1, "< 0.1", "> 0.1")#
+            )), size = 1, show.legend = TRUE) +#
+        scale_shape_manual(name = "p value", values = c(19,7,1)) +#
+        geom_errorbarh(aes(xmin = estimate - std.error , xmax = estimate + std.error, height = .25), size = 0.25)+#
+        #geom_text(data = df_r2, x=-Inf, y=Inf, hjust = 0, vjust = 45, size = 3, aes(label = paste("italic(R) ^ 2 == ", round(r_squared,2))), parse = T) +#
+        theme_light(base_size = 6)+ theme(legend.position = "right")+#
+        facet_grid(response ~ type, scales = "free")
+df_kc
+dfOlm
+df_lm
+z <- names(select(df_lm, starts_with("m2_")))
+z
+fit %>% purrr::map(tidy) %>%#
+    purrr::map(function(x){x$term[1] <- "area";return(x)})
+fit2 %>% purrr::map(tidy) %>%#
+    purrr::map(function(x){x$term[1] <- "area";return(x)})
+fit2 %>% purrr::map(tidy) %>%#
+    purrr::map(function(x){x$term[2] <- "log area";return(x)})
+df_kc <- fit2 %>% purrr::map(tidy) %>%#
+    purrr::map(function(x){x$term[2] <- "log area";return(x)})#
+#
+for(i in seq_along(z)) {df_kc[[i]]$response <- z[[i]] }
+df_kc
+df_kc <- df_kc %>% purrr::map(#
+    function(x) separate(x, col = response, into = c("type", "response"))#
+)
+df_kc
+df_kc$type <- "log kcals"
+df_kc
+df_kc <- fit2 %>% purrr::map(tidy) %>%#
+    purrr::map(function(x){x$term[2] <- "log area";return(x)})#
+#
+for(i in seq_along(z)) {df_kc[[i]]$response <- z[[i]] }#
+#
+df_kc <- df_kc %>% purrr::map(#
+    function(x) separate(x, col = response, into = c("type", "response"))#
+)
+df_kc <- df_kc %>% mutate(type = "log kcals")
+df_kc <- fit2 %>% purrr::map(tidy) %>%#
+    purrr::map(function(x){x$term[2] <- "log area";return(x)})#
+#
+for(i in seq_along(z)) {df_kc[[i]]$response <- z[[i]] }#
+#
+df_kc <- df_kc %>% purrr::map(#
+    function(x) separate(x, col = response, into = c("type", "response"))#
+)
+df_kc
+class(df_kc)
+df_kc <- df_kc %>% purrr::map(#
+    function(x) mutate(x, type = "log kcals")#
+)
+df_kc
+df_kc <- df_kc %>% purrr::map(#
+    function(x) mutate(x, type = "log kcal")#
+)
+z <- names(select(df_lm, starts_with("sd_"), -sd_kcals))#
+#
+df_sd <- fit_sd %>% purrr::map(tidy) %>%#
+    purrr::map(function(x){x$term[1] <- "area";return(x)})#
+#
+for(i in seq_along(z)) {df_sd[[i]]$response <- z[[i]] }#
+#
+df_sd <- df_sd %>% purrr::map(#
+    function(x) separate(x, col = response, into = c("type", "response"))#
+)
+bind_rows(#
+    bind_rows(df_kc),#
+    bind_rows(df_sd)#
+) %>% mutate(term = as_factor(term) %>% fct_rev()) %>%#
+# filter(term != 'area') %>%#
+    ggplot(aes(estimate, term)) +#
+        geom_vline(xintercept = 0, color = "grey84", linetype = 2) +#
+        geom_point(aes(shape = ifelse(#
+            p.value < 0.05, "< 0.05" ,#
+                ifelse(p.value < 0.1, "< 0.1", "> 0.1")#
+            )), size = 1, show.legend = TRUE) +#
+        scale_shape_manual(name = "p value", values = c(19,7,1)) +#
+        geom_errorbarh(aes(xmin = estimate - std.error , xmax = estimate + std.error, height = .25), size = 0.25)+#
+        #geom_text(data = df_r2, x=-Inf, y=Inf, hjust = 0, vjust = 45, size = 3, aes(label = paste("italic(R) ^ 2 == ", round(r_squared,2))), parse = T) +#
+        theme_light(base_size = 6)+ theme(legend.position = "right")+#
+        facet_grid(response ~ type, scales = "free")
+df_kc <- fit2 %>% purrr::map(tidy) %>%#
+    purrr::map(function(x){x$term[2] <- "log area";return(x)})#
+#
+for(i in seq_along(z)) {df_kc[[i]]$response <- z[[i]] }#
+#
+df_kc <- df_kc %>% purrr::map(#
+    function(x) separate(x, col = response, into = c("type", "response"))#
+)#
+#
+df_kc <- df_kc %>% purrr::map(#
+    function(x) mutate(x, type = "log kcal")#
+)
+z <- names(select(df_lm, starts_with("sd_"), -sd_kcals))
+fit_sd2 %>% purrr::map(tidy)
+df_sd <- fit_sd2 %>% purrr::map(tidy) %>%#
+    purrr::map(function(x){x$term[2] <- "log area";return(x)})
+for(i in seq_along(z)) {df_sd[[i]]$response <- z[[i]] }#
+#
+df_sd <- df_sd %>% purrr::map(#
+    function(x) separate(x, col = response, into = c("type", "response"))#
+)
+bind_rows(#
+    bind_rows(df_kc),#
+    bind_rows(df_sd)#
+) %>% mutate(term = as_factor(term) %>% fct_rev()) %>%#
+# filter(term != 'area') %>%#
+    ggplot(aes(estimate, term)) +#
+        geom_vline(xintercept = 0, color = "grey84", linetype = 2) +#
+        geom_point(aes(shape = ifelse(#
+            p.value < 0.05, "< 0.05" ,#
+                ifelse(p.value < 0.1, "< 0.1", "> 0.1")#
+            )), size = 1, show.legend = TRUE) +#
+        scale_shape_manual(name = "p value", values = c(19,7,1)) +#
+        geom_errorbarh(aes(xmin = estimate - std.error , xmax = estimate + std.error, height = .25), size = 0.25)+#
+        #geom_text(data = df_r2, x=-Inf, y=Inf, hjust = 0, vjust = 45, size = 3, aes(label = paste("italic(R) ^ 2 == ", round(r_squared,2))), parse = T) +#
+        theme_light(base_size = 6)+ theme(legend.position = "right")+#
+        facet_grid(response ~ type, scales = "free")
+bind_rows(#
+    bind_rows(df_kc),#
+    bind_rows(df_sd)#
+) %>% mutate(term = as_factor(term) %>% fct_rev()) %>%#
+ filter(term != 'log area') %>%#
+    ggplot(aes(estimate, term)) +#
+        geom_vline(xintercept = 0, color = "grey84", linetype = 2) +#
+        geom_point(aes(shape = ifelse(#
+            p.value < 0.05, "< 0.05" ,#
+                ifelse(p.value < 0.1, "< 0.1", "> 0.1")#
+            )), size = 1, show.legend = TRUE) +#
+        scale_shape_manual(name = "p value", values = c(19,7,1)) +#
+        geom_errorbarh(aes(xmin = estimate - std.error , xmax = estimate + std.error, height = .25), size = 0.25)+#
+        #geom_text(data = df_r2, x=-Inf, y=Inf, hjust = 0, vjust = 45, size = 3, aes(label = paste("italic(R) ^ 2 == ", round(r_squared,2))), parse = T) +#
+        theme_light(base_size = 6)+ theme(legend.position = "right")+#
+        facet_grid(response ~ type, scales = "free")
+quartz.save("figures/fig_5a.pdf", type = "pdf", width = 3.5, height = 4, dpi = 500, pointsize = 6)
+quartz(width = 3.5, height = 4, pointsize = 6)#
+#
+bind_rows(#
+    bind_rows(df_kc),#
+    bind_rows(df_sd)#
+) %>% mutate(term = as_factor(term) %>% fct_rev()) %>%#
+ filter(term != 'log area') %>%#
+    ggplot(aes(estimate, term)) +#
+        geom_vline(xintercept = 0, color = "grey84", linetype = 2) +#
+        geom_point(aes(shape = ifelse(#
+            p.value < 0.05, "< 0.05" ,#
+                ifelse(p.value < 0.1, "< 0.1", "> 0.1")#
+            )), size = 1, show.legend = TRUE) +#
+        scale_shape_manual(name = "p value", values = c(19,7,1)) +#
+        geom_errorbarh(aes(xmin = estimate - std.error , xmax = estimate + std.error, height = .25), size = 0.25)+#
+        #geom_text(data = df_r2, x=-Inf, y=Inf, hjust = 0, vjust = 45, size = 3, aes(label = paste("italic(R) ^ 2 == ", round(r_squared,2))), parse = T) +#
+        theme_light(base_size = 6)+ theme(legend.position = "right")+#
+        facet_grid(response ~ type, scales = "free")
+quartz.save("figures/fig_5a.png", type = "png", width = 3.5, height = 4, dpi = 500, pointsize = 6)

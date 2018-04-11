@@ -2,7 +2,9 @@
 ## Juan Rocha
 ## juan.rocha@su.se
 
-## Here I kept the code that worked droping all intermediate stages. It comes from the draft Rmd document that is taking too long time to compile. So Now I calculate all analysis and figures separately and only import objects there.
+## Here I kept the code that worked droping all intermediate stages. It comes 
+# from the draft Rmd document that is taking too long time to compile. So Now I 
+# calculate all analysis and figures separately and only import objects there.
 
 ## load libraries
 library(tidyverse)
