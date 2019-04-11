@@ -2,8 +2,8 @@
 ## Juan Rocha
 ## juan.rocha@su.se
 
-## Here I kept the code that worked droping all intermediate stages. It comes 
-# from the draft Rmd document that is taking too long time to compile. So Now I 
+## Here I kept the code that worked droping all intermediate stages. It comes
+# from the draft Rmd document that is taking too long time to compile. So Now I
 # calculate all analysis and figures separately and only import objects there.
 
 ## load libraries
@@ -28,7 +28,7 @@ library (vegan)
 
 setwd("~/Documents/Projects/TAI/scripts/TAI-Volta")
 ## load the results obtained with 180116_Analysis.R
-load("180129_Volta.RData")
+load("180601_Volta.RData")
 
 
 # load map for visualizations and data
@@ -89,14 +89,18 @@ source('~/Dropbox/Code/multiplot.R')
 layout <- matrix(c(1:2), ncol = 1, nrow = 2, byrow = F)
 m <- multiplot(plotlist = gg, layout = layout)
 
-quartz.save("figures/fig_1.png", type = "png", width = 7, height = 3, dpi = 500)
+# quartz.save("figures/fig_1.png", type = "png", width = 7, height = 3, dpi = 500)
 
 ##############
 ### Figure 2
 ##############
 
-df$clus <- clusters$Hierarchical
+## correct names for final Version
+# corrected_names <- c(
+#     "Aridity", "Mean temperature", "Soil water", "Wet season", "Slope 75%", 'Farmers', 'Urbanization','Literacy', "Population density [log]", "Ratio of children", "Ratio of women", "External migration", "Regional migration", "Population trend","Market access", "Cattle", 'Small ruminants', "Dams", "SD Kilocalorie", 'Cowpea', "Maize", "Millet", "Rice", "Sorghum", "Soy", "Yam")
 
+df$clus <- clusters$Hierarchical
+# names(df)[3:28] <- corrected_names
 
 df_ostrom <- data_frame(
     first_tier = as_factor(c(
@@ -152,9 +156,9 @@ boxes <- df %>% gather(
     key = second_tier, value = value, 3:28, factor_key = TRUE) %>%
     left_join(df_ostrom) %>%
     # group_by(second_tier, clus, first_tier) %>%
-    mutate(clus = clus %>% as.character() %>% as_factor()) %>%
+    mutate(clus = clus %>% as.character() %>% as_factor()) %>% as_tibble() %>%
     ggplot(aes(clus, value)) +
-    geom_boxplot(aes(fill = clus, color = clus), alpha = 0.5, size = 0.2) +
+    geom_boxplot(aes(fill = clus, color = clus), alpha = 0.5, size = 0.2, position = position_dodge2(preserve = "total")) +
     guides(fill = guide_legend(ncol = 3, nrow = 2)) +  #coord_flip() +
     facet_wrap(~second_tier, scales = 'free', ncol = 7 ) +
     scale_fill_brewer(name = "cluster", palette = "Accent") + scale_color_brewer(name = "cluster", palette = "Accent") +  theme_light(base_size = 6) + xlab("cluster") + theme(legend.position = c(0.9, 0.1), legend.direction = "horizontal", legend.key.size = unit(.5,"cm")) + ggtitle("B")
@@ -166,13 +170,15 @@ layout <- matrix(c(rep(1, 12), rep(2, 16)), ncol = 7, nrow = 4, byrow = F)
 layout <- rbind(layout, matrix(rep(3, 28), ncol = 7, nrow = 4))
 multiplot(plotlist = gg, layout = layout)
 
-quartz.save("figures/fig_2.pdf", type = "pdf", width = 7, height = 7, dpi = 500)
+# quartz.save("figures/fig_2.png", type = "png", width = 7, height = 7, dpi = 500)
 
 
 
 ####################
 ## Figure 3
 #####################
+
+## Correct names on 180116_analysis.R
 
 # create colors
 levelCols <- brewer.pal(k, "Accent") # check for better colours with alpha, k = 7
@@ -200,7 +206,7 @@ plot.cube <- function (x, main, c1, c2, c3, sub, ... ){ #takes a cube object
   }
 }
 
-quartz(width = 4, height = 4, pointsize = 6)
+quartz(width = 4, height = 4, pointsize = 6.5)
 par(mfrow = c(4,3), mai = c(0.15,0.15,0.15,0.1))
 # Interactions
 plot.cube(int.side, main = "Interactions", sub = c( " ","Resource", "Ecological", "Social"),
@@ -217,7 +223,7 @@ plot.cube(bio.side, main = "Ecological", sub = c("", "Resource", "Interactions",
 plot.cube(soc.side, main = "Social", sub = c('', "Resource", "Interactions", "Ecological"),
           c1 = "gray20", c2 = "darkgreen", c3 = "dodgerblue4")
 
-quartz.save("figures/fig_3.png", type = "png", width = 4, height = 4, dpi = 500, pointsize = 6)
+# quartz.save("figures/fig_3.pdf", type = "pdf", width = 4, height = 4, dpi = 500, pointsize = 6.5)
 
 ##################
 # Figure 4
@@ -272,20 +278,21 @@ for (i in 1:length(mds2)){
 }
 ## J171017: Note that to maintain consistency with colours I don't plot the mclus.out, that is a pam clustering over the new mds for each year analysed. Instead I plot the original aggregated fitting over all years
 
-quartz.save("figures/fig_4.pdf", type = "pdf", width = 4, height = 4, dpi = 500, pointsize = 6)
+# quartz.save("figures/fig_4.pdf", type = "pdf", width = 4, height = 4, dpi = 500, pointsize = 6)
 
 ################################
 #  regression figures
 ################################
-quartz(width = 3.5, height = 4, pointsize = 6)
+quartz(width = 3, height = 4, pointsize = 5)
 
 bind_rows(
     bind_rows(df_kc),
     bind_rows(df_sd)
-) %>% mutate(term = as_factor(term) %>% fct_rev()) %>%
+) %>% mutate(term = as_factor(str_replace(term,"_", " ")) %>% fct_rev(),
+             type = str_replace(type, "m2", "kcals")) %>%
 filter(term != 'area') %>%
     ggplot(aes(estimate, term)) +
-        geom_vline(xintercept = 0, color = "grey84", linetype = 2) +
+        geom_vline(xintercept = 0, color = "grey84", linetype = 2, size = 0.5) +
         geom_point(aes(shape = ifelse(
             p.value < 0.05, "< 0.05" ,
                 ifelse(p.value < 0.1, "< 0.1", "> 0.1")
@@ -293,10 +300,10 @@ filter(term != 'area') %>%
         scale_shape_manual(name = "p value", values = c(19,7,1)) +
         geom_errorbarh(aes(xmin = estimate - std.error , xmax = estimate + std.error, height = .25), size = 0.25)+
         #geom_text(data = df_r2, x=-Inf, y=Inf, hjust = 0, vjust = 45, size = 3, aes(label = paste("italic(R) ^ 2 == ", round(r_squared,2))), parse = T) +
-        theme_light(base_size = 6)+ theme(legend.position = "right")+
+        theme_light(base_size = 5.5)+ theme(legend.position = "right")+
         facet_grid(response ~ type, scales = "free")
 
-quartz.save("figures/fig_5.pdf", type = "pdf", width = 3.5, height = 4, dpi = 500, pointsize = 6)
+quartz.save("figures/fig_5.pdf", type = "pdf", width = 3, height = 4, dpi = 500, pointsize = 5)
 
 #################################
 # Supplementary material Figures
@@ -332,17 +339,54 @@ g <- ggplot(
 quartz()
 g
 
-quartz.save("figures/sm_fig2.pdf", type = "pdf", width = 7, height = 7, dpi = 500)
+quartz.save("figures/sm_fig2.png", type = "png", width = 7, height = 7, dpi = 500)
 
 
 ## SMFig 3
 ## number of cluster selection
-quartz(width = 2, height = 2, pointsize = 6)
-clust_results %>% filter(!is.na(Number_clusters))%>% ggplot(
-    aes(as.factor(Number_clusters))) +
-    geom_bar() + labs(x = "Number of clusters", y = "Frequency among all indexes") + theme_grey(base_size=6)
 
-quartz.save("figures/sm_fig3.png", type = "png", width = 2, height = 2, dpi = 500)
+p1 <- clust_results %>% filter(!is.na(Number_clusters))%>%
+    ggplot(
+        aes(as.factor(Number_clusters))) +
+    geom_bar() +
+    labs(x = "Number of clusters", y = "Frequency among all indexes", tag = "A") + theme_light(base_size=6)
+
+# quartz.save("figures/sm_clusters.pdf", type = "pdf", width = 2, height = 2, dpi = 500)
+
+## trying to improve the figure of cluster selection J190409
+#  The problem with this approach is that there is not an easy way of partitioning the graph. Some need to be maximised, minimised, above a threshold, below a critical value, min second difference and so forth. Nice table expalining it Table 2 pg 19 in Charrad.
+# clust_num$All.index %>%
+#     as.data.frame() %>%
+#     rownames_to_column(var = 'clusters') %>%
+#     gather(key = "index", value = "value", 2:27) %>%
+#     group_by(index) %>%
+#     mutate(value_scaled = scales::rescale(value, to = c(0,1))) %>%
+#     ggplot(aes(x = clusters, y = value_scaled, group = index)) +
+#     geom_line(aes(color = index))
+
+p2 <- clust_results %>% filter(!is.na(Number_clusters)) %>%
+    arrange(Number_clusters) %>%
+    mutate(Index = as_factor(Index)) %>%
+    ggplot(aes(y = Number_clusters, x = Index)) +
+    geom_col() + coord_flip() +
+    labs(y = "Number of clusters", x = "Indexes", tag = "B") +
+    theme_light(base_size = 6)
+
+p3 <- slot(stab, "measures") %>% as.data.frame() %>%
+    rownames_to_column("metric") %>%
+    gather(key = "var", value = "value", 2:64) %>%
+    separate(col = var, into = c("clusters", "algorithm"), sep="[.]") %>%
+    ggplot(aes(clusters, value)) + geom_line(aes(group = algorithm, color = algorithm)) + guides(col = guide_legend(nrow = 5)) +
+    facet_wrap(.~ metric, scale = "free_y", ncol = 4) +
+    theme_light(base_size = 6) +
+    theme(legend.position = c(0.9, 0.2), legend.direction = "vertical", legend.key.size = unit(.2,"cm")) + labs(tag = "C")
+
+quartz(width = 5, height = 5, pointsize = 6)
+layout <- matrix(c(1:3,3), ncol = 2, nrow = 2, byrow = T)
+gg <- list(p1,p2,p3)
+multiplot(plotlist = gg, layout = layout)
+
+quartz.save("figures/cluster_selection_figX.pdf", type = "pdf", width = 5, height = 5, dpi = 600)
 
 ## SMFig 3
 ### this should be Fig SM complementing Fig 1 and 2
@@ -395,4 +439,39 @@ differences_list %>% bind_rows() %>% mutate(vars = as_factor(vars)) %>%
     geom_errorbarh(aes(xmin = conf.low, xmax = conf.high, height = 0.5), size = 0.25) +
     geom_vline(xintercept = 0, color = "grey") + facet_wrap(~vars)+ theme_light(base_size = 7) + theme(legend.position = c(0.8, 0.05), legend.direction = "horizontal", legend.key.size = unit(.5,"cm"))
 
-quartz.save("figures/sm_fig5.png", type = "png", width = 7, height = 7, dpi = 500)
+quartz.save("figures/sm_fig6.pdf", type = "pdf", width = 7, height = 7, dpi = 500)
+
+
+
+#########################
+# J180530
+# Ingo suggested adding a heatmap to the paper. Here is an example with the recent package iheatmapr.
+
+library(iheatmapr)
+
+mat <- as.matrix(df[-c(1,2, 29:31)])
+rownames(mat) <- pull(df, ADM_2)
+
+## legend styling from plotly website (https://plot.ly/r/legend/#styling-the-legend)
+l <- list(
+  font = list(
+    family = "arial",
+    size = 8),
+  margin = list(b = 100))
+
+hm <- main_heatmap(mat,
+             name = "Normalized<br>units",
+             layout = l) %>%
+    add_row_groups(
+        df$clus, name = "SES archetypes",
+        colors = "Accent", title = ""
+    ) %>%
+    add_col_groups(
+        df_ostrom$first_tier, name = "Ostrom's SES<br>framework",
+        colors = "Set1", title = "") %>%
+    # add_row_labels(size = 0.05) %>%
+    add_col_labels(font = list(family = "Arial", size = 8)) %>%
+    # add_col_clustering() %>%
+    add_row_dendro(clus)
+
+save_iheatmap(hm, file = "heatmap.pdf", zoom = 1, vwidth = 500, vheight = 500 )

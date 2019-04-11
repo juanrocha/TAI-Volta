@@ -1,0 +1,30 @@
+---
+title: "title"
+date: "6/20/2018"
+output: 
+  pdf_document:
+    dev: pdf
+    keep_tex: no
+    latex_engine: pdflatex
+    toc: no
+documentclass: letter
+signature: Juan C. Rocha
+address: |
+  | Stockholm Resilience Centre
+  | Stockholm University
+  | Kräftriket 2B, 10691
+  | Stockholm
+citecolor: blue
+fontsize: 9pt
+header-includes:
+- \usepackage{hyperref}
+---
+
+\begin{letter}{Chief Editor \\ Monica Contestabile \\ Nature Sustainability \\
+The Campus, 4 Crinan Street \\ London N1 9XW, UK}
+
+
+\opening{Dear Editor:}
+
+Please find enclosed the manuscript **"Mapping Social-Ecological Systems Archetypes"** for submission to Nature Sustainability as a research article. The manuscript develops a method for upscaling Ostrom's social-ecological systems framework. Current uses of the SES framework are limited to local scales and their conclusions hardly reach policy making arenas. Here we attempt to use the framework at a binational scale applied to issues of food security in the Volta river basin (Ghana and Burkina Faso). 
+

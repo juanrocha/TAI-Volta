@@ -258,6 +258,10 @@ df <- left_join(biophys, users) %>%
 # Note this is non-normalized data, original values. After the following line all is "rescaled" to 0-1
 df[-c(1,2)] <- apply(df[-c(1,2)], 2, rescale_hw)
 
+## correct names for final Version
+corrected_names <- c(
+    "Aridity", "Mean temperature", "Soil water", "Wet season", "Slope 75%", 'Farmers', 'Urbanization','Literacy', "Population density [log]", "Ratio of children", "Ratio of women", "External migration", "Regional migration", "Population trend","Market access", "Cattle", 'Small ruminants', "Dams", "SD Kilocalorie", 'Cowpea', "Maize", "Millet", "Rice", "Sorghum", "Soy", "Yam")
+names(df)[3:28] <- corrected_names
 
 ############ Clustering
 ## Using mahalanobis distance help us dealing with colinearity or strong correlations.
@@ -364,6 +368,13 @@ cube <- function(s1, s2, s3, s4){ # each side of the cube is s_
 
   return(list(mod1, ef1, ef2, ef3))
 }
+
+# correct names for final version
+
+names(eco)[-1] <- corrected_names[1:5]
+names(social2)[-1] <- corrected_names[c(12:15, 6:11)]
+names(resource)[-1] <- corrected_names[c(18,19,16,17)]
+names(interact)[-1] <- corrected_names[20:26]
 
 int.side <- invisible(cube(s1 = interact[-c(1)], s2 = resource[-c(1)], s3= eco[-c(1)], s4 = social2[-c(1)]))
 bio.side <- cube(s1 = eco[-c(1)] , s2 =  resource[-c(1)], interact[-c(1)], s4 = social2[-c(1)])
@@ -478,4 +489,4 @@ df_sd <- df_sd %>% purrr::map(
 #         facet_grid(response ~ type, scales = "free")
 
 setwd("~/Documents/Projects/TAI/scripts/TAI-Volta")
-save.image("180129_Volta.RData")
+save.image("180601_Volta.RData")

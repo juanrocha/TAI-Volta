@@ -1,79 +1,69 @@
 ---
 title: "Mapping Social Ecological Systems Archetypes"
+author: |
+    | Juan Rocha^1,2^, Katja Malmborg^1^, Line Gordon^1^, Kate Brauman^3^ and Fabrice DeClerck^1,4^
+    | \small ^1^Stockholm Resilience Centre, Stockholm University, Kräftriket 2B, 10691 Stockholm
+    | \small ^2^Beijer Institute, Swedish Royal Academy of Sciences, Lilla Frescativägen 4A, 104 05 Stockholm
+    | \small ^3^Institute of Environment, University of Minnesota, St	Paul,	MN	55108, USA
+    | \small ^4^Bioversity International, CGIAR, Montpellier Cedex 5, France
 
-# Use letters for affiliations, numbers to show equal authorship (if applicable) and to indicate the corresponding author
-author:
-  - name: Juan C. Rocha
-    affiliation: a,b,1
-  - name: Katja Malmborg
-    affiliation: a
-  - name: Line Gordon
-    affiliation: a
-  - name: Kate Brauman
-    affiliation: c
-  - name: Fabrice DeClerck
-    affiliation: a,d
-
-address:
-  - code: a
-    address: Stockholm Resilience Centre, Stockholm University, Stockholm, 10691 Sweden
-  - code: b
-    address: Beijer Institute, Swedish Royal Academy of Sciences, Stockholm, 10405 Sweden
-  - code: c
-    address: Institute of Environment, University of Minnesota, St	Paul,	MN	55108, USA
-  - code: d
-    address: Bioversity International, CGIAR, Montpellier Cedex 5, France
-
-corresponding_author:
-  - code: 1
-    text: "To whom correspondence should be addressed. E-mail: juan.rocha@su.se"
-
-# For footer text
-lead_author_surname: Rocha
-
-## Remove this if not required    
-# equal_authors:
+# author:
+#   - name: Juan C. Rocha
+#     affiliation: a,b,1
+#   - name: Katja Malmborg
+#     affiliation: a
+#   - name: Line Gordon
+#     affiliation: a
+#   - name: Kate Brauman
+#     affiliation: c
+#   - name: Fabrice De Clerk
+#     affiliation: d
+# address:
+#   - code: a
+#     address: Stockholm Resilience Centre, Stockholm University, Stockholm, 10691 Sweden
+#   - code: b
+#     address: Beijer Institute, Swedish Royal Academy of Sciences, Stockholm, 10405 Sweden
+#   - code: c
+#     address: Beijer Institute, Swedish Royal Academy of Sciences, Stockholm, 10405 Sweden
+#   - code: d
+#     address: Beijer Institute, Swedish Royal Academy of Sciences, Stockholm, 10405 Sweden
+# corresponding_author:
 #   - code: 1
-#     text: "A.O.(Author One) and A.T. (Author Two) contributed equally to this work (remove if not applicable)."
-
-
-author_contributions: |
-  LG and FD contributed the initial idea; all authors designed the research, KM cleaned the data, JR wrote the code and ran the analysis with guidance of KM, LG, KB and FD. All authors discussed the results and wrote the paper.
-
-## Remove this if not required
-conflict_of_interest: |
-  The authors declare no conflict of interest.
-
-abstract: |
-  Achieving sustainable development goals requires targeting and monitoring sustainable solutions tailored to different social and ecological contexts. Ostrom stressed that there are no universal solutions to environmental problems, and developed a social-ecological systems' (SES) framework -a nested multi-tier set of variables- to help diagnose problems, identify complex interactions, and solutions tailored to each SES arena. Here we develop a data driven method for upscaling Ostrom's SES framework and apply it to a context where data is scarce, incomplete, but also where solutions towards sustainable development are needed. The purpose of upscaling the framework is to create a tool that facilitates decision-making on data scarce contexts such as developing countries. We mapped SES by applying the SES framework to poverty alleviation and food security issues in the Volta River basin in Ghana and Burkina Faso. We found archetypical configurations of SES in space. Given data availability, we study their change over time, and discuss where agricultural innovations such as water reservoirs might have a stronger impact at increasing food security and therefore alleviating poverty and hunger. We conclude by outlining how the method can be used in other SES comparative studies.
-
-
-significance: |
-  While sustainable development goals are by their nature global, their achievement requires local action and thus targeting and monitoring sustainable solutions tailored to different social and ecological contexts. Here we classify municipalities of Ghana and Burkina Faso into different social-ecological systems typologies allowing us to investigate where in the Volta river basin the usage of water reservoirs can helps people improve their crops production and therefore fight hunger in one of the most arid areas of the world.
-
-acknowledgements: |
-  We appreciate feedback on previous versions of the manuscript by Megan Meacham, Ingo Fetzer, and Miina Porkka. Ilja Lange and Esther Klingenberg provided assistance with data cleaning and literature review.
-
-keywords:
-  - social-ecological systems framework
-  - archetypes
-  - sustainable development goals
-  - data poor environments
-
-## must be one of: pnasresearcharticle (usual two-column layout), pnasmathematics (one column layout), or pnasinvited (invited submissions only)
-pnas_type: pnasresearcharticle
-
-bibliography: MappingSES_bibliography.bib
-csl: pnas.csl
-
-## change to true to add optional line numbering
-lineno: false
-
-output: rticles::pnas_article
+#     text: "To whom correspondence should be addressed. E-mail: juan.rocha@su.se"
+# lead_author_surname: Rocha
+output:
+  pdf_document:
+    # pandoc_args: [
+    #   "-V", "classoption=twocolumn"
+    # ]
+    dev: pdf
+    keep_tex: yes
+    latex_engine: pdflatex
+    toc: no
+  word_document:
+    toc: no
+citecolor: blue
+documentclass: article
+fontsize: 9pt
 header-includes:
 - \graphicspath{ {figures/} }
-- \usepackage{graphicx, rotating, longtable}
+- \usepackage{graphicx, rotating, longtable,lineno}
+- \linenumbers
+- \renewcommand{\abstractname}{}
 
+keywords:
+  - social-ecological systems
+  - archetypes
+  - sustainable development goals
+
+lineno: yes
+linkcolor: blue
+abstract: |
+ Achieving sustainable development goals requires targeting and monitoring sustainable solutions tailored to different social and ecological contexts. A social-ecological systems' (SES) framework was developed to help diagnose problems, identify complex interactions, and solutions tailored to each SES. Here we develop a data driven method for upscaling the SES framework and apply it to a context where data is scarce, but also where solutions towards sustainable development are needed. The purpose of upscaling the framework is to create a tool that facilitates decision-making on data scarce contexts. We mapped SES by applying the framework to poverty alleviation and food security issues in the Volta River basin in Ghana and Burkina Faso. We found archetypical configurations of SES in space, and discuss where agricultural innovations such as water reservoirs might have a stronger impact at increasing food security and therefore alleviating poverty and hunger. We conclude by outlining how the method can be used in other SES comparative studies.
+  
+urlcolor: blue
+bibliography: MappingSES_bibliography.bib
+csl: pnas.csl
 ---
 
 
@@ -163,8 +153,8 @@ In order to target development interventions, we need to be able to characterize
 \begin{table*}[!htbp] \centering 
   \caption{Summary variables used and their equivalence with the Ostrom's SES framework} 
   \label{table:tab1} 
-\tiny 
-\begin{tabular}{@{\extracolsep{2pt}} p{2.5cm} p{2.5cm} p{2.5cm} p{9cm} } 
+\footnotesize 
+\begin{tabular}{@{\extracolsep{2pt}} p{2.5cm} p{2.5cm} p{2.5cm} p{7cm} } 
 \\[-1.8ex]\hline 
 \hline \\[-1.8ex] 
 1st tier & 2nd tier & Indicators & Comments \\ 
@@ -288,11 +278,11 @@ Advancing theories on sustainability science requires articulating existing SES 
 
 Methods {#methods .unnumbered}
 -----------------------
-The optimal number of clusters was tested by comparing 30 different indexes and their performance following a sensitivity analysis. In general, each index requires maximisation or minimisation of some measure, that helps the researcher decide the optimal number of clusters in the data. A description and interpretation of each index can be found in Charrad et al [-@Charrad:2014tp]. We further test the internal validation and stability validation of 9 different clustering techniques: hierarchical clustering, self-organizing maps, k-means, partitioning around medoids _pam_, divisible hierarchical algorithm _diana_,  a sampling based clustering _clara_, a fuzzy clustering _fanny_, self-organizing trees _sota_, and model-based algorithm [@Brock:2008vz]. While the first technique offers a robust estimation of the number of clusters in the data, the second helps choosing an optimal clustering algorithm. Results are typically presented as non-metric multi dimensional ordinations and their spacial distribution in maps of the Volta basin. Alternatively, principal component ordination results are shown in SI. The maximum dissimilarity distance was used to maximise the distance between components, while the Ward aggregation method was used to minimise the total within-cluster variance [@Charrad:2014tp]. For visualisations we used a less restrictive Manhattan distance to ensure convergence. We further investigate the interdependences between Ostrom's nested variables, by reiterating the ordination on a set of variables of interest (e.g. interactions [I]) and performing vector fitting with the remaining variable sets (e.g. resource (RU and RS), social (U and S), ecological (ECO)) (Fig 2). The same procedure was performed over time for year with complete data to test how robust are our estimates over time (Fig S6).
+The optimal number of clusters was tested by comparing 30 different indexes and their performance following a sensitivity analysis. In general, each index requires maximisation or minimisation of some measure, that helps the researcher decide the optimal number of clusters in the data. A description and interpretation of each index can be found in Charrad et al [-@Charrad:2014tp]. We further test the internal validation and stability validation of 9 different clustering techniques: hierarchical clustering, self-organizing maps, k-means, partitioning around medoids _pam_, divisible hierarchical algorithm _diana_,  a sampling based clustering _clara_, a fuzzy clustering _fanny_, self-organizing trees _sota_, and model-based algorithm [@Brock:2008vz]. While the first technique offers a robust estimation of the number of clusters in the data, the second helps choosing an optimal clustering algorithm. Results are typically presented as non-metric multi dimensional ordinations and their spacial distribution in maps of the Volta basin. Alternatively, principal component ordination results are shown in SI. The maximum dissimilarity distance was used to maximise the distance between components, while the Ward aggregation method was used to minimise the total within-cluster variance [@Charrad:2014tp]. For visualisations we used a less restrictive Manhattan distance to ensure convergence. We further investigate the interdependences between Ostrom's nested variables, by reiterating the ordination on a set of variables of interest (e.g. interactions [I]) and performing vector fitting with the remaining variable sets (e.g. resource (RU and RS), social (U and S), ecological (ECO)) (Fig 2). The same procedure was performed over time for year with complete data to test how robust are our estimates over time (Fig S6). Data used is available at https://figshare.com/s/8cf865e90f35f44aaf16, upon publication it will be made openly available. The development version of the code is available at: https://github.com/juanrocha/TAI-Volta
 
-<!-- Leave these lines as they are at the end of your .Rmd file to ensure placement of methods & acknowledgements sections before the references-->
-\showmatmethods
+Acknowledgements {#acknowledgement .unnumbered}
+-----------------------
+We appreciate feedback on previous versions of the manuscript by Megan Meacham, Ingo Fetzer, and Miina Porkka. Ilja Lange and Esther Klingenberg provided assistance with data cleaning and literature review.
 
-\showacknow
-
-
+**Author contributions:** LG and FD contributed the initial idea; all authors designed the research, KM cleaned the data, JR wrote the code and ran the analysis with guidance of KM, LG, KB and FD. All authors discussed the results and wrote the paper.
+**Conflict of interest:** The authors declare no conflict of interest.

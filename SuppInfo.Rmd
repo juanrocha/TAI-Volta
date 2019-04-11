@@ -1,0 +1,328 @@
+---
+title: "Supplementary Information"
+subtitle: "Mapping Social Ecological Systems Archetypes"
+author: |
+    | Juan Rocha^1,2,e^, Katja Malmborg^1^, Line Gordon^1^, Kate Brauman^3^ and Fabrice DeClerck^1,4^
+    | \small ^1^Stockholm Resilience Centre, Stockholm University, Kräftriket 2B, 10691 Stockholm
+    | \small ^2^Beijer Institute, Swedish Royal Academy of Sciences, Lilla Frescativägen 4A, 104 05 Stockholm
+    | \small ^3^Institute of Environment, University of Minnesota, St	Paul,	MN	55108, USA
+    | \small ^4^Bioversity International, CGIAR, Montpellier Cedex 5, France
+    | \small ^e^  juan.rocha@su.se
+
+output:
+  pdf_document:
+    dev: pdf
+    keep_tex: yes
+    latex_engine: pdflatex
+    toc: yes
+    
+citecolor: blue
+documentclass: article
+fontsize: 9pt
+header-includes:
+- \usepackage{dcolumn, graphicx, rotating}
+- \graphicspath{ {figures/} }
+keywords:
+  - social-ecological systems
+  - archetypes
+  - sustainable development goals
+lineno: no
+linkcolor: blue
+
+urlcolor: blue
+bibliography: MappingSES_bibliography.bib
+csl: pnas.csl
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, 
+                      message = FALSE, results = "hide", 
+                      dev = 'png', dpi = 600)
+
+# knitr::opts_knit$set(progress = FALSE, verbose = FALSE)
+
+rm(list = ls())
+set.seed(12345)
+# this file combines code from the 161027 draft and the simplified version of the analysis
+
+## load libraries
+library(tidyverse)
+library(forcats)
+library  ('gdata')
+library (readxl)
+# library (corrgram)
+# library(GGally)
+library(broom)
+
+# load libraries for mapping
+library(maptools)
+library(rgeos)
+library(RColorBrewer)
+library(ggmap)
+library(grid)
+library(gridExtra)
+
+# load libraries for clustering
+library (vegan)
+# library(rgl)
+# library(cluster)
+library(NbClust)
+library(clValid)
+# library(MASS)
+library(kohonen)
+library(FactoMineR)
+library(factoextra)
+
+# setwd('~/Documents/Projects/TAI/scripts/TAI-Volta')
+
+
+```
+
+
+```{r data, cache = TRUE, echo = FALSE, error=FALSE, warning=FALSE, message=FALSE, results = 'hide'}
+
+## Read data
+load("180129_Volta.RData")
+df <- mutate(df, id = TAI_ID1)
+df$clus <- clusters$Hierarchical
+
+```
+
+\renewcommand\thefigure{S\arabic{figure}}
+\renewcommand\thetable{S\arabic{table}}
+
+Crop data selection{.unnumbered}
+--------------------
+
+Crop data records available for Ghana and Burkina Faso go as back as `r min(dat$Year)` from their respective statistical bureaux. Out of the 32 crops recorded, complete data for the basin is only available for 7 crops used in the current analysis. The data has `r dim(dat)[1]` observations. An observation is a datapoint of a crop in a district with some production (tons) and some cropped area (ha). Out of the `r dim(dat)[1]` observations `r sum(is.na(dat$area) | is.na(dat$prod))` are missing values: `NA's` or empty cells on the raw data (36%). For the analysis presented in the paper we only used the 7 most complete crops (<4% missing values). Fig S1 shows the missing values in orange, the darker the blue the better, meaning data is complete for the 99 spatial units analyzed. All data was log-transformed, total crop area calculated as well as the proportion of cultivated area per crop. However area values were not used for the clustering due to high correlations with production data. Production in Tons was transformed to Kcals with data from FAO. The mean for a 7 year period (skipping 2006) was used as the interaction (I) dataset in the clustering routines. Mean values and log-transformations were performed for each district or province dropping the missing values, meaning that for some provices and some crops the mean is not based on 7 values but fewer (>4 in minimum cases). In doing so we avoid zero inflation on the distributions of the original data that can bias the clustering results.
+
+Algorithm and cluster number selection{.unnumbered}
+--------------------
+
+Figure S3 compares the clustering of the second level administrative units into 6 clusters with the best performing clustering methods. All maps render very similar results, specially with _clara_, _pam_ or _hierarchical_ clustering (Fig S3). The test for internal validation suggests that hierarchical clustering is the best performing technique with low numbers of clusters, while stability validation suggests _clara_ or _pam_ with higher number of clusters. Henceforth we favour 6 clusters as the number of archetypes given the strong support found by comparing 30 the indexes proposed. Subsequent results in the main text use hierarchical clustering because it outperforms _clara_ and _pam_ on the internal and stability validation.
+
+![**Crop selection.** Number of observations (N) per crop per year. Note that there is only 7 crops with almost complete data for 7 years from the complete dataset. <span data-label="sm_fig1"></span>](figures/sm_fig1.png){width=70%}
+
+
+![**Normalized values for second tier variables and their distribution in space**<span data-label="sm_fig2"></span>](figures/sm_fig2.png)
+
+<!-- \begin{figure*}[htb] -->
+<!-- \centering -->
+<!-- \includegraphics[width = 7in, height = 3in]{fig_1} -->
+<!-- \caption{\textbf{Comparison of clustering techniques.} Social-Ecological systems archetypes found by applying 6 clustering techniques on 6 clusters (See SMFig1 for cluster number selection). Upper panel shows non-metric multi dimensional scaling of the data, and the lower panel the respective geographical distribution. Best performing algorithms are clara (a), partition around medioids (c), and  hierarchical clustering (e)} -->
+<!-- \label{fig:fig1} -->
+<!-- \end{figure*} -->
+
+
+![**Comparison of clustering techniques**. Social-Ecological systems archetypes found by applying 6 clustering techniques on 6 clusters. Upper panel shows non-metric multi dimensional scaling of the data, and the lower panel the respective geographical distribution. Best performing algorithms are clara (a), partition around medioids (c), and  hierarchical clustering (e)<span data-label="fig:fig1"></span>](figures/fig_1.png){width=100%}
+
+![**Distribution of second tier variables per cluster.** <span data-label="sm_fig3"></span>](figures/sm_fig3.png)
+
+
+![**Differences between clusters per second tier variable.** After an analysis of variance was performed for each variable with respect to each cluster, a Tukey test of difference is shows which clusters are significantly different or not from each other by each second tier variable analysed.<span data-label="sm_fig5"></span>](figures/sm_fig5.png){width=80%}
+
+
+
+
+![**Time robustness**. The interaction dataset is ordered with non-metric multidimensional scaling for multiple points in time and vectors are fitted for all other variables that significanlty (p < 0.001) explain the variation of the ordination. Each column is a different year with complete data, while each row corresponds to the dataset used for the vector fitting (resource, social, ecological). The colors of points and contours correspond to the archetypes found in Fig 2. <span data-label="fig:4"></span>](figures/fig_4.png){width=75%}
+
+Principal component analysis{.unnumbered}
+--------------------
+
+An alternative approach to ordination is PCA. As we can see from the ordination plots the first principal component explains ~45% of the variability in the data while the second ~12%.
+
+```{r SM_Fig4, fig.height=1.5, fig.width=6, fig.cap = "PCA results", dev.args=list(pointsize = 7) }
+library(FactoMineR)
+library(factoextra)
+par(mfrow=c(1,3))
+pca_1 <- PCA(df[-c(1,2,29,30)])
+barplot(pca_1$eig[,"eigenvalue"], ylab="value", xlab="Eigenvalues", names.arg=as.character(1:27))
+```
+
+
+Similarly to the results presented with non-metric multidimensional scaling (Fig 2), PCA separate two big groups of clusters across the first component with a lot of overlap across the second component (Fig S7). The vectors confirm that  clusters 1-3 are dominated by agroecosystems whose production focuses on millet, cowpeas, rice and sorghum. Clusters 1-2 have the higher aridity and mean temperatures, but also the higher concentration of water reservoirs and cattle per square kilometer. Cluster 3 has the fasters growing population and also the highest variability in crop production as well as the highest concentration of farmers. Clusters 4-5 in the south tend to be more urbanised, have higher rates of literacy, higher migration (both internal and regional), as well as agroecosystems dominated by the production of yam and maize. Cluster 6 has particularly high population density and market access.
+
+Table S1 shows the loadings of each component. On the first component, variables with high positive values such as aridity, mean temperature, and produced kilocalores of cowpeas, millet or sorghum separate apart clusters 1-3; while variables with negative values such as wet season, literacy, regional migration and urbanization are responsible for the differentiation of the clusters 4-6. On the vertical axis (the second component) variables responsible for explaining variation includes population density, ratio of women, market access and production in kilocalories of yam and maize.
+
+```{r SM_table1, results='asis'}
+## loadings of the first two PCs of the PCA
+knitr::kable(sweep(pca_1$var$coord[,1:2],2,sqrt(pca_1$eig[1:ncol(pca_1$var$coord),1])[1:2],FUN="/"),
+             caption = "Eigenvector loadings from principal component analysis.",
+             digits = 2, longtable = FALSE)
+
+```
+
+
+
+
+```{r regressions, results = 'asis'}
+# df_lm <- left_join(biophys, users) %>%
+#   left_join(., social) %>%
+#   left_join(., res.units) %>%
+#   left_join(., res.syst) %>%
+#   left_join(., interact) %>%
+#     left_join(kcals_cap) %>%
+#     left_join(crop.area) %>%
+#     left_join(var_kcals) %>%
+#     left_join(interact_2) %>%
+#     #add_column(cluster = as.vector(fitHier)) %>%
+#     as_tibble()
+
+
+
+## correct the intercept issue.
+fit <- list()
+fit <- map2(select(df_lm, starts_with("m2_")), select(df_lm, starts_with("a_")), ~ lm(.x ~ .y + Aridity + Mean_temp + Wet_season + Soil_water + Slope75 + Farmers + Literacy + Market_access + Dams, data = df_lm))
+
+stargazer::stargazer(
+    fit, align = F, header = F, type = 'latex', digits = 2,
+    float = T, no.space = F, single.row = F, font.size = "small",
+    float.env = "sidewaystable", #style = "aer",
+    dep.var.labels = "crop", dep.var.labels.include = T,
+    column.labels = str_sub(names(fit), start = 4L, end = -1L),
+    covariate.labels = c("Cropped area", "Aridity", "Mean temperature", "Wet season",
+                         "Soil water", "Slope", "Farmers", "Literacy", "Market access",
+                         "Dams density"),
+    title = "Regression on mean kilocalorie production per crop",
+    notes = "Units of are kilocalorie per capita for each administrative unit", notes.append = TRUE
+)
+
+```
+
+
+```{r regressions2, results = 'asis'}
+## correct the intercept issue:
+fit_sd <- list()
+fit_sd <-  map2(
+    select(df_lm, starts_with("sd_"), -sd_kcals),
+    select(df_lm, starts_with("a_")), ~ lm(.x ~ .y + Aridity + Mean_temp + Wet_season + Soil_water + Slope75 + Farmers + Literacy + Market_access + Dams, data = df_lm))
+
+
+stargazer::stargazer(
+    fit_sd, align = F, header = F, type = 'latex', digits = 2,
+    float = T, no.space = F, single.row = F, font.size = "small",
+    float.env = "sidewaystable", #style = "aer",
+    dep.var.labels = "crop", dep.var.labels.include = T,
+    column.labels = str_sub(names(fit_sd), start = 4L, end = -1L),
+    covariate.labels = c("Cropped area", "Aridity", "Mean temperature", "Wet season",
+                         "Soil water", "Slope", "Farmers", "Literacy", "Market access",
+                         "Dams density"),
+    title = "Regression on kilocalorie variance per crop",
+    notes = "Units of variance are millions of kilocalorie", notes.append = TRUE
+)
+
+```
+
+
+
+```{r regressions_3, results = 'asis'}
+## update the fit with log-scale: the kilocals / capita is m2_crops, m_crops are on log-scale already.
+fit2 <- list()
+fit2 <- map2(select(df_lm, starts_with("m_")), select(df_lm, starts_with("a_")), ~ lm(.x ~ log1p(.y) + Aridity + Mean_temp + Wet_season + Soil_water + Slope75 + Farmers + Literacy + Market_access + Dams, data = df_lm))
+
+##
+stargazer::stargazer(
+    fit2, align = F, header = F, type = 'latex', digits = 2,
+    float = T, no.space = F, single.row = F, font.size = "small",
+    float.env = "sidewaystable", #style = "aer",
+    dep.var.labels = "crop", dep.var.labels.include = T,
+    column.labels = str_sub(names(fit), start = 4L, end = -1L),
+    covariate.labels = c("Cropped area", "Aridity", "Mean temperature", "Wet season",
+                         "Soil water", "Slope", "Farmers", "Literacy", "Market access",
+                         "Dams density"),
+    title = "Regression on mean kilocalorie production per crop",
+    notes = "Units of are kilocalorie per capita for each administrative unit in logarthmic scale", notes.append = TRUE
+)
+
+```
+
+
+```{r regressions_4, results = 'asis'}
+## update to log scale
+
+df_lm <- df_lm %>%
+  mutate(sd_cowpea = log1p(sd_cowpea),
+         sd_maize = log1p(sd_maize),
+         sd_millet = log1p(sd_millet),
+         sd_rice = log1p(sd_rice),
+         sd_sorghum = log1p(sd_sorghum),
+         sd_soy = log1p(sd_soy),
+         sd_yam = log1p(sd_yam))
+
+fit_sd2 <- list()
+fit_sd2 <-  map2(
+    select(df_lm, starts_with("sd_"), -sd_kcals),
+    select(df_lm, starts_with("a_")), ~ lm(.x ~ log1p(.y) + Aridity + Mean_temp + Wet_season + Soil_water + Slope75 + Farmers + Literacy + Market_access + Dams, data = df_lm))
+
+
+
+stargazer::stargazer(
+    fit_sd2, align = F, header = F, type = 'latex', digits = 2,
+    float = T, no.space = F, single.row = F, font.size = "small",
+    float.env = "sidewaystable", #style = "aer",
+    dep.var.labels = "crop", dep.var.labels.include = T,
+    column.labels = str_sub(names(fit_sd), start = 4L, end = -1L),
+    covariate.labels = c("Cropped area", "Aridity", "Mean temperature", "Wet season",
+                         "Soil water", "Slope", "Farmers", "Literacy", "Market access",
+                         "Dams density"),
+    title = "Regression on kilocalorie variance per crop",
+    notes = "Units of variance are millions of kilocalorie in logarithmic scale", notes.append = TRUE
+)
+
+```
+
+```{r}
+# ### Update to figure 5 with regression results. Here I follow the code from 180116_analsysis. It's just to replicate the figure without having to change the RData file. I don't know yet whether co-authors will choose this figure as final one. This is a work around for now. In future version I can simply change the analysis file to implement the log tranformations above for the regression.
+# z <- names(select(df_lm, starts_with("m_")))
+#
+# df_kc <- fit2 %>% purrr::map(tidy) %>%
+#     purrr::map(function(x){x$term[2] <- "log area";return(x)})
+#
+# for(i in seq_along(z)) {df_kc[[i]]$response <- z[[i]] }
+#
+# df_kc <- df_kc %>% purrr::map(
+#     function(x) separate(x, col = response, into = c("type", "response"))
+# )
+#
+# df_kc <- df_kc %>% purrr::map(
+#     function(x) mutate(x, type = "log kcal")
+# )
+#
+#
+# z <- names(select(df_lm, starts_with("sd_"), -sd_kcals))
+#
+# df_sd <- fit_sd2 %>% purrr::map(tidy) %>%
+#     purrr::map(function(x){x$term[2] <- "log area";return(x)})
+#
+# for(i in seq_along(z)) {df_sd[[i]]$response <- z[[i]] }
+#
+# df_sd <- df_sd %>% purrr::map(
+#     function(x) separate(x, col = response, into = c("type", "response"))
+# )
+#
+# quartz(width = 3.5, height = 4, pointsize = 6)
+#
+# bind_rows(
+#     bind_rows(df_kc),
+#     bind_rows(df_sd)
+# ) %>% mutate(term = as_factor(term) %>% fct_rev()) %>%
+#  filter(term != 'log area') %>%
+#     ggplot(aes(estimate, term)) +
+#         geom_vline(xintercept = 0, color = "grey84", linetype = 2) +
+#         geom_point(aes(shape = ifelse(
+#             p.value < 0.05, "< 0.05" ,
+#                 ifelse(p.value < 0.1, "< 0.1", "> 0.1")
+#             )), size = 1, show.legend = TRUE) +
+#         scale_shape_manual(name = "p value", values = c(19,7,1)) +
+#         geom_errorbarh(aes(xmin = estimate - std.error , xmax = estimate + std.error, height = .25), size = 0.25)+
+#         #geom_text(data = df_r2, x=-Inf, y=Inf, hjust = 0, vjust = 45, size = 3, aes(label = paste("italic(R) ^ 2 == ", round(r_squared,2))), parse = T) +
+#         theme_light(base_size = 6)+ theme(legend.position = "right")+
+#         facet_grid(response ~ type, scales = "free")
+#
+# quartz.save("figures/fig_5a.pdf", type = "pdf", width = 3.5, height = 4, dpi = 500, pointsize = 6)
+#
+
+```
+
+
